@@ -21,7 +21,7 @@ class Marketing extends Model
       $query->when($filters['search'] ?? false, function($query, $search){
         return $query->where('nama_marketing', 'like', '%' . $search . '%')
                 ->orWhere('inisial', 'like', '%' . $search . '%')
-                ->orWhere('telepon', 'like', '%' . $search . '%');
+                ->orWhere('no_telepon', 'like', '%' . $search . '%');
       });
     }
 }

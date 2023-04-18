@@ -1,6 +1,6 @@
 export default function Input({ value, handle, label, validasi }) {
   const name = label.replace(/\s+/g, '_').toLowerCase();
-  console.log(name);
+  // console.log(name);
   return (
     <div>
       <label

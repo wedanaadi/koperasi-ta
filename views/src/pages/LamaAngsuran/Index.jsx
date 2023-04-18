@@ -255,7 +255,7 @@ export default function Index() {
                                 }}
                               >
                                 <MdDeleteOutline/> &nbsp;
-                                <span>Edit</span>
+                                <span>Hapus</span>
                               </button>
                             </td>
                           </tr>

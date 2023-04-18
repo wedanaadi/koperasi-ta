@@ -5,6 +5,7 @@ import useStore from "../../store/useStore";
 import { createData } from "../../api/LamaAngsuran";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Input from "../../components/Input";
+import {MdOutlineKeyboardBackspace} from "react-icons/md"
 
 export default function Add() {
   const queryClient = useQueryClient();
@@ -83,13 +84,14 @@ export default function Add() {
   return (
     <div className="bg-white card w-1/2">
       <div className="border-second card-header">
-        <h3 className="mb-0 text-2xl font-semibold">Tambah Lama Angsuran</h3>
+        <h3 className="mb-0 text-lg font-bold">Tambah Lama Angsuran</h3>
         <div className="flex justify-center items-center">
           <Link
             to={`/masterdata/lamaangsuran`}
-            className="btn bg-slate-600 text-white hover:opacity-80"
+            className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"
           >
-            Kembali
+            <MdOutlineKeyboardBackspace /> &nbsp;
+            <span>Kembali</span>
           </Link>
         </div>
       </div>

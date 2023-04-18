@@ -29,6 +29,21 @@ export default [
         icon: "icon",
         to: "lamaangsuran",
       },
+      {
+        label: "Marketing",
+        icon: "icon",
+        to: "marketing",
+      },
+      {
+        label: "Jenis Simpanan",
+        icon: "icon",
+        to: "jenissimpanan",
+      },
+      {
+        label: "Akun",
+        icon: "icon",
+        to: "akun",
+      },
     ]
   },
 ]

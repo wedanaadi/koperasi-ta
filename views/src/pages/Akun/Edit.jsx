@@ -2,9 +2,14 @@ import React, { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import useStore from "../../store/useStore";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateData } from "../../api/Akun";
+import Input from "../../components/Input";
 import { useEffect } from "react";
 
 export default function Edit() {
+  const queryClient = useQueryClient();
   const [errorValidasi, setErrorValidasi] = useState([]);
   const [akun, setAkun] = useState({
     no_akun: "",
@@ -15,6 +20,7 @@ export default function Edit() {
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
+  const tokenLogin = useStore((state) => state.token);
 
   const dataLokal = JSON.parse(localStorage.getItem("dataEdit"));
 
@@ -26,28 +32,64 @@ export default function Edit() {
     });
   }, []);
 
+  const createAkunMutation = useMutation({
+    mutationFn: updateData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["akun", 1] });
+      navigasi(`/masterdata/akun`);
+      toastChange({
+        id: "NotifAkun",
+        content: {
+          title: "Update Data",
+          description: "Update Akun Successfuly",
+          backgroundColor: toastColors.success,
+          icon: toastIcon.check,
+        },
+        position: "top-right",
+        dismiss: true,
+        duration: 3000,
+      });
+      localStorage.removeItem("dataEdit");
+    },
+    onMutate: () => {
+      toastChange({
+        id: "NotifAkun",
+        content: {
+          title: "Update Data",
+          description: "Loading....",
+          backgroundColor: toastColors.loading,
+          icon: toastIcon.loading,
+        },
+        position: "top-right",
+        dismiss: false,
+        duration: 0,
+      });
+    },
+    onError: (res) => {
+      const respon = res.response;
+      setErrorValidasi(respon.data.errors);
+      toastChange({
+        id: "NotifAkun",
+        content: {
+          title: "Update Data",
+          description: respon.data.msg,
+          backgroundColor: toastColors.error,
+          icon: toastIcon.error,
+        },
+        position: "top-right",
+        dismiss: true,
+        duration: 7000,
+      });
+    },
+  });
+
   const handleSimpan = (e) => {
     e.preventDefault();
-    axios
-      .put(`${import.meta.env.VITE_BACKEND_API}/akun/${dataLokal.id}`, { ...akun })
-      .then((res) => {
-        navigasi(`/akun`);
-        toastChange({
-          id: "NotifAddAkun",
-          content: {
-            title: "Update Data",
-            description: "Updated Akun Successfuly",
-            backgroundColor: toastColors.success,
-            icon: toastIcon.check,
-          },
-          position: "top-right",
-          dismiss: true,
-          duration: 3000,
-        });
-      })
-      .catch((err) => {
-        setErrorValidasi(err.response.data.errors);
-      });
+    createAkunMutation.mutate({
+      Data: akun,
+      token: tokenLogin,
+      id: dataLokal.id,
+    });
   };
 
   const handleChangeInput = (e) => {
@@ -58,73 +100,40 @@ export default function Edit() {
   };
 
   return (
-    <div className="bg-white card">
+    <div className="bg-white card w-1/2">
       <div className="border-second card-header">
-        <h3 className="mb-0 text-2xl font-semibold">Ubah Akun</h3>
+        <h3 className="mb-0 text-lg font-bold">Ubah Akun</h3>
         <div className="flex justify-center items-center">
           <Link
-            to={`/akun`}
-            className="btn bg-slate-400 text-white hover:opacity-80"
+            to={`/masterdata/akun`}
+            className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"
           >
-            Kembali
+            <MdOutlineKeyboardBackspace /> &nbsp;
+            <span>Kembali</span>
           </Link>
         </div>
       </div>
       <div className="card-body">
         <form autoComplete="off" onSubmit={handleSimpan}>
           <div className="mb-6">
-            <label className="block mb-2 text-primary" htmlFor="username">
-              No Akun
-            </label>
-            <input
-              className="field text-third border-primary focus:bg-four bg-four"
-              type="text"
-              name="no_akun"
-              placeholder="Nomor Akun"
-              onChange={handleChangeInput}
-              value={akun.no_akun}
+            <Input
+              label={"No Akun"}
+              value={akun}
+              handle={handleChangeInput}
+              validasi={errorValidasi}
             />
-            {errorValidasi?.no_akun?.map((msg, index) => (
-              <span key={index} className="text-sm text-red-600 font-semibold">
-                {msg}
-              </span>
-            ))}
-          </div>
-          <div className="mb-6">
-            <label className="block mb-2 text-primary" htmlFor="username">
-              Jenis Transaksi
-            </label>
-            <input
-              className="field text-third border-primary focus:bg-four bg-four"
-              type="text"
-              name="jenis_transaksi"
-              placeholder="Jenis Transaksi"
-              onChange={handleChangeInput}
-              value={akun.jenis_transaksi}
+            <Input
+              label={"Jenis Transaksi"}
+              value={akun}
+              handle={handleChangeInput}
+              validasi={errorValidasi}
             />
-            {errorValidasi?.jenis_transaksi?.map((msg, index) => (
-              <span key={index} className="text-sm text-red-600 font-semibold">
-                {msg}
-              </span>
-            ))}
-          </div>
-          <div className="mb-6">
-            <label className="block mb-2 text-primary" htmlFor="username">
-              Akun
-            </label>
-            <input
-              className="field text-third border-primary focus:bg-four bg-four"
-              type="text"
-              name="akun"
-              placeholder="Akun"
-              onChange={handleChangeInput}
-              value={akun.akun}
+            <Input
+              label={"Akun"}
+              value={akun}
+              handle={handleChangeInput}
+              validasi={errorValidasi}
             />
-            {errorValidasi?.akun?.map((msg, index) => (
-              <span key={index} className="text-sm text-red-600 font-semibold">
-                {msg}
-              </span>
-            ))}
           </div>
           <div className="w-2/12 float-right">
             <button

@@ -2,39 +2,77 @@ import React, { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import useStore from "../../store/useStore";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createData } from "../../api/JenisSimpanan";
+import Input from "../../components/Input";
 
 export default function Add() {
+  const queryClient = useQueryClient();
   const [errorValidasi, setErrorValidasi] = useState([]);
   const [jenisSimpanan, setJenisSimpanan] = useState({
     nama_jenis_simpanan: "",
     saldo_minimal: "",
   });
-  const navigasi = useNavigate()
+  const navigasi = useNavigate();
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
+  const tokenLogin = useStore((state) => state.token);
+
+  const createJSMutation = useMutation({
+    mutationFn: createData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jenisSimpanan", 1] });
+      navigasi(`/masterdata/jenissimpanan`);
+      toastChange({
+        id: "NotifJS",
+        content: {
+          title: "Create Data",
+          description: "Cretae Jenis Simpanan Successfuly",
+          backgroundColor: toastColors.success,
+          icon: toastIcon.check,
+        },
+        position: "top-right",
+        dismiss: true,
+        duration: 3000,
+      });
+    },
+    onMutate: () => {
+      toastChange({
+        id: "NotifJS",
+        content: {
+          title: "Create Data",
+          description: "Loading....",
+          backgroundColor: toastColors.loading,
+          icon: toastIcon.loading,
+        },
+        position: "top-right",
+        dismiss: false,
+        duration: 0,
+      });
+    },
+    onError: (res) => {
+      const respon = res.response;
+      setErrorValidasi(respon.data.errors);
+      toastChange({
+        id: "NotifJS",
+        content: {
+          title: "Create Data",
+          description: respon.data.msg,
+          backgroundColor: toastColors.error,
+          icon: toastIcon.error,
+        },
+        position: "top-right",
+        dismiss: true,
+        duration: 7000,
+      });
+    },
+  });
 
   const handleSimpan = (e) => {
     e.preventDefault();
-    axios
-      .post(`${import.meta.env.VITE_BACKEND_API}/jenissimpanan`,{...jenisSimpanan})
-      .then((res) => {
-        navigasi(`/jenissimpanan`)
-        toastChange({
-          id: "NotifAddJenisSimpanan",
-          content: {
-            title: "Create Data",
-            description: "Cretae Lama Angsuran Successfuly",
-            backgroundColor: toastColors.success,
-            icon: toastIcon.check,
-          },
-          position: "top-right",
-          dismiss: true,
-          duration: 3000,
-        });
-      }).catch((err)=>{
-        setErrorValidasi(err.response.data.errors)
-      });
+    createJSMutation.mutate({ newData: jenisSimpanan, token: tokenLogin });
   };
 
   const handleChangeInput = (e) => {
@@ -45,54 +83,36 @@ export default function Add() {
   };
 
   return (
-    <div className="bg-white card">
+    <div className="bg-white card w-1/2">
       <div className="border-second card-header">
-        <h3 className="mb-0 text-2xl font-semibold">Tambah Jenis Simpanan</h3>
+        <h3 className="mb-0 text-lg font-bold">Tambah Jenis Simpanan</h3>
         <div className="flex justify-center items-center">
           <Link
-            to={`/jenissimpanan`}
-            className="btn bg-slate-400 text-white hover:opacity-80"
+            to={`/masterdata/jenissimpanan`}
+            className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"
           >
-            Kembali
+            <MdOutlineKeyboardBackspace /> &nbsp;
+            <span>Kembali</span>
           </Link>
         </div>
       </div>
       <div className="card-body">
         <form autoComplete="off" onSubmit={handleSimpan}>
           <div className="mb-6">
-            <label className="block mb-2 text-primary" htmlFor="username">
-              Nama Jenis Simpanan
-            </label>
-            <input
-              className="field text-third border-primary focus:bg-four bg-four"
-              type="text"
-              name="nama_jenis_simpanan"
-              placeholder="Nama Simpanan"
-              onChange={handleChangeInput}
+            <Input
+              label={"Nama Jenis Simpanan"}
+              value={jenisSimpanan}
+              handle={handleChangeInput}
+              validasi={errorValidasi}
             />
-            {errorValidasi?.nama_jenis_simpanan?.map((msg, index) => (
-              <span key={index} className="text-sm text-red-600 font-semibold">
-                {msg}
-              </span>
-            ))}
           </div>
           <div className="mb-6">
-            <label className="block mb-2 text-primary" htmlFor="username">
-              Saldo Minimal
-            </label>
-            <input
-              className="field text-third border-primary focus:bg-four bg-four"
-              type="number"
-              min={0}
-              name="saldo_minimal"
-              placeholder="Saldo Minimal"
-              onChange={handleChangeInput}
+            <Input
+              label={"Saldo Minimal"}
+              value={jenisSimpanan}
+              handle={handleChangeInput}
+              validasi={errorValidasi}
             />
-            {errorValidasi?.saldo_minimal?.map((msg, index) => (
-              <span key={index} className="text-sm text-red-600 font-semibold">
-                {msg}
-              </span>
-            ))}
           </div>
           <div className="w-2/12 float-right">
             <button
@@ -105,5 +125,5 @@ export default function Add() {
         </form>
       </div>
     </div>
-  )
+  );
 }

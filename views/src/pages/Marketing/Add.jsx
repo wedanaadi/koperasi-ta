@@ -2,40 +2,78 @@ import React, { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import useStore from "../../store/useStore";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createData } from "../../api/Marketing";
+import Input from "../../components/Input";
 
 export default function Add() {
+  const queryClient = useQueryClient();
   const [errorValidasi, setErrorValidasi] = useState([]);
   const [marketing, setMarketing] = useState({
     nama_marketing: "",
     inisial: "",
     no_telepon: "",
   });
-  const navigasi = useNavigate()
+  const navigasi = useNavigate();
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
+  const tokenLogin = useStore((state) => state.token);
+
+  const createMarketingMutation = useMutation({
+    mutationFn: createData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["marketing", 1] });
+      navigasi(`/masterdata/marketing`);
+      toastChange({
+        id: "NotifMarketing",
+        content: {
+          title: "Create Data",
+          description: "Cretae Marketing Successfuly",
+          backgroundColor: toastColors.success,
+          icon: toastIcon.check,
+        },
+        position: "top-right",
+        dismiss: true,
+        duration: 3000,
+      });
+    },
+    onMutate: () => {
+      toastChange({
+        id: "NotifMarketing",
+        content: {
+          title: "Create Data",
+          description: "Loading....",
+          backgroundColor: toastColors.loading,
+          icon: toastIcon.loading,
+        },
+        position: "top-right",
+        dismiss: false,
+        duration: 0,
+      });
+    },
+    onError: (res) => {
+      const respon = res.response;
+      setErrorValidasi(respon.data.errors);
+      toastChange({
+        id: "NotifMarketing",
+        content: {
+          title: "Create Data",
+          description: respon.data.msg,
+          backgroundColor: toastColors.error,
+          icon: toastIcon.error,
+        },
+        position: "top-right",
+        dismiss: true,
+        duration: 7000,
+      });
+    },
+  });
 
   const handleSimpan = (e) => {
     e.preventDefault();
-    axios
-      .post(`${import.meta.env.VITE_BACKEND_API}/marketing`,{...marketing})
-      .then((res) => {
-        navigasi(`/marketing`)
-        toastChange({
-          id: "NotifAddMarketing",
-          content: {
-            title: "Create Data",
-            description: "Cretae Marketing Successfuly",
-            backgroundColor: toastColors.success,
-            icon: toastIcon.check,
-          },
-          position: "top-right",
-          dismiss: true,
-          duration: 3000,
-        });
-      }).catch((err)=>{
-        setErrorValidasi(err.response.data.errors)
-      });
+    createMarketingMutation.mutate({ newData: marketing, token: tokenLogin });
   };
 
   const handleChangeInput = (e) => {
@@ -46,70 +84,44 @@ export default function Add() {
   };
 
   return (
-    <div className="bg-white card">
+    <div className="bg-white card w-1/2">
       <div className="border-second card-header">
-        <h3 className="mb-0 text-2xl font-semibold">Tambah Marketing</h3>
+        <h3 className="mb-0 text-lg font-bold">Tambah Marketing</h3>
         <div className="flex justify-center items-center">
           <Link
-            to={`/marketing`}
-            className="btn bg-slate-400 text-white hover:opacity-80"
+            to={`/masterdata/marketing`}
+            className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"
           >
-            Kembali
+            <MdOutlineKeyboardBackspace /> &nbsp;
+            <span>Kembali</span>
           </Link>
         </div>
       </div>
       <div className="card-body">
         <form autoComplete="off" onSubmit={handleSimpan}>
           <div className="mb-6">
-            <label className="block mb-2 text-primary" htmlFor="username">
-              Nama Marketing
-            </label>
-            <input
-              className="field text-third border-primary focus:bg-four bg-four"
-              type="text"
-              name="nama_marketing"
-              placeholder="Nama Lengkap"
-              onChange={handleChangeInput}
+            <Input
+              label={"Nama Marketing"}
+              value={marketing}
+              handle={handleChangeInput}
+              validasi={errorValidasi}
             />
-            {errorValidasi?.nama_marketing?.map((msg, index) => (
-              <span key={index} className="text-sm text-red-600 font-semibold">
-                {msg}
-              </span>
-            ))}
           </div>
           <div className="mb-6">
-            <label className="block mb-2 text-primary" htmlFor="username">
-              Inisial
-            </label>
-            <input
-              className="field text-third border-primary focus:bg-four bg-four"
-              type="text"
-              name="inisial"
-              placeholder="Inisial"
-              onChange={handleChangeInput}
+            <Input
+              label={"Inisial"}
+              value={marketing}
+              handle={handleChangeInput}
+              validasi={errorValidasi}
             />
-            {errorValidasi?.inisial?.map((msg, index) => (
-              <span key={index} className="text-sm text-red-600 font-semibold">
-                {msg}
-              </span>
-            ))}
           </div>
           <div className="mb-6">
-            <label className="block mb-2 text-primary" htmlFor="username">
-              No Telepon
-            </label>
-            <input
-              className="field text-third border-primary focus:bg-four bg-four"
-              type="text"
-              name="no_telepon"
-              placeholder="No Telepon"
-              onChange={handleChangeInput}
+            <Input
+              label={"No Telepon"}
+              value={marketing}
+              handle={handleChangeInput}
+              validasi={errorValidasi}
             />
-            {errorValidasi?.no_telepon?.map((msg, index) => (
-              <span key={index} className="text-sm text-red-600 font-semibold">
-                {msg}
-              </span>
-            ))}
           </div>
           <div className="w-2/12 float-right">
             <button

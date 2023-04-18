@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import useStore from "../../store/useStore";
 import { useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateData } from "../../api/LamaAngsuran";
 import Input from "../../components/Input";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
 
 export default function Edit() {
   const queryClient = useQueryClient();
@@ -44,6 +44,7 @@ export default function Edit() {
         dismiss: true,
         duration: 3000,
       });
+      localStorage.removeItem('dataEdit')
     },
     onMutate: () => {
       toastChange({
@@ -96,13 +97,14 @@ export default function Edit() {
   return (
     <div className="bg-white card w-1/2">
       <div className="border-second card-header">
-        <h3 className="mb-0 text-2xl font-semibold">Ubah Lama Angsuran</h3>
+        <h3 className="mb-0 text-lg font-bold">Ubah Lama Angsuran</h3>
         <div className="flex justify-center items-center">
           <Link
             to={`/masterdata/lamaangsuran`}
-            className="btn bg-slate-600 text-white hover:opacity-80"
+            className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"
           >
-            Kembali
+            <MdOutlineKeyboardBackspace /> &nbsp;
+            <span>Kembali</span>
           </Link>
         </div>
       </div>

@@ -28,9 +28,9 @@ export default [
     path: `/`,
     element: (
       // <RequiredLogin>
-        <Suspense fallback={`Loading Page....`}>
-          <Home />
-        </Suspense>
+      <Suspense fallback={`Loading Page....`}>
+        <Home />
+      </Suspense>
       // </RequiredLogin>
     ),
     children: [
@@ -52,7 +52,7 @@ export default [
               <Suspense>
                 <Karyawan />
               </Suspense>
-            )
+            ),
           },
           {
             path: `karyawan/add`,
@@ -60,7 +60,7 @@ export default [
               <Suspense>
                 <AddKaryawan />
               </Suspense>
-            )
+            ),
           },
           {
             path: `karyawan/edit`,
@@ -94,80 +94,80 @@ export default [
               </Suspense>
             ),
           },
-        ]
+          {
+            path: `marketing`,
+            element: (
+              <Suspense>
+                <Marketing />
+              </Suspense>
+            ),
+          },
+          {
+            path: `marketing/add`,
+            element: (
+              <Suspense>
+                <AddMarketing />
+              </Suspense>
+            ),
+          },
+          {
+            path: `marketing/edit`,
+            element: (
+              <Suspense>
+                <EditMarketing />
+              </Suspense>
+            ),
+          },
+          {
+            path: `jenissimpanan`,
+            element: (
+              <Suspense>
+                <JenisSimpanan />
+              </Suspense>
+            ),
+          },
+          {
+            path: `jenissimpanan/add`,
+            element: (
+              <Suspense>
+                <AddJenisSimpanan />
+              </Suspense>
+            ),
+          },
+          {
+            path: `jenissimpanan/edit`,
+            element: (
+              <Suspense>
+                <EditJenisSimpanan />
+              </Suspense>
+            ),
+          },
+          {
+            path: `akun`,
+            element: (
+              <Suspense>
+                <Akun />
+              </Suspense>
+            ),
+          },
+          {
+            path: `akun/add`,
+            element: (
+              <Suspense>
+                <AddAkun />
+              </Suspense>
+            ),
+          },
+          {
+            path: `akun/edit`,
+            element: (
+              <Suspense>
+                <EditAkun />
+              </Suspense>
+            ),
+          },
+        ],
       },
-      // {
-      //   path: `/jenissimpanan`,
-      //   element: (
-      //     <Suspense>
-      //       <JenisSimpanan />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: `/jenissimpanan/add`,
-      //   element: (
-      //     <Suspense>
-      //       <AddJenisSimpanan />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: `/jenissimpanan/edit`,
-      //   element: (
-      //     <Suspense>
-      //       <EditJenisSimpanan />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: `/marketing`,
-      //   element: (
-      //     <Suspense>
-      //       <Marketing />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: `/marketing/add`,
-      //   element: (
-      //     <Suspense>
-      //       <AddMarketing />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: `/marketing/edit`,
-      //   element: (
-      //     <Suspense>
-      //       <EditMarketing />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: `/akun`,
-      //   element: (
-      //     <Suspense>
-      //       <Akun />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: `/akun/add`,
-      //   element: (
-      //     <Suspense>
-      //       <AddAkun />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: `/akun/edit`,
-      //   element: (
-      //     <Suspense>
-      //       <EditAkun />
-      //     </Suspense>
-      //   ),
-      // },
     ],
   },
   {
