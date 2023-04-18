@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { MdOutlineDashboard } from "react-icons/md";
+import { MdLogout, MdOutlineDashboard } from "react-icons/md";
 import { BsChevronDown } from "react-icons/bs";
 
 import useStore from "../../store/useStore";
 import { useMutation } from "@tanstack/react-query";
 import { apiLogout } from "../../api/Auth";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import Menus from "../../components/menuSidebar.jsx";
 import logo from "../../assets/logo.png";
+import NavItem from "./NavItem/NavItem";
 
 export default function Sidebar({ open }) {
   const [subMenuOpen, setSubMenuOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function Sidebar({ open }) {
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
   const navigasi = useNavigate();
+  const { pathname } = useLocation();
 
   const createLogoutMutation = useMutation({
     mutationFn: apiLogout,
@@ -54,12 +56,23 @@ export default function Sidebar({ open }) {
         duration: 0,
       });
     },
-    onError: () => {
+    onError: (res) => {
+      const respon = res.response;
+      let message = "";
+      if (respon.status === 422) {
+        setErrorValidasi(respon.data.errors);
+        message = respon.data.msg;
+      }
+      if (respon.status === 403) {
+        message = respon.data.errors;
+      } else {
+        message = respon.statusText;
+      }
       toastChange({
         id: "NotifAuthentication",
         content: {
           title: "Authentication",
-          description: "error",
+          description: message,
           backgroundColor: toastColors.error,
           icon: toastIcon.error,
         },
@@ -98,74 +111,18 @@ export default function Sidebar({ open }) {
           </div>
         </div>
 
-        <ul className="pt-6">
-          {Menus.map((menu, index) => (
-            <div key={index}>
-              {menu.title !== "Logout" &&
-                (menu.subMenus ? (
-                  <li
-                    className={`flex rounded-md p-2 cursor-pointer hover:bg-third text-white text-sm items-center gap-x-4 ${
-                      menu.gap ? "mt-9" : "mt-2"
-                    } ${!open && "invisible"}`}
-                    onClick={() => setSubMenuOpen(!subMenuOpen)}
-                  >
-                    {menu.icon ? menu.icon : <MdOutlineDashboard />}
-                    <span className="flex-1">{menu.title}</span>
-                    {menu.subMenus && (
-                      <BsChevronDown
-                        onClick={() => setSubMenuOpen(!subMenuOpen)}
-                        className={`${subMenuOpen && "rotate-180"}`}
-                      />
-                    )}
-                  </li>
-                ) : (
-                  <Link to={menu.src}>
-                    <li
-                      className={`flex rounded-md p-2 cursor-pointer hover:bg-third text-white text-sm items-center gap-x-4 ${
-                        menu.gap ? "mt-9" : "mt-2"
-                      } ${!open && "invisible"}`}
-                    >
-                      {menu.icon ? menu.icon : <MdOutlineDashboard />}
-                      <span className="flex-1">{menu.title}</span>
-                      {menu.subMenus && (
-                        <BsChevronDown
-                          onClick={() => setSubMenuOpen(!subMenuOpen)}
-                          className={`${subMenuOpen && "rotate-180"}`}
-                        />
-                      )}
-                    </li>
-                  </Link>
-                ))}
-
-              {/* logout */}
-              {menu.title === "Logout" && (
-                <li
-                  className={`flex rounded-md p-2 cursor-pointer hover:bg-third text-white text-sm items-center gap-x-4 ${
-                    menu.gap ? "mt-9" : "mt-2"
-                  } ${!open && "invisible"}`}
-                  onClick={() => handleLogout()}
-                >
-                  {menu.icon ? menu.icon : <MdOutlineDashboard />}
-                  <span className="flex-1">{menu.title}</span>
-                </li>
-              )}
-
-              {menu.subMenus && subMenuOpen && open && (
-                <ul>
-                  {menu.subMenus.map((subMenuItem, idx) => (
-                    <Link to={subMenuItem.src} key={idx}>
-                      <li
-                        className="flex px-5 cursor-pointer text-center text-sm text-gray-200 py-1 hover:bg-third"
-                      >
-                        {subMenuItem.title}
-                      </li>
-                    </Link>
-                  ))}
-                </ul>
-              )}
-            </div>
+        <nav className="pt-6">
+          {Menus.map((item, index) => (
+            <NavItem key={`${item.label}-${index}`} item={item} />
           ))}
-        </ul>
+          <div
+            className="flex cursor-pointer rounded-md p-2 text-white text-sm gap-x-4 items-center hover:bg-third"
+            onClick={handleLogout}
+          >
+            <MdLogout />
+            <span className="flex-1">Logout</span>
+          </div>
+        </nav>
       </div>
     </aside>
   );

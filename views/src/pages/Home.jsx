@@ -13,13 +13,7 @@ export default function Home() {
   const navigasi = useNavigate()
   const toggleSidebar = () => {
     setOpen(!open);
-  };
-
-  // useEffect(()=>{
-  //   if(tokenLogin === null || tokenLogin === '') {
-  //     navigasi(`/login`)
-  //   }
-  // },[])
+  }
 
   return (
     <div className="flex flex-row w-full min-h-screen">

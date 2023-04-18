@@ -21,3 +21,7 @@
 .card-body {
   @apply px-3 py-2
 }
+
+.active {
+  @apply text-third bg-second font-bold rounded-none !important
+}

@@ -66,12 +66,20 @@ export default function Login() {
     },
     onError: (res) => {
       const respon = res.response;
-      setErrorValidasi(respon.data.errors);
+      let message = "";
+      if(respon.status === 422) {
+        setErrorValidasi(respon.data.errors);
+        message = respon.data.msg;
+      } if(respon.status === 403) {
+        message = respon.data.errors;
+      } else {
+        message = respon.statusText;
+      }
       toastChange({
         id: "NotifAuthentication",
         content: {
           title: "Authentication",
-          description: respon.data.msg,
+          description: message,
           backgroundColor: toastColors.error,
           icon: toastIcon.error,
         },

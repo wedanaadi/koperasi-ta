@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import { RequiredLogin } from "./components/MiddlewareAuth";
 
 const Home = React.lazy(() => import("./pages/Home"));
 const Login = React.lazy(() => import("./pages/Login"));
@@ -9,7 +10,9 @@ const AddLamaAngsuran = React.lazy(() => import("./pages/LamaAngsuran/Add"));
 const EditLamaAngsuran = React.lazy(() => import("./pages/LamaAngsuran/Edit"));
 const JenisSimpanan = React.lazy(() => import("./pages/JenisSimpanan/Index"));
 const AddJenisSimpanan = React.lazy(() => import("./pages/JenisSimpanan/Add"));
-const EditJenisSimpanan = React.lazy(() => import("./pages/JenisSimpanan/Edit"));
+const EditJenisSimpanan = React.lazy(() =>
+  import("./pages/JenisSimpanan/Edit")
+);
 const Marketing = React.lazy(() => import("./pages/Marketing/Index"));
 const AddMarketing = React.lazy(() => import("./pages/Marketing/Add"));
 const EditMarketing = React.lazy(() => import("./pages/Marketing/Edit"));
@@ -24,136 +27,148 @@ export default [
   {
     path: `/`,
     element: (
-      <Suspense>
-        <Home />
-      </Suspense>
+      // <RequiredLogin>
+        <Suspense fallback={`Loading Page....`}>
+          <Home />
+        </Suspense>
+      // </RequiredLogin>
     ),
-    children : [
+    children: [
       {
         index: true,
         element: <Dashboard />,
       },
       {
-        path: `/lamaAngsuran`,
-        element: (
-          <Suspense>
-            <LamaAngsuran />
-          </Suspense>
-        ),
+        path: `/masterdata`,
+        // element: (
+        //   <Suspense>
+        //     <Karyawan />
+        //   </Suspense>
+        // ),
+        children: [
+          {
+            path: `karyawan`,
+            element: (
+              <Suspense>
+                <Karyawan />
+              </Suspense>
+            )
+          },
+          {
+            path: `karyawan/add`,
+            element: (
+              <Suspense>
+                <AddKaryawan />
+              </Suspense>
+            )
+          },
+          {
+            path: `karyawan/edit`,
+            element: (
+              <Suspense>
+                <EditKaryawan />
+              </Suspense>
+            ),
+          },
+          {
+            path: `lamaAngsuran`,
+            element: (
+              <Suspense>
+                <LamaAngsuran />
+              </Suspense>
+            ),
+          },
+          {
+            path: `lamaAngsuran/add`,
+            element: (
+              <Suspense>
+                <AddLamaAngsuran />
+              </Suspense>
+            ),
+          },
+          {
+            path: `lamaAngsuran/edit`,
+            element: (
+              <Suspense>
+                <EditLamaAngsuran />
+              </Suspense>
+            ),
+          },
+        ]
       },
-      {
-        path: `/lamaAngsuran/add`,
-        element: (
-          <Suspense>
-            <AddLamaAngsuran />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/lamaAngsuran/edit`,
-        element: (
-          <Suspense>
-            <EditLamaAngsuran />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/jenissimpanan`,
-        element: (
-          <Suspense>
-            <JenisSimpanan />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/jenissimpanan/add`,
-        element: (
-          <Suspense>
-            <AddJenisSimpanan />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/jenissimpanan/edit`,
-        element: (
-          <Suspense>
-            <EditJenisSimpanan />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/marketing`,
-        element: (
-          <Suspense>
-            <Marketing />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/marketing/add`,
-        element: (
-          <Suspense>
-            <AddMarketing />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/marketing/edit`,
-        element: (
-          <Suspense>
-            <EditMarketing />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/akun`,
-        element: (
-          <Suspense>
-            <Akun />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/akun/add`,
-        element: (
-          <Suspense>
-            <AddAkun />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/akun/edit`,
-        element: (
-          <Suspense>
-            <EditAkun />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/karyawan`,
-        element: (
-          <Suspense>
-            <Karyawan />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/karyawan/add`,
-        element: (
-          <Suspense>
-            <AddKaryawan />
-          </Suspense>
-        ),
-      },
-      {
-        path: `/karyawan/edit`,
-        element: (
-          <Suspense>
-            <EditKaryawan />
-          </Suspense>
-        ),
-      },
-    ]
+      // {
+      //   path: `/jenissimpanan`,
+      //   element: (
+      //     <Suspense>
+      //       <JenisSimpanan />
+      //     </Suspense>
+      //   ),
+      // },
+      // {
+      //   path: `/jenissimpanan/add`,
+      //   element: (
+      //     <Suspense>
+      //       <AddJenisSimpanan />
+      //     </Suspense>
+      //   ),
+      // },
+      // {
+      //   path: `/jenissimpanan/edit`,
+      //   element: (
+      //     <Suspense>
+      //       <EditJenisSimpanan />
+      //     </Suspense>
+      //   ),
+      // },
+      // {
+      //   path: `/marketing`,
+      //   element: (
+      //     <Suspense>
+      //       <Marketing />
+      //     </Suspense>
+      //   ),
+      // },
+      // {
+      //   path: `/marketing/add`,
+      //   element: (
+      //     <Suspense>
+      //       <AddMarketing />
+      //     </Suspense>
+      //   ),
+      // },
+      // {
+      //   path: `/marketing/edit`,
+      //   element: (
+      //     <Suspense>
+      //       <EditMarketing />
+      //     </Suspense>
+      //   ),
+      // },
+      // {
+      //   path: `/akun`,
+      //   element: (
+      //     <Suspense>
+      //       <Akun />
+      //     </Suspense>
+      //   ),
+      // },
+      // {
+      //   path: `/akun/add`,
+      //   element: (
+      //     <Suspense>
+      //       <AddAkun />
+      //     </Suspense>
+      //   ),
+      // },
+      // {
+      //   path: `/akun/edit`,
+      //   element: (
+      //     <Suspense>
+      //       <EditAkun />
+      //     </Suspense>
+      //   ),
+      // },
+    ],
   },
   {
     path: `/login`,

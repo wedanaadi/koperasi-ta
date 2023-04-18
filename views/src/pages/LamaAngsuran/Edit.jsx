@@ -31,7 +31,7 @@ export default function Edit() {
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lamaangsuran", 1] });
-      navigasi(`/lamaangsuran`);
+      navigasi(`/masterdata/lamaangsuran`);
       toastChange({
         id: "NotifAddLamaAngsuran",
         content: {
@@ -99,8 +99,8 @@ export default function Edit() {
         <h3 className="mb-0 text-2xl font-semibold">Ubah Lama Angsuran</h3>
         <div className="flex justify-center items-center">
           <Link
-            to={`/lamaangsuran`}
-            className="btn bg-slate-400 text-white hover:opacity-80"
+            to={`/masterdata/lamaangsuran`}
+            className="btn bg-slate-600 text-white hover:opacity-80"
           >
             Kembali
           </Link>

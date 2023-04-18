@@ -49,11 +49,11 @@ Route::post("/pegawai", [PegawaiController::class, 'store'])->name('postPegawai'
 Route::put("/pegawai/{id}", [PegawaiController::class, 'update'])->name('updatePegawai');
 Route::delete("/pegawai/{id}", [PegawaiController::class, 'destroy'])->name('deletePegawai');
 
+Route::get("/lamaangsuran", [LamaAngsuranController::class, 'index'])->name('getLamaAngsuran');
+Route::post("/lamaangsuran", [LamaAngsuranController::class, 'store'])->name('postLamaAngsuran');
+Route::put("/lamaangsuran/{id}", [LamaAngsuranController::class, 'update'])->name('updateLamaAngsuran');
+Route::delete("/lamaangsuran/{id}", [LamaAngsuranController::class, 'destroy'])->name('deleteLamaAngsuran');
 Route::middleware('auth:sanctum')->group(function () {
   Route::post("/logout", [AuthenticationController::class, 'logout'])->name('logout');
 
-  Route::get("/lamaangsuran", [LamaAngsuranController::class, 'index'])->name('getLamaAngsuran');
-  Route::post("/lamaangsuran", [LamaAngsuranController::class, 'store'])->name('postLamaAngsuran');
-  Route::put("/lamaangsuran/{id}", [LamaAngsuranController::class, 'update'])->name('updateLamaAngsuran');
-  Route::delete("/lamaangsuran/{id}", [LamaAngsuranController::class, 'destroy'])->name('deleteLamaAngsuran');
 });

@@ -22,7 +22,7 @@ export default function Add() {
     mutationFn: createData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lamaangsuran", 1] });
-      navigasi(`/lamaangsuran`);
+      navigasi(`/masterdata/lamaangsuran`);
       toastChange({
         id: "NotifAddLamaAngsuran",
         content: {
@@ -86,7 +86,7 @@ export default function Add() {
         <h3 className="mb-0 text-2xl font-semibold">Tambah Lama Angsuran</h3>
         <div className="flex justify-center items-center">
           <Link
-            to={`/lamaangsuran`}
+            to={`/masterdata/lamaangsuran`}
             className="btn bg-slate-600 text-white hover:opacity-80"
           >
             Kembali
