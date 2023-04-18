@@ -20,7 +20,7 @@ export default [
   // { title: "Schedule ", src: "Calendar", icon: <BsCalendarCheck /> },
   {
     title: "Master Data",
-    src: "/",
+    src: "",
     icon: <BsServer />,
     subMenus: [
       {

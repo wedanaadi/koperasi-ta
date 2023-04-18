@@ -6,13 +6,13 @@ const Icon = () => {
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="currentColor"
       className="w-5 h-5"
     >
       <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         d="M19.5 8.25l-7.5 7.5-7.5-7.5"
       />
     </svg>
@@ -25,13 +25,13 @@ const CloseIcon = () => {
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="currentColor"
       className="w-4 h-4"
     >
       <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         d="M6 18L18 6M6 6l12 12"
       />
     </svg>
@@ -45,6 +45,7 @@ export default function Select({
   isSearchable,
   onChange,
   editValue = null,
+  cssPotision = null
 }) {
   const [showMenu, setShowMenu] = useState(false);
   const [selectedValue, setSelectedValue] = useState(isMulti ? [] : null);
@@ -169,7 +170,7 @@ export default function Select({
         </div>
       </div>
       {showMenu && (
-        <div className="w-full translate-y-1 border border-slate-400 rounded-md max-h-36 overflow-auto bg-white z-[999]">
+        <div className={`${cssPotision} w-full translate-y-1 border border-slate-400 rounded-md max-h-36 overflow-auto bg-white z-90`}>
           {isSearchable && (
             <div className="p-[5px] bg-slate-300 w-full">
               <input

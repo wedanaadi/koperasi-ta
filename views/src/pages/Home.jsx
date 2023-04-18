@@ -15,16 +15,16 @@ export default function Home() {
     setOpen(!open);
   };
 
-  useEffect(()=>{
-    if(tokenLogin === null || tokenLogin === '') {
-      navigasi(`/login`)
-    }
-  },[])
+  // useEffect(()=>{
+  //   if(tokenLogin === null || tokenLogin === '') {
+  //     navigasi(`/login`)
+  //   }
+  // },[])
 
   return (
     <div className="flex flex-row w-full min-h-screen">
       <button
-        className="fixed z-90 bottom-10 right-8 bg-primary w-10 h-10 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-third duration-300"
+        className="fixed z-[999] bottom-10 right-8 bg-primary w-10 h-10 rounded-full drop-shadow-lg flex justify-center items-center text-white text-4xl hover:bg-third duration-300"
         onClick={toggleSidebar}
       >
         <span>

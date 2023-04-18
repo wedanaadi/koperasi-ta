@@ -11,7 +11,7 @@ const Search = ({ onSearch }) => {
   return (
     <input
       type="text"
-      className="field border-primary bg-four focus:bg-four focus:text-third"
+      className="w-full p-2 border-2 border-second focus:bg-four rounded-md"
       style={{ width: "240px" }}
       placeholder="Search"
       value={search}

@@ -1,36 +1,124 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Pagination from "../../components/Datatable/Pagination/Pagination";
 import Search from "../../components/Datatable/Search";
-import { Link, useNavigate, useParams } from "react-router-dom";
 import useStore from "../../store/useStore";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import baseUrl from "../../components/baseUrl";
+import axios from "../../components/axiosApi.jsx";
+import { deleteData } from "../../api/LamaAngsuran";
+import Select from "../../components/Tailwind/Select";
 
 export default function Index() {
-  const [dataApi, setDataApi] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [onSearch, setSearch] = useState("");
-  const navigasi = useNavigate();
+  const tokenLogin = useStore((state) => state.token);
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
+  const [pagination, setPagination] = useState({
+    label: "10",
+    value: 10,
+  });
 
-  const getData = () => {
-    // let pageParse = page;
-    let url = `${
-      import.meta.env.VITE_BACKEND_API
-    }/lamaangsuran?page=${currentPage}&perpage=${"10"}`;
+  const optionsPage = [
+    {
+      value: 10,
+      label: "10",
+    },
+    {
+      value: 25,
+      label: "25",
+    },
+    {
+      value: 50,
+      label: "50",
+    },
+    {
+      value: 100,
+      label: "100",
+    },
+  ];
+
+  const navigasi = useNavigate();
+  const queryClient = useQueryClient();
+
+  const fetchDatas = async () => {
+    let url = `${baseUrl}/lamaangsuran?page=${currentPage}&perpage=${pagination.value}`;
     if (onSearch) {
       setCurrentPage(1);
       url += `&search=${onSearch}`;
     }
-    axios.get(url).then((res) => {
-      setDataApi(res.data);
+    const { data: res } = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${tokenLogin}`,
+      },
     });
+    return res.data;
   };
 
-  useEffect(() => {
-    getData();
-  }, [currentPage]);
+  const {
+    isLoading,
+    isError,
+    data: lamaAngsurans,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["lamaangsuran", currentPage, pagination],
+    queryFn: fetchDatas,
+  });
+
+  const deleteLamaAngsuranMutation = useMutation({
+    mutationFn: deleteData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lamaangsuran", 1] });
+      toastChange({
+        id: "NotifDeleteLamaAngsuran",
+        content: {
+          title: "Create Data",
+          description: "Cretae Lama Angsuran Successfuly",
+          backgroundColor: toastColors.success,
+          icon: toastIcon.check,
+        },
+        position: "top-right",
+        dismiss: true,
+        duration: 3000,
+      });
+    },
+    onMutate: () => {
+      toastChange({
+        id: "NotifDeleteLamaAngsuran",
+        content: {
+          title: "Delete Data",
+          description: "Loading....",
+          backgroundColor: toastColors.loading,
+          icon: toastIcon.loading,
+        },
+        position: "top-right",
+        dismiss: false,
+        duration: 0,
+      });
+    },
+    onError: (res) => {
+      const respon = res.response;
+      setErrorValidasi(respon.data.errors);
+      toastChange({
+        id: "NotifDeleteLamaAngsuran",
+        content: {
+          title: "Delete Data",
+          description: respon.data.msg,
+          backgroundColor: toastColors.error,
+          icon: toastIcon.error,
+        },
+        position: "top-right",
+        dismiss: true,
+        duration: 7000,
+      });
+    },
+  });
+
+  if (isLoading) return "loading....";
+  if (isError) return `Error ${error.message}`;
 
   const handleEditButton = (data) => {
     localStorage.setItem("dataEdit", JSON.stringify(data));
@@ -41,28 +129,10 @@ export default function Index() {
     let text = "Hapus data ?";
     let msg = "";
     if (confirm(text) == true) {
-      axios
-      .delete(`${import.meta.env.VITE_BACKEND_API}/lamaangsuran/${id}`,{})
-      .then((res) => {
-        getData()
-        toastChange({
-          id: "NotifdeleteLamaAngsuran",
-          content: {
-            title: "Delete Data",
-            description: "Delete Lama Angsuran Successfuly",
-            backgroundColor: toastColors.success,
-            icon: toastIcon.check,
-          },
-          position: "top-right",
-          dismiss: true,
-          duration: 3000,
-        });
-      }).catch((err)=>{
-        console.log(err);
-      });
+      deleteLamaAngsuranMutation.mutate({ id: id, token: tokenLogin });
     } else {
       msg = "Aksi dibatalkan";
-      alert(msg)
+      alert(msg);
     }
   };
 
@@ -77,11 +147,21 @@ export default function Index() {
         </div>
       </div>
       <div className="card-body">
-        <div>
-          <div className="w-2/12">&nbsp;</div>
+        <div className="sm:flex sm:flex-row sm:items-center">
+          <div className="w-full sm:w-2/12">
+            <Select
+              placeHolder="Page..."
+              options={optionsPage}
+              cssPotision="absolute"
+              editValue={pagination}
+              onChange={(value) => {
+                setPagination(value);
+              }}
+            />
+          </div>
           <div className="flex flex-row-reverse w-full">
             <>
-              <button className="btn2 bg-blue-700" onClick={() => getData()}>
+              <button className="btn2 bg-blue-700 hover:opacity-80" onClick={() => refetch()}>
                 Cari
               </button>
               &nbsp;
@@ -97,45 +177,52 @@ export default function Index() {
           <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
               <div className="overflow-auto">
-                <table className="min-w-full border-2 text-center text-base font-light">
-                  <thead className="border-b font-medium">
-                    <tr>
-                      <th scope="col" className="border-r px-6 py-4 w-1/12">
+                <table className="min-w-full border-2 border-third text-center text-base font-light">
+                  <thead className="border-b border-third font-medium">
+                    <tr className="bg-four">
+                      <th scope="col" className="border-r border-third px-6 py-4 w-1/12">
                         #
                       </th>
-                      <th scope="col" className="border-r px-6 py-4">
+                      <th scope="col" className="border-r border-third px-6 py-4">
                         Lama Angsuran
                       </th>
-                      <th scope="col" className="border-r px-6 py-4 w-2/12">
+                      <th scope="col" className="border-r border-third px-6 py-4 w-2/12">
                         Aksi
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {dataApi?.data?.data.length > 0 ? (
-                      dataApi?.data?.data.map((data, index) => (
-                        <tr className="border-b font-medium" key={index}>
-                          <td className="whitespace-nowrap border-r px-6 py-4 font-medium">
-                            {index + dataApi.data.from}
+                    {lamaAngsurans?.data.length > 0 ? (
+                      lamaAngsurans?.data.map((data, index) => (
+                        <tr className="border-b font-medium even:bg-white odd:bg-slate-100" key={index}>
+                          <td className="whitespace-nowrap border-r border-third px-6 py-4 font-medium">
+                            {index + lamaAngsurans.from}
                           </td>
-                          <td className="whitespace-nowrap border-r px-6 py-4 text-left">
+                          <td className="whitespace-nowrap border-r border-third px-6 py-4 text-left">
                             {data.lama_angsuran}
                           </td>
-                          <td className="whitespace-nowrap border-r px-6 py-4 flex justify-center">
+                          <td className="whitespace-nowrap border-r border-third px-6 py-4 flex justify-center">
                             <button
-                              className="btn2 bg-orange-500"
+                              className="btn2 bg-orange-500 hover:opacity-80"
                               onClick={() => handleEditButton(data)}
                             >
                               Edit
                             </button>
                             &nbsp;
-                            <button className="btn2 bg-red-500" onClick={() => handleHapus(data.id)}>Hapus</button>
+                            <button
+                              className="btn2 bg-red-700 hover:opacity-80"
+                              onClick={() => handleHapus(data.id)}
+                            >
+                              Hapus
+                            </button>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={2}>Tidak Ada Data</td>
+                        <td colSpan={3} className="text-center">
+                          Tidak Ada Data
+                        </td>
                       </tr>
                     )}
                   </tbody>
@@ -144,12 +231,12 @@ export default function Index() {
             </div>
           </div>
         </div>
-        {dataApi?.data ? (
+        {lamaAngsurans ? (
           <Pagination
             className="pagination-bar float-right mb-3"
             currentPage={currentPage}
-            totalCount={dataApi.data.total}
-            pageSize={dataApi.data.per_page}
+            totalCount={lamaAngsurans.total}
+            pageSize={lamaAngsurans.per_page}
             onPageChange={(page) => setCurrentPage(page)}
           />
         ) : (

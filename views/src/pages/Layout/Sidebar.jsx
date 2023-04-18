@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiLogout } from "../../api/Auth";
 import { useNavigate, Link } from "react-router-dom";
 import Menus from "../../components/menuSidebar.jsx";
-import logo from "../../assets/logo.png"
+import logo from "../../assets/logo.png";
 
 export default function Sidebar({ open }) {
   const [subMenuOpen, setSubMenuOpen] = useState(false);
@@ -75,7 +75,7 @@ export default function Sidebar({ open }) {
   };
 
   return (
-    <aside className="flex fixed shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]">
+    <aside className="flex fixed shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] z-[999]">
       <div
         className={`h-screen overflow-y-auto bg-primary relative duration-500 ${
           open ? "w-48 lg:w-60" : "w-0"
@@ -103,23 +103,21 @@ export default function Sidebar({ open }) {
             <div key={index}>
               {menu.title !== "Logout" &&
                 (menu.subMenus ? (
-                  <Link to={menu.src}>
-                    <li
-                      className={`flex rounded-md p-2 cursor-pointer hover:bg-third text-white text-sm items-center gap-x-4 ${
-                        menu.gap ? "mt-9" : "mt-2"
-                      } ${!open && "invisible"}`}
-                      onClick={() => setSubMenuOpen(!subMenuOpen)}
-                    >
-                      {menu.icon ? menu.icon : <MdOutlineDashboard />}
-                      <span className="flex-1">{menu.title}</span>
-                      {menu.subMenus && (
-                        <BsChevronDown
-                          onClick={() => setSubMenuOpen(!subMenuOpen)}
-                          className={`${subMenuOpen && "rotate-180"}`}
-                        />
-                      )}
-                    </li>
-                  </Link>
+                  <li
+                    className={`flex rounded-md p-2 cursor-pointer hover:bg-third text-white text-sm items-center gap-x-4 ${
+                      menu.gap ? "mt-9" : "mt-2"
+                    } ${!open && "invisible"}`}
+                    onClick={() => setSubMenuOpen(!subMenuOpen)}
+                  >
+                    {menu.icon ? menu.icon : <MdOutlineDashboard />}
+                    <span className="flex-1">{menu.title}</span>
+                    {menu.subMenus && (
+                      <BsChevronDown
+                        onClick={() => setSubMenuOpen(!subMenuOpen)}
+                        className={`${subMenuOpen && "rotate-180"}`}
+                      />
+                    )}
+                  </li>
                 ) : (
                   <Link to={menu.src}>
                     <li
@@ -155,9 +153,8 @@ export default function Sidebar({ open }) {
               {menu.subMenus && subMenuOpen && open && (
                 <ul>
                   {menu.subMenus.map((subMenuItem, idx) => (
-                    <Link to={subMenuItem.src}>
+                    <Link to={subMenuItem.src} key={idx}>
                       <li
-                        key={idx}
                         className="flex px-5 cursor-pointer text-center text-sm text-gray-200 py-1 hover:bg-third"
                       >
                         {subMenuItem.title}

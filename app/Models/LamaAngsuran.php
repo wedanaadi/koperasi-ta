@@ -19,8 +19,7 @@ class LamaAngsuran extends Model
   public function scopeFilter($query, array $filters)
   {
     $query->when($filters['search'] ?? false, function($query, $search){
-      return $query->where('nama_simpanan', 'like', '%' . $search . '%')
-              ->orWhere('saldo_minimal', 'like', '%' . $search . '%');
+      return $query->where('lama_angsuran', 'like', '%' . $search . '%');
     });
   }
 }
