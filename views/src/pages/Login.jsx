@@ -70,7 +70,7 @@ export default function Login() {
       if(respon.status === 422) {
         setErrorValidasi(respon.data.errors);
         message = respon.data.msg;
-      } if(respon.status === 403) {
+      } else if(respon.status === 403) {
         message = respon.data.errors;
       } else {
         message = respon.statusText;

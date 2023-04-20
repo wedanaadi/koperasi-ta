@@ -19,6 +19,16 @@ export default function NavItemHeader(props) {
     setExpand((expanded) => !expanded);
   };
 
+  function compare( a, b ) {
+    if ( a.label < b.label ){
+      return -1;
+    }
+    if ( a.label > b.label ){
+      return 1;
+    }
+    return 0;
+  }
+
   return (
     <>
       <button
@@ -34,7 +44,7 @@ export default function NavItemHeader(props) {
 
       {expanded && (
         <div>
-          {children.map((item, index) => {
+          {children.sort(compare).map((item, index) => {
             const key = `${item.label}-${index}`;
             const { label, icon, children } = item;
 

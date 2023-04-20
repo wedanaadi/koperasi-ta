@@ -4,8 +4,8 @@ import axios from "axios";
 import useStore from "../../store/useStore";
 import { createData } from "../../api/LamaAngsuran";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Input from "../../components/Input";
-import {MdOutlineKeyboardBackspace} from "react-icons/md"
+import { Input } from "../../components/Input";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
 
 export default function Add() {
   const queryClient = useQueryClient();
@@ -53,12 +53,20 @@ export default function Add() {
     },
     onError: (res) => {
       const respon = res.response;
-      setErrorValidasi(respon.data.errors);
+      let message = "";
+      if(respon.status === 422) {
+        setErrorValidasi(respon.data.errors);
+        message = respon.data.msg;
+      } else if(respon.status === 403) {
+        message = respon.data.errors;
+      } else {
+        message = respon.statusText;
+      }
       toastChange({
-        id: "NotifAddLamaAngsuran",
+        id: "NotifLamaAngsuran",
         content: {
           title: "Create Data",
-          description: respon.data.msg,
+          description: message,
           backgroundColor: toastColors.error,
           icon: toastIcon.error,
         },
@@ -71,7 +79,10 @@ export default function Add() {
 
   const handleSimpan = (e) => {
     e.preventDefault();
-    createLamaAngsuranMutation.mutate({newData:lamaAngsuran, 'token':tokenLogin})
+    createLamaAngsuranMutation.mutate({
+      newData: lamaAngsuran,
+      token: tokenLogin,
+    });
   };
 
   const handleChangeInput = (e) => {
@@ -97,14 +108,12 @@ export default function Add() {
       </div>
       <div className="card-body">
         <form autoComplete="off" onSubmit={handleSimpan}>
-          <div className="mb-6">
-            <Input
-              label={'Lama Angsuran'}
-              value={lamaAngsuran}
-              handle={handleChangeInput}
-              validasi={errorValidasi}
-            />
-          </div>
+          <Input
+            label={"Lama Angsuran"}
+            value={lamaAngsuran}
+            handle={handleChangeInput}
+            validasi={errorValidasi}
+          />
           <div className="w-2/12 float-right">
             <button
               className="bg-primary hover:bg-third btn mb-6"

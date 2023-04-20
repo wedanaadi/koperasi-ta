@@ -9,6 +9,7 @@ import baseUrl from "../../components/baseUrl";
 import { MdAddCircleOutline, MdDeleteOutline, MdEdit } from "react-icons/md";
 import Select from "../../components/Tailwind/Select";
 import { deleteData } from "../../api/JenisSimpanan";
+import { InputFormat, NumberFormat } from "../../components/Input";
 
 const ConfirmDialog = React.lazy(() => import("../../components/ConfirmAlert"));
 
@@ -75,7 +76,8 @@ export default function Index() {
   const deleteJenisSimpananMutation = useMutation({
     mutationFn: deleteData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["jenisSimpanan", 1] });
+      setCurrentPage(1)
+      queryClient.invalidateQueries({ queryKey: ["jenisSimpanan"] });
       toastChange({
         id: "NotifJS",
         content: {
@@ -106,11 +108,10 @@ export default function Index() {
     onError: (res) => {
       const respon = res.response;
       let message = "";
-      if (respon.status === 422) {
+      if(respon.status === 422) {
         setErrorValidasi(respon.data.errors);
         message = respon.data.msg;
-      }
-      if (respon.status === 403) {
+      } else if(respon.status === 403) {
         message = respon.data.errors;
       } else {
         message = respon.statusText;
@@ -147,7 +148,7 @@ export default function Index() {
     handleHapus(idSelected);
   }, [confirmDelete]);
 
-  if (isLoading) return "loading....";
+  // if (isLoading) return "loading....";
   if (isError) return `Error ${error.message}`;
 
   return (
@@ -160,7 +161,10 @@ export default function Index() {
         <div className="border-second card-header">
           <h3 className="mb-0 text-lg font-bold">Data Jenis Simpanan</h3>
           <div className="flex justify-center items-center">
-            <Link to={"add"} className="flex items-center btn bg-green-700 hover:opacity-80">
+            <Link
+              to={"add"}
+              className="flex items-center btn bg-green-700 hover:opacity-80"
+            >
               <MdAddCircleOutline /> &nbsp;
               <span>Tambah</span>
             </Link>
@@ -230,50 +234,57 @@ export default function Index() {
                       </tr>
                     </thead>
                     <tbody>
-                      {jenisSimpanans?.data.length > 0 ? (
-                        jenisSimpanans?.data.map((data, index) => (
-                          <tr
-                            className="border-b font-medium even:bg-white odd:bg-slate-100"
-                            key={index}
-                          >
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 font-medium">
-                              {index + jenisSimpanans.from}
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {data.nama_jenis_simpanan}
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {data.saldo_minimal}
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 flex justify-center">
-                              <button
-                                className="btn2 bg-orange-500 hover:opacity-80 flex items-center"
-                                onClick={() => handleEditButton(data)}
-                              >
-                                <MdEdit/> &nbsp;
-                                <span>Edit</span>
-                              </button>
-                              &nbsp;
-                              <button
-                                className="btn2 bg-red-700 hover:opacity-80 flex items-center"
-                                onClick={() => {
-                                  setOpenDialog(!openDialog);
-                                  setIDSelected(data.id);
-                                }}
-                              >
-                                <MdDeleteOutline/> &nbsp;
-                                <span>Hapus</span>
-                              </button>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
+                      {isLoading && (
                         <tr>
-                          <td colSpan={4} className="text-center">
-                            Tidak Ada Data
+                          <td colSpan={4} className="text-left">
+                            Loading....
                           </td>
                         </tr>
                       )}
+                      {jenisSimpanans?.data.length > 0
+                        ? jenisSimpanans?.data.map((data, index) => (
+                            <tr
+                              className="border-b font-medium even:bg-white odd:bg-slate-100"
+                              key={index}
+                            >
+                              <td className="whitespace-nowrap border-r border-third px-6 py-2 font-medium">
+                                {index + jenisSimpanans.from}
+                              </td>
+                              <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
+                                {data.nama_jenis_simpanan}
+                              </td>
+                              <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
+                                <NumberFormat value={data.saldo_minimal} />
+                              </td>
+                              <td className="whitespace-nowrap border-r border-third px-6 py-2 flex justify-center">
+                                <button
+                                  className="btn2 bg-orange-500 hover:opacity-80 flex items-center"
+                                  onClick={() => handleEditButton(data)}
+                                >
+                                  <MdEdit /> &nbsp;
+                                  <span>Edit</span>
+                                </button>
+                                &nbsp;
+                                <button
+                                  className="btn2 bg-red-700 hover:opacity-80 flex items-center"
+                                  onClick={() => {
+                                    setOpenDialog(!openDialog);
+                                    setIDSelected(data.id);
+                                  }}
+                                >
+                                  <MdDeleteOutline /> &nbsp;
+                                  <span>Hapus</span>
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        : !isLoading && (
+                            <tr>
+                              <td colSpan={4} className="text-center">
+                                Tidak Ada Data
+                              </td>
+                            </tr>
+                          )}
                     </tbody>
                   </table>
                 </div>

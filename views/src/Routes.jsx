@@ -22,6 +22,12 @@ const EditAkun = React.lazy(() => import("./pages/Akun/Edit"));
 const Karyawan = React.lazy(() => import("./pages/Karyawan/Index"));
 const AddKaryawan = React.lazy(() => import("./pages/Karyawan/Add"));
 const EditKaryawan = React.lazy(() => import("./pages/Karyawan/Edit"));
+const Nasabah = React.lazy(() => import("./pages/Nasabah/Index"));
+const AddNasabah = React.lazy(() => import("./pages/Nasabah/Add"));
+const EditNasabah = React.lazy(() => import("./pages/Nasabah/Edit"));
+const Setting = React.lazy(() => import("./pages/setting/Index"));
+const BA = React.lazy(() => import("./pages/setting/BiayaAdmin"));
+const Sistem = React.lazy(() => import("./pages/setting/Sistem"));
 
 export default [
   {
@@ -163,6 +169,56 @@ export default [
             element: (
               <Suspense>
                 <EditAkun />
+              </Suspense>
+            ),
+          },
+          {
+            path: `nasabah`,
+            element: (
+              <Suspense>
+                <Nasabah />
+              </Suspense>
+            ),
+          },
+          {
+            path: `nasabah/add`,
+            element: (
+              <Suspense>
+                <AddNasabah />
+              </Suspense>
+            ),
+          },
+          {
+            path: `nasabah/edit`,
+            element: (
+              <Suspense>
+                <EditNasabah />
+              </Suspense>
+            ),
+          },
+        ],
+      },
+      {
+        path: `setting`,
+        element: (
+          <Suspense>
+            <Setting />
+          </Suspense>
+        ),
+        children: [
+          {
+            path: `biayaadmin`,
+            element: (
+              <Suspense>
+                <BA />
+              </Suspense>
+            ),
+          },
+          {
+            path: `sistem`,
+            element: (
+              <Suspense>
+                <Sistem />
               </Suspense>
             ),
           },

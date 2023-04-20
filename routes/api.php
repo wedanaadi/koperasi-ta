@@ -6,6 +6,7 @@ use App\Http\Controllers\BiayaAdminController;
 use App\Http\Controllers\JenisSimpananController;
 use App\Http\Controllers\LamaAngsuranController;
 use App\Http\Controllers\MarketingController;
+use App\Http\Controllers\NasabahController;
 use App\Http\Controllers\PegawaiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,10 @@ Route::get("/pegawai", [PegawaiController::class, 'index'])->name('getPegawai');
 Route::post("/pegawai", [PegawaiController::class, 'store'])->name('postPegawai');
 Route::put("/pegawai/{id}", [PegawaiController::class, 'update'])->name('updatePegawai');
 Route::delete("/pegawai/{id}", [PegawaiController::class, 'destroy'])->name('deletePegawai');
+Route::get("/nasabah", [NasabahController::class, 'index'])->name('getNasabah');
+Route::post("/nasabah", [NasabahController::class, 'store'])->name('postNasabah');
+Route::put("/nasabah/{id}", [NasabahController::class, 'update'])->name('updateNasabah');
+Route::delete("/nasabah/{id}", [NasabahController::class, 'destroy'])->name('deleteNasabah');
 
 Route::get("/lamaangsuran", [LamaAngsuranController::class, 'index'])->name('getLamaAngsuran');
 Route::post("/lamaangsuran", [LamaAngsuranController::class, 'store'])->name('postLamaAngsuran');

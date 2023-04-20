@@ -77,7 +77,8 @@ export default function Index() {
   const deleteLamaAngsuranMutation = useMutation({
     mutationFn: deleteData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lamaangsuran", 1] });
+      setCurrentPage(1)
+      queryClient.invalidateQueries({ queryKey: ["lamaangsuran"] });
       toastChange({
         id: "NotifLamaAngsuran",
         content: {
@@ -108,11 +109,10 @@ export default function Index() {
     onError: (res) => {
       const respon = res.response;
       let message = "";
-      if (respon.status === 422) {
+      if(respon.status === 422) {
         setErrorValidasi(respon.data.errors);
         message = respon.data.msg;
-      }
-      if (respon.status === 403) {
+      } else if(respon.status === 403) {
         message = respon.data.errors;
       } else {
         message = respon.statusText;
@@ -149,7 +149,7 @@ export default function Index() {
     handleHapus(idSelected);
   }, [confirmDelete]);
 
-  if (isLoading) return "loading....";
+  // if (isLoading) return "loading....";
   if (isError) return `Error ${error.message}`;
 
   return (
@@ -226,6 +226,11 @@ export default function Index() {
                       </tr>
                     </thead>
                     <tbody>
+                    {isLoading && (
+                        <tr>
+                          <td colSpan={3} className="text-left">Loading....</td>
+                        </tr>
+                      )}
                       {lamaAngsurans?.data.length > 0 ? (
                         lamaAngsurans?.data.map((data, index) => (
                           <tr
@@ -261,11 +266,11 @@ export default function Index() {
                           </tr>
                         ))
                       ) : (
-                        <tr>
+                        !isLoading && (<tr>
                           <td colSpan={3} className="text-center">
                             Tidak Ada Data
                           </td>
-                        </tr>
+                        </tr>)
                       )}
                     </tbody>
                   </table>

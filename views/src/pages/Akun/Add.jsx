@@ -5,7 +5,7 @@ import useStore from "../../store/useStore";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createData } from "../../api/Akun";
-import Input from "../../components/Input";
+import { Input } from "../../components/Input";
 
 export default function Add() {
   const queryClient = useQueryClient();
@@ -55,12 +55,20 @@ export default function Add() {
     },
     onError: (res) => {
       const respon = res.response;
-      setErrorValidasi(respon.data.errors);
+      let message = "";
+      if(respon.status === 422) {
+        setErrorValidasi(respon.data.errors);
+        message = respon.data.msg;
+      } else if(respon.status === 403) {
+        message = respon.data.errors;
+      } else {
+        message = respon.statusText;
+      }
       toastChange({
         id: "NotifAkun",
         content: {
           title: "Create Data",
-          description: respon.data.msg,
+          description: message,
           backgroundColor: toastColors.error,
           icon: toastIcon.error,
         },
@@ -99,26 +107,24 @@ export default function Add() {
       </div>
       <div className="card-body">
         <form autoComplete="off" onSubmit={handleSimpan}>
-          <div className="mb-6">
-            <Input
-              label={"No Akun"}
-              value={akun}
-              handle={handleChangeInput}
-              validasi={errorValidasi}
-            />
-            <Input
-              label={"Jenis Transaksi"}
-              value={akun}
-              handle={handleChangeInput}
-              validasi={errorValidasi}
-            />
-            <Input
-              label={"Akun"}
-              value={akun}
-              handle={handleChangeInput}
-              validasi={errorValidasi}
-            />
-          </div>
+          <Input
+            label={"No Akun"}
+            value={akun}
+            handle={handleChangeInput}
+            validasi={errorValidasi}
+          />
+          <Input
+            label={"Jenis Transaksi"}
+            value={akun}
+            handle={handleChangeInput}
+            validasi={errorValidasi}
+          />
+          <Input
+            label={"Akun"}
+            value={akun}
+            handle={handleChangeInput}
+            validasi={errorValidasi}
+          />
           <div className="w-2/12 float-right">
             <button
               className="bg-primary hover:bg-third btn mb-6"

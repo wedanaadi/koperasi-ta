@@ -59,11 +59,10 @@ export default function Sidebar({ open }) {
     onError: (res) => {
       const respon = res.response;
       let message = "";
-      if (respon.status === 422) {
+      if(respon.status === 422) {
         setErrorValidasi(respon.data.errors);
         message = respon.data.msg;
-      }
-      if (respon.status === 403) {
+      } else if(respon.status === 403) {
         message = respon.data.errors;
       } else {
         message = respon.statusText;

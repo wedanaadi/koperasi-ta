@@ -5,14 +5,14 @@ import useStore from "../../store/useStore";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createData } from "../../api/JenisSimpanan";
-import Input from "../../components/Input";
+import { Input, InputFormat } from "../../components/Input";
 
 export default function Add() {
   const queryClient = useQueryClient();
   const [errorValidasi, setErrorValidasi] = useState([]);
   const [jenisSimpanan, setJenisSimpanan] = useState({
     nama_jenis_simpanan: "",
-    saldo_minimal: "",
+    saldo_minimal: 0,
   });
   const navigasi = useNavigate();
   const toastChange = useStore((state) => state.changeState);
@@ -54,12 +54,20 @@ export default function Add() {
     },
     onError: (res) => {
       const respon = res.response;
-      setErrorValidasi(respon.data.errors);
+      let message = "";
+      if(respon.status === 422) {
+        setErrorValidasi(respon.data.errors);
+        message = respon.data.msg;
+      } else if(respon.status === 403) {
+        message = respon.data.errors;
+      } else {
+        message = respon.statusText;
+      }
       toastChange({
         id: "NotifJS",
         content: {
           title: "Create Data",
-          description: respon.data.msg,
+          description: message,
           backgroundColor: toastColors.error,
           icon: toastIcon.error,
         },
@@ -98,22 +106,23 @@ export default function Add() {
       </div>
       <div className="card-body">
         <form autoComplete="off" onSubmit={handleSimpan}>
-          <div className="mb-6">
-            <Input
-              label={"Nama Jenis Simpanan"}
-              value={jenisSimpanan}
-              handle={handleChangeInput}
-              validasi={errorValidasi}
-            />
-          </div>
-          <div className="mb-6">
-            <Input
-              label={"Saldo Minimal"}
-              value={jenisSimpanan}
-              handle={handleChangeInput}
-              validasi={errorValidasi}
-            />
-          </div>
+          <Input
+            label={"Nama Jenis Simpanan"}
+            value={jenisSimpanan}
+            handle={handleChangeInput}
+            validasi={errorValidasi}
+          />
+          <InputFormat
+            value={jenisSimpanan}
+            label={"Saldo Minimal"}
+            validasi={errorValidasi}
+            handle={(values) => {
+              setJenisSimpanan({
+                ...jenisSimpanan,
+                ["saldo_minimal"]: values.floatValue,
+              });
+            }}
+          />
           <div className="w-2/12 float-right">
             <button
               className="bg-primary hover:bg-third btn mb-6"

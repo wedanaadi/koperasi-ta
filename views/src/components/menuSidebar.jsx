@@ -20,7 +20,7 @@ export default [
     gap: true,
     children: [
       {
-        label: "karyawan",
+        label: "Karyawan",
         icon: "icon",
         to: "karyawan",
       },
@@ -43,6 +43,29 @@ export default [
         label: "Akun",
         icon: "icon",
         to: "akun",
+      },
+      {
+        label: "Nasabah",
+        icon: "icon",
+        to: "nasabah",
+      },
+    ]
+  },
+  {
+    label: "Setting",
+    icon: <MdOutlineSettings/>,
+    to: "/setting",
+    gap: true,
+    children: [
+      {
+        label: "Biaya Administrasi",
+        icon: "icon",
+        to: "biayaadmin",
+      },
+      {
+        label: "Sistem",
+        icon: "icon",
+        to: "sistem",
       },
     ]
   },
