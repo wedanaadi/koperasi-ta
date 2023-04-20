@@ -161,8 +161,8 @@ export default function Add() {
       </div>
       <div className="card-body">
         <form autoComplete="off" onSubmit={handleSimpan}>
-          <div className="flex gap-x-4">
-            <div className="w-3/12">
+          <div className="md:flex md:gap-x-4">
+            <div className="md:w-3/12">
               <DateInput
                 value={dateTglDaftar}
                 label="Tanggal Daftar"
@@ -170,7 +170,7 @@ export default function Add() {
                 validasi={errorValidasi}
               />
             </div>
-            <div className="w-6/12">
+            <div className="md:w-6/12">
               <Input
                 validasi={errorValidasi}
                 label="Nama Lengkap"
@@ -178,7 +178,7 @@ export default function Add() {
                 value={nasabah}
               />
             </div>
-            <div className="w-3/12">
+            <div className="md:w-3/12">
               <Input
                 validasi={errorValidasi}
                 label="Inisial"
@@ -187,8 +187,8 @@ export default function Add() {
               />
             </div>
           </div>
-          <div className="flex gap-x-4">
-            <div className="w-3/12">
+          <div className="md:flex md:gap-x-4">
+            <div className="md:w-3/12">
               <Input
                 validasi={errorValidasi}
                 label="No KTP"
@@ -196,7 +196,7 @@ export default function Add() {
                 value={nasabah}
               />
             </div>
-            <div className="w-3/12">
+            <div className="md:w-3/12">
               <Select
                 value={selectedJK}
                 options={optionJK}
@@ -205,7 +205,7 @@ export default function Add() {
                 handle={(value) => setSelectedJK(value)}
               />
             </div>
-            <div className="w-3/12">
+            <div className="md:w-3/12">
               <Select
                 value={selectedAgama}
                 options={optionAgama}
@@ -214,7 +214,7 @@ export default function Add() {
                 handle={(value) => setSelectedAgama(value)}
               />
             </div>
-            <div className="w-3/12">
+            <div className="md:w-3/12">
               <Select
                 value={selectedStatus}
                 options={optionStatus}
@@ -224,8 +224,8 @@ export default function Add() {
               />
             </div>
           </div>
-          <div className="flex gap-x-4">
-            <div className="w-3/12">
+          <div className="md:flex md:gap-x-4">
+            <div className="md:w-3/12">
               <Input
                 validasi={errorValidasi}
                 label="Pekerjaan"
@@ -233,7 +233,7 @@ export default function Add() {
                 value={nasabah}
               />
             </div>
-            <div className="w-6/12">
+            <div className="md:w-6/12">
               <Input
                 validasi={errorValidasi}
                 label="Nama Ibu Kandung"
@@ -241,7 +241,7 @@ export default function Add() {
                 value={nasabah}
               />
             </div>
-            <div className="w-4/12">
+            <div className="md:w-4/12">
               <Select
                 value={selectedJabatan}
                 options={optionJabatan}
@@ -257,7 +257,7 @@ export default function Add() {
             handle={handleChangeInput}
             validasi={errorValidasi}
           />
-          <div className="w-2/12 float-right">
+          <div className="md:w-2/12 float-right">
             <button
               className="bg-primary hover:bg-third btn mb-6"
               type="submit"

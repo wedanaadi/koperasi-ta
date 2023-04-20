@@ -20,6 +20,22 @@ class PegawaiController extends Controller
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
   }
 
+  public function list_pegawai($jabatan)
+  {
+    $dataDB = Pegawai::where('jabatan',$jabatan)
+      ->where('is_aktif',"1")
+      ->OrderBy('nama_lengkap', 'ASC')
+      ->get();
+    $data = [];
+    foreach ($dataDB as $v) {
+      array_push($data,[
+        'label' => $v->nama_lengkap,
+        'value' => $v->id
+      ]);
+    }
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
   public function store(Request $request)
   {
     $validator = Validator::make($request->all(), [

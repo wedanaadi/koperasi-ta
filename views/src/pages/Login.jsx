@@ -32,9 +32,14 @@ export default function Login() {
         "data_login",
         encriptData(JSON.stringify(res?.data?.user_data))
       );
+      localStorage.setItem(
+        "data_setting",
+        encriptData(JSON.stringify(res?.data?.setting))
+      );
       actionLogin({
         accessToken: res?.data?.access_token,
         dataLogin: res?.data?.user_data,
+        dataSetting: res?.data?.setting,
       });
       navigasi("/", { replace: true });
       toastChange({

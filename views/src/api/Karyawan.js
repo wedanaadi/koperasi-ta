@@ -29,3 +29,14 @@ export async function deleteData({id, token}) {
   })
   return res.data
 }
+
+export async function getList({queryKey}) {
+  const [_, filter, token] = queryKey
+  const res = await axios.get(`${baseUrl}/pegawaifind/${filter}`,{
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }
+  })
+  return res.data
+}

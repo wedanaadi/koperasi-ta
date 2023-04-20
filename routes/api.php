@@ -8,6 +8,7 @@ use App\Http\Controllers\LamaAngsuranController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\NasabahController;
 use App\Http\Controllers\PegawaiController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +47,7 @@ Route::post("/biayaadmin", [BiayaAdminController::class, 'store'])->name('postBi
 Route::put("/biayaadmin/{id}", [BiayaAdminController::class, 'update'])->name('updateBiayaAdmin');
 Route::delete("/biayaadmin/{id}", [BiayaAdminController::class, 'destroy'])->name('deleteBiayaAdmin');
 Route::get("/pegawai", [PegawaiController::class, 'index'])->name('getPegawai');
+Route::get("/pegawaifind/{jabatan}", [PegawaiController::class, 'list_pegawai'])->name('getListPegawai');
 Route::post("/pegawai", [PegawaiController::class, 'store'])->name('postPegawai');
 Route::put("/pegawai/{id}", [PegawaiController::class, 'update'])->name('updatePegawai');
 Route::delete("/pegawai/{id}", [PegawaiController::class, 'destroy'])->name('deletePegawai');
@@ -53,11 +55,16 @@ Route::get("/nasabah", [NasabahController::class, 'index'])->name('getNasabah');
 Route::post("/nasabah", [NasabahController::class, 'store'])->name('postNasabah');
 Route::put("/nasabah/{id}", [NasabahController::class, 'update'])->name('updateNasabah');
 Route::delete("/nasabah/{id}", [NasabahController::class, 'destroy'])->name('deleteNasabah');
+Route::get("/biayaadmin/{id}", [SettingController::class, 'biaya_admin'])->name('getBiayaAdmin');
+Route::put("/nasabah/{id}", [SettingController::class, 'update'])->name('updateBiayaAdmin');
 
 Route::get("/lamaangsuran", [LamaAngsuranController::class, 'index'])->name('getLamaAngsuran');
 Route::post("/lamaangsuran", [LamaAngsuranController::class, 'store'])->name('postLamaAngsuran');
 Route::put("/lamaangsuran/{id}", [LamaAngsuranController::class, 'update'])->name('updateLamaAngsuran');
 Route::delete("/lamaangsuran/{id}", [LamaAngsuranController::class, 'destroy'])->name('deleteLamaAngsuran');
+Route::get("/setting", [SettingController::class, 'index'])->name('getSetting');
+Route::put("/setting/{id}", [SettingController::class, 'update_setting'])->name('updateSetting');
+
 Route::middleware('auth:sanctum')->group(function () {
   Route::post("/logout", [AuthenticationController::class, 'logout'])->name('logout');
 

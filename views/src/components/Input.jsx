@@ -42,6 +42,35 @@ export const InputFormat = ({ value, handle, label, validasi }) => {
   );
 };
 
+export const InputDecimal = ({ value, handle, label, validasi }) => {
+  const name = label.replace(/\s+/g, "_").toLowerCase();
+  return (
+    <div className="mb-6">
+      <label
+        className="block mb-2 text-primary font-semibold text-lg"
+        htmlFor={label.toLowerCase()}
+      >
+        {label}
+      </label>
+      <NumericFormat
+        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md`}
+        displayType="input"
+        value={value[name]}
+        thousandSeparator="."
+        decimalSeparator=","
+        decimalScale={2}
+        allowNegative={false}
+        onValueChange={handle}
+      />
+      {validasi[`${name}`]?.map((msg, index) => (
+        <span key={index} className="text-sm text-red-600 font-semibold">
+          {msg}
+        </span>
+      ))}
+    </div>
+  );
+};
+
 export function Input({
   value,
   handle,

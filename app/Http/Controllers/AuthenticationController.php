@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pegawai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -28,10 +29,12 @@ class AuthenticationController extends Controller
       if (!$pegawai || !Hash::check($request->password, $pegawai->password)) {
         return response()->json(['errors' => 'Bad Credentials, Cek kembali username atau password!'], 403);
       }
+      $setting = DB::table('setting_sistem')->first();
       $token = $pegawai->createToken('sanctum_token')->plainTextToken;
       $payload = [
         'access_token' => $token,
-        'user_data' => $pegawai
+        'user_data' => $pegawai,
+        'setting' => $setting
       ];
       return response()->json(['msg' => 'Successfuly Login', "data" => $payload, 'error' => null], 200);
     } catch (\Exception $e) {
