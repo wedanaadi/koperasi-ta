@@ -4,6 +4,7 @@ use App\Http\Controllers\AkunController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\BiayaAdminController;
 use App\Http\Controllers\JenisSimpananController;
+use App\Http\Controllers\KasController;
 use App\Http\Controllers\LamaAngsuranController;
 use App\Http\Controllers\MarketingController;
 use App\Http\Controllers\NasabahController;
@@ -39,6 +40,7 @@ Route::post("/marketing", [MarketingController::class, 'store'])->name('postMark
 Route::put("/marketing/{id}", [MarketingController::class, 'update'])->name('updateMarketing');
 Route::delete("/marketing/{id}", [MarketingController::class, 'destroy'])->name('deleteMarketing');
 Route::get("/akun", [AkunController::class, 'index'])->name('getAkun');
+Route::get("/akunForSelect", [AkunController::class, 'list_select'])->name('getListAkunSelect');
 Route::post("/akun", [AkunController::class, 'store'])->name('postAkun');
 Route::put("/akun/{id}", [AkunController::class, 'update'])->name('updateAkun');
 Route::delete("/akun/{id}", [AkunController::class, 'destroy'])->name('deleteAkun');
@@ -64,6 +66,11 @@ Route::put("/lamaangsuran/{id}", [LamaAngsuranController::class, 'update'])->nam
 Route::delete("/lamaangsuran/{id}", [LamaAngsuranController::class, 'destroy'])->name('deleteLamaAngsuran');
 Route::get("/setting", [SettingController::class, 'index'])->name('getSetting');
 Route::put("/setting/{id}", [SettingController::class, 'update_setting'])->name('updateSetting');
+
+Route::get("/kas", [KasController::class, 'index'])->name('getKas');
+Route::post("/kas", [KasController::class, 'store'])->name('postKas');
+Route::put("/kas/{id}", [KasController::class, 'update'])->name('updateKas');
+Route::delete("/kas/{id}", [KasController::class, 'destroy'])->name('deleteKas');
 
 Route::middleware('auth:sanctum')->group(function () {
   Route::post("/logout", [AuthenticationController::class, 'logout'])->name('logout');

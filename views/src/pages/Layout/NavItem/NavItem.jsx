@@ -3,8 +3,10 @@ import { NavLink } from "react-router-dom";
 import NavItemHeader from "./NavItemHeader";
 
 export default function NavItem(props) {
-  const { label, icon, to, children } = props.item;
-
+  const { label, icon, to, children, role } = props.item;
+  // if(!role.includes('admin')) {
+  //   return false;
+  // }
   if (children) {
     return <NavItemHeader item={props.item} />;
   }

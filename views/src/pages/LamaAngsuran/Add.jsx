@@ -28,7 +28,7 @@ export default function Add() {
         id: "NotifAddLamaAngsuran",
         content: {
           title: "Create Data",
-          description: "Cretae Lama Angsuran Successfuly",
+          description: "Create Lama Angsuran Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },

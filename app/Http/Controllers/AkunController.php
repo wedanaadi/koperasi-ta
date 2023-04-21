@@ -12,9 +12,24 @@ class AkunController extends Controller
   public function index()
   {
     $data = Akun::filter(request(['search']))
-      ->where('is_aktif',"1")
+      ->where('is_aktif', "1")
       ->OrderBy('no_akun', 'ASC')
       ->paginate(request('perpage'));
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
+  public function list_select()
+  {
+    $dataDB = Akun::where('is_aktif', "1")
+      ->OrderBy('no_akun', 'ASC')
+      ->get();
+    $data = [];
+    foreach ($dataDB as $v) {
+      array_push($data, [
+        'label' => $v->jenis_transaksi,
+        'value' => $v->id
+      ]);
+    }
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
   }
 

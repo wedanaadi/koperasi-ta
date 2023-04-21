@@ -39,7 +39,7 @@ export default function Edit() {
         id: "NotifJS",
         content: {
           title: "Update Data",
-          description: "Cretae Jenis Simpanan Successfuly",
+          description: "Update Jenis Simpanan Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },

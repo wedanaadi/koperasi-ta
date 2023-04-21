@@ -67,7 +67,7 @@ export default function Add() {
         id: "NotifNasabah",
         content: {
           title: "Create Data",
-          description: "Cretae Nasabah Successfuly",
+          description: "Create Nasabah Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },

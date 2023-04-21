@@ -4,7 +4,7 @@ import Akun from "../Akun/Index"
 
 export default function Content() {
   return (
-    <div className="m-5 mb-auto">
+    <div className="m-5 mb-auto relative">
       <Outlet/>
     </div>
   );

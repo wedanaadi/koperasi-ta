@@ -40,7 +40,7 @@ export default function Home() {
         </span>
       </button>
       <Sidebar open={open} />
-      <div className={`bg-four flex flex-col w-full overflow-x-auto duration-500 ${open && 'ml-48 lg:ml-60'}`}>
+      <div className={`bg-four flex flex-col w-full overflow-x-auto duration-500 ${open && 'ml-48 lg:ml-60'} relative`}>
         <Menubar />
         <Content />
         <Footer />

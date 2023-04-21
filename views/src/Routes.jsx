@@ -28,6 +28,16 @@ const EditNasabah = React.lazy(() => import("./pages/Nasabah/Edit"));
 const Setting = React.lazy(() => import("./pages/setting/Index"));
 const BA = React.lazy(() => import("./pages/setting/BiayaAdmin"));
 const Sistem = React.lazy(() => import("./pages/setting/Sistem"));
+const TransaksiKas = React.lazy(() => import("./pages/TransaksiKas/Index"));
+const KasMasuk = React.lazy(() => import("./pages/TransaksiKas/KasPemasukan/View"));
+const AddKasMasuk = React.lazy(() => import("./pages/TransaksiKas/KasPemasukan/Add"));
+const EditKasMasuk = React.lazy(() => import("./pages/TransaksiKas/KasPemasukan/Edit"));
+const KasKeluar = React.lazy(() => import("./pages/TransaksiKas/KasPengeluaran/View"));
+const AddKasKeluar = React.lazy(() => import("./pages/TransaksiKas/KasPengeluaran/Add"));
+const EditKasKeluar = React.lazy(() => import("./pages/TransaksiKas/KasPengeluaran/Edit"));
+const Penyesuain = React.lazy(() => import("./pages/TransaksiKas/KasPenyesuain/View"));
+const AddPenyesuain = React.lazy(() => import("./pages/TransaksiKas/KasPenyesuain/Add"));
+const EditPenyesuain = React.lazy(() => import("./pages/TransaksiKas/KasPenyesuain/Edit"));
 
 export default [
   {
@@ -224,6 +234,88 @@ export default [
           },
         ],
       },
+      {
+        path: `transaksikas`,
+        element: (
+          <Suspense>
+            <TransaksiKas/>
+          </Suspense>
+        ),
+        children: [
+          {
+            path: `kasmasuk`,
+            element:(
+              <Suspense>
+                <KasMasuk/>
+              </Suspense>
+            )
+          },
+          {
+            path: `kasmasuk/add`,
+            element:(
+              <Suspense>
+                <AddKasMasuk/>
+              </Suspense>
+            )
+          },
+          {
+            path: `kasmasuk/edit`,
+            element:(
+              <Suspense>
+                <EditKasMasuk/>
+              </Suspense>
+            )
+          },
+          {
+            path: `kaskeluar`,
+            element:(
+              <Suspense>
+                <KasKeluar/>
+              </Suspense>
+            )
+          },
+          {
+            path: `kaskeluar/add`,
+            element:(
+              <Suspense>
+                <AddKasKeluar/>
+              </Suspense>
+            )
+          },
+          {
+            path: `kaskeluar/edit`,
+            element:(
+              <Suspense>
+                <EditKasKeluar/>
+              </Suspense>
+            )
+          },
+          {
+            path: `kaspenyesuain`,
+            element:(
+              <Suspense>
+                <Penyesuain/>
+              </Suspense>
+            )
+          },
+          {
+            path: `kaspenyesuain/add`,
+            element:(
+              <Suspense>
+                <AddPenyesuain/>
+              </Suspense>
+            )
+          },
+          {
+            path: `kaspenyesuain/edit`,
+            element:(
+              <Suspense>
+                <EditPenyesuain/>
+              </Suspense>
+            )
+          }
+        ]
+      }
     ],
   },
   {

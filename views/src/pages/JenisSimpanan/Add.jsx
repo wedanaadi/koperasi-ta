@@ -29,7 +29,7 @@ export default function Add() {
         id: "NotifJS",
         content: {
           title: "Create Data",
-          description: "Cretae Jenis Simpanan Successfuly",
+          description: "Create Jenis Simpanan Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },

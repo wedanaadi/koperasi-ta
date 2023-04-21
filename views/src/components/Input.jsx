@@ -129,7 +129,9 @@ export function DateInput({
         value={value}
         onChange={handle}
         displayFormat={"DD/MM/YYYY"}
-        inputClassName="w-full rounded-md focus:ring-0 font-normal p-2 border-2 border-second focus:bg-four rounded-md"
+        containerClassName="mt-0"
+        toggleClassName="hidden"
+        inputClassName="w-full relative rounded-md focus:ring-0 font-normal p-2 border-2 border-second focus:bg-four rounded-md"
       />
       {validasi[`${name}`]?.map((msg, index) => (
         <span key={index} className="text-sm text-red-600 font-semibold">
@@ -181,6 +183,7 @@ export function Select({
   validasi,
   options,
   alias = "",
+  ccPosition="relative"
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
@@ -197,6 +200,7 @@ export function Select({
         options={options}
         editValue={value}
         onChange={handle}
+        cssPotision={ccPosition}
       />
       {validasi[`${name}`]?.map((msg, index) => (
         <span key={index} className="text-sm text-red-600 font-semibold">

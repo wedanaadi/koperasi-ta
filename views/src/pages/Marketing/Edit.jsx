@@ -39,7 +39,7 @@ export default function Edit() {
         id: "NotifMarketing",
         content: {
           title: "Update Data",
-          description: "Cretae Marketing Successfuly",
+          description: "Update Marketing Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },

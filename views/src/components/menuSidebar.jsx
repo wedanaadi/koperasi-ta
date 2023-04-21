@@ -12,12 +12,14 @@ export default [
     label: "Dashboard",
     icon: <MdOutlineDashboard/>,
     to: "/",
+    role: ['direktur','admin','teller']
   },
   {
     label: "Master Data",
     icon: <MdViewModule/>,
     to: "/masterdata",
     gap: true,
+    role: ['direktur','admin','teller'],
     children: [
       {
         label: "Karyawan",
@@ -52,10 +54,35 @@ export default [
     ]
   },
   {
+    label: "Transaksi Kas",
+    icon: <MdAccountCircle/>,
+    to: "/transaksikas",
+    gap: true,
+    role: ['direktur','admin','teller'],
+    children: [
+      {
+        label: "Kas Pemasukan",
+        icon: "icon",
+        to: "kasmasuk",
+      },
+      {
+        label: "Kas Pengeluaran",
+        icon: "icon",
+        to: "kaskeluar",
+      },
+      {
+        label: "Penyesuain Kas",
+        icon: "icon",
+        to: "kaspenyesuain",
+      },
+    ]
+  },
+  {
     label: "Setting",
     icon: <MdOutlineSettings/>,
     to: "/setting",
     gap: true,
+    role: ['direktur','admin','teller'],
     children: [
       {
         label: "Biaya Administrasi",

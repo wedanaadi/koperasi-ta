@@ -1,44 +1,61 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import useStore from "../../store/useStore";
+import useStore from "../../../store/useStore";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createData } from "../../api/Karyawan";
-import { Input, Select, Textarea } from "../../components/Input";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createData } from "../../../api/Kas";
+import { listSelect } from "../../../api/Akun";
+import { DateInput, Input, InputFormat, Select } from "../../../components/Input";
+import { ConvertToEpoch } from "../../../components/Date";
 
 export default function Add() {
+  const [dateTrx, setdateTrx] = useState({
+    startDate: null,
+    endDate: null,
+  });
   const queryClient = useQueryClient();
   const [errorValidasi, setErrorValidasi] = useState([]);
-  const [selectedValue, setSelectedValue] = useState(null);
-  const [karyawan, setKaryawan] = useState({
-    nama_lengkap: "",
-    alamat: "",
-    no_handphone: "",
-    username: "",
-    password: "",
-    jabatan: "",
+  const [selectedUntuk, setSelectedUntuk] = useState(null);
+  const [selectedDari, setSelectedDari] = useState(null);
+  let optionAkuns = [];
+  const [penyesuain, setPenyesuain] = useState({
+    tanggal_transaksi: "",
+    keterangan: "",
+    untuk_akun: "",
+    dari_akun: "",
+    jumlah: 0,
+    jenis: "penyesuain",
   });
-  const options = [
-    { value: "direktur", label: "Direktur" },
-    { value: "teller", label: "Teller" },
-    { value: "admin", label: "Admin Kredit" },
-  ];
   const navigasi = useNavigate();
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
   const tokenLogin = useStore((state) => state.token);
 
-  const createKaryawanMutation = useMutation({
+  const {
+    isLoading: isLoadingAkun,
+    isError: isErrorAkun,
+    data: akuns,
+    error: errorAkun,
+  } = useQuery({
+    queryKey: ["listSelectAkun", tokenLogin],
+    queryFn: listSelect,
+  });
+
+  if (!isLoadingAkun && !isErrorAkun) {
+    optionAkuns = akuns?.data;
+  }
+
+  const createPengeluaranMutation = useMutation({
     mutationFn: createData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["karyawan", 1] });
-      navigasi(`/masterdata/karyawan`);
+      queryClient.invalidateQueries({ queryKey: ["penyesuain", 1] });
+      navigasi(`/transaksikas/kaspenyesuain`);
       toastChange({
-        id: "NotifKaryawan",
+        id: "NotifKP",
         content: {
           title: "Create Data",
-          description: "Create Karyawan Successfuly",
+          description: "Create Penyesuain Kas Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },
@@ -49,7 +66,7 @@ export default function Add() {
     },
     onMutate: () => {
       toastChange({
-        id: "NotifKaryawan",
+        id: "NotifKP",
         content: {
           title: "Create Data",
           description: "Loading....",
@@ -64,16 +81,16 @@ export default function Add() {
     onError: (res) => {
       const respon = res.response;
       let message = "";
-      if(respon.status === 422) {
+      if (respon.status === 422) {
         setErrorValidasi(respon.data.errors);
         message = respon.data.msg;
-      } else if(respon.status === 403) {
+      } else if (respon.status === 403) {
         message = respon.data.errors;
       } else {
         message = respon.statusText;
       }
       toastChange({
-        id: "NotifKaryawan",
+        id: "NotifKP",
         content: {
           title: "Create Data",
           description: message,
@@ -88,31 +105,37 @@ export default function Add() {
   });
 
   useEffect(() => {
-    setKaryawan({
-      ...karyawan,
-      ["jabatan"]: selectedValue?.value ? selectedValue.value : "",
+    setPenyesuain({
+      ...penyesuain,
+      ["untuk_akun"]: selectedUntuk?.value ? selectedUntuk.value : "",
+      ["dari_akun"]: selectedDari?.value ? selectedDari.value : "",
+      ["tanggal_transaksi"]: dateTrx.startDate !== null ? ConvertToEpoch(dateTrx.startDate) : "",
     });
-  }, [selectedValue]);
+  }, [selectedDari, selectedUntuk, dateTrx]);
 
   const handleSimpan = (e) => {
     e.preventDefault();
-    createKaryawanMutation.mutate({ newData: karyawan, token: tokenLogin });
+    createPengeluaranMutation.mutate({
+      newData: penyesuain,
+      token: tokenLogin,
+      tipe: "penyesuain",
+    });
   };
 
   const handleChangeInput = (e) => {
-    setKaryawan({
-      ...karyawan,
+    setPenyesuain({
+      ...penyesuain,
       [e.target.name]: e.target.value,
     });
   };
 
   return (
-    <div className="bg-white card w-1/2">
+    <div className="bg-white card sm:w-1/2">
       <div className="border-second card-header">
-        <h3 className="mb-0 text-lg font-bold">Tambah Karyawan</h3>
+        <h3 className="mb-0 text-lg font-bold">Tambah Penyesuain Kas</h3>
         <div className="flex justify-center items-center">
           <Link
-            to={`/masterdata/karyawan`}
+            to={`/transaksikas/kaspenyesuain`}
             className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"
           >
             <MdOutlineKeyboardBackspace /> &nbsp;
@@ -122,46 +145,44 @@ export default function Add() {
       </div>
       <div className="card-body">
         <form autoComplete="off" onSubmit={handleSimpan}>
-          <Input
+          <DateInput
+            value={dateTrx}
+            label="Tanggal Transaksi"
+            handle={(value) => setdateTrx(value)}
             validasi={errorValidasi}
-            label="Nama Lengkap"
-            handle={handleChangeInput}
-            value={karyawan}
           />
           <Input
             validasi={errorValidasi}
-            label="No Handphone"
+            label="Keterangan"
             handle={handleChangeInput}
-            value={karyawan}
+            value={penyesuain}
           />
-          <Textarea
-            value={karyawan}
-            label={"Alamat"}
-            handle={handleChangeInput}
+          <InputFormat
+            value={penyesuain}
             validasi={errorValidasi}
+            label="Jumlah"
+            handle={(values) => {
+              setPenyesuain({
+                ...penyesuain,
+                ["jumlah"]: values.floatValue,
+              });
+            }}
           />
           <Select
-            value={selectedValue}
-            options={options}
-            label={"Jabatan"}
-            alias={"Level"}
+            label={"Untuk Akun"}
+            options={optionAkuns}
             validasi={errorValidasi}
-            handle={(value) => setSelectedValue(value)}
+            value={selectedUntuk}
+            handle={(value) => setSelectedUntuk(value)}
           />
-          <Input
+          <Select
+            label={"Dari Akun"}
+            options={optionAkuns}
             validasi={errorValidasi}
-            label="Username"
-            handle={handleChangeInput}
-            value={karyawan}
+            value={selectedDari}
+            handle={(value) => setSelectedDari(value)}
           />
-          <Input
-            validasi={errorValidasi}
-            label="Password"
-            handle={handleChangeInput}
-            value={karyawan}
-            type="password"
-          />
-          <div className="w-2/12 float-right">
+          <div className="md:w-2/12 float-right">
             <button
               className="bg-primary hover:bg-third btn mb-6"
               type="submit"

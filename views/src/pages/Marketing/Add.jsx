@@ -30,7 +30,7 @@ export default function Add() {
         id: "NotifMarketing",
         content: {
           title: "Create Data",
-          description: "Cretae Marketing Successfuly",
+          description: "Create Marketing Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },

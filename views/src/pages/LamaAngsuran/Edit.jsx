@@ -36,7 +36,7 @@ export default function Edit() {
         id: "NotifAddLamaAngsuran",
         content: {
           title: "Update Data",
-          description: "Cretae Lama Angsuran Successfuly",
+          description: "Update Lama Angsuran Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },

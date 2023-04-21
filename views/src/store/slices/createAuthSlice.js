@@ -1,4 +1,3 @@
-import axios from "../../components/axiosApi";
 import {dencriptData} from "../../components/encrypt"
 
 const tokenStore = localStorage.getItem("access_token");

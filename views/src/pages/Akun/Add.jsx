@@ -30,7 +30,7 @@ export default function Add() {
         id: "NotifAkun",
         content: {
           title: "Create Data",
-          description: "Cretae Akun Successfuly",
+          description: "Create Akun Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },

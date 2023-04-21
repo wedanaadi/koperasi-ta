@@ -1,19 +1,8 @@
-import axios from "../components/axiosApi"
+import axiosApi from "../components/axiosApi"
 import baseUrl from "../components/baseUrl"
 
-export async function listSelect({queryKey}) {
-  const [_, token] = queryKey
-  const res = await axios.get(`${baseUrl}/akunForSelect`,{
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    }
-  })
-  return res.data
-}
-
 export async function createData({newData, token}) {
-  const res = await axios.post(`${baseUrl}/akun`,JSON.stringify(newData),{
+  const res = await axiosApi.post(`${baseUrl}/kas`,JSON.stringify(newData),{
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
@@ -23,7 +12,7 @@ export async function createData({newData, token}) {
 }
 
 export async function updateData({Data, token, id}) {
-  const res = await axios.put(`${baseUrl}/akun/${id}`,JSON.stringify(Data),{
+  const res = await axiosApi.put(`${baseUrl}/kas/${id}`,JSON.stringify(Data),{
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
@@ -33,7 +22,7 @@ export async function updateData({Data, token, id}) {
 }
 
 export async function deleteData({id, token}) {
-  const res = await axios.delete(`${baseUrl}/akun/${id}`,{},{
+  const res = await axiosApi.delete(`${baseUrl}/kas/${id}`,{},{
     headers: {
       Authorization: `Bearer ${token}`
     }
