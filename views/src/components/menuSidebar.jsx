@@ -5,6 +5,7 @@ import {
   MdOutlineSettings,
   MdLogout,
   MdViewModule,
+  MdOutlineSaveAlt,
 } from "react-icons/md";
 
 export default [
@@ -74,6 +75,25 @@ export default [
         label: "Penyesuain Kas",
         icon: "icon",
         to: "kaspenyesuain",
+      },
+    ]
+  },
+  {
+    label: "Simpanan",
+    icon: <MdOutlineSaveAlt/>,
+    to: "/simpanan",
+    gap: true,
+    role: ['direktur','admin','teller'],
+    children: [
+      {
+        label: "Setoran",
+        icon: "icon",
+        to: "setoran",
+      },
+      {
+        label: "Penarikan",
+        icon: "icon",
+        to: "penarikan",
       },
     ]
   },

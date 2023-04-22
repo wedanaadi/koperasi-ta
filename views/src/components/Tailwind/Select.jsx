@@ -158,7 +158,7 @@ export default function Select({
     );
   };
   return (
-    <div className="w-ful border border-slate-400 rounded-md relative">
+    <div className="w-full border border-slate-400 rounded-md relative">
       <div
         ref={inputRef}
         onClick={handleInputClick}
@@ -170,7 +170,7 @@ export default function Select({
         </div>
       </div>
       {showMenu && (
-        <div className={`${cssPotision} w-full translate-y-1 border border-slate-400 rounded-md max-h-36 overflow-auto bg-white z-90`}>
+        <div className={`${cssPotision} w-full translate-y-1 border border-slate-400 rounded-md max-h-36 overflow-auto bg-white z-[999]`}>
           {isSearchable && (
             <div className="p-[5px] bg-slate-300 w-full">
               <input

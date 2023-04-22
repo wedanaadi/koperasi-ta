@@ -18,6 +18,21 @@ class JenisSimpananController extends Controller
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
   }
 
+  public function list_select()
+  {
+    $dataDB = JenisSimpanan::where('is_aktif', "1")
+      ->OrderBy('nama_jenis_simpanan', 'ASC')
+      ->get();
+    $data = [];
+    foreach ($dataDB as $v) {
+      array_push($data, [
+        'label' => $v->nama_jenis_simpanan,
+        'value' => $v->id
+      ]);
+    }
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
   // ! NOTE : Kode untuk menambah data baru
   public function store(Request $request)
   {

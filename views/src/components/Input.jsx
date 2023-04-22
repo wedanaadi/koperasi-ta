@@ -14,12 +14,12 @@ export const NumberFormat = ({ value }) => {
   );
 };
 
-export const InputFormat = ({ value, handle, label, validasi }) => {
+export const InputFormat = ({ value, handle, label, validasi, flex=false }) => {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
-    <div className="mb-6">
+    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
       <label
-        className="block mb-2 text-primary font-semibold text-lg"
+        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'w-1/2'}`}
         htmlFor={label.toLowerCase()}
       >
         {label}
@@ -42,12 +42,12 @@ export const InputFormat = ({ value, handle, label, validasi }) => {
   );
 };
 
-export const InputDecimal = ({ value, handle, label, validasi }) => {
+export const InputDecimal = ({ value, handle, label, validasi, flex=false }) => {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
-    <div className="mb-6">
+    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
       <label
-        className="block mb-2 text-primary font-semibold text-lg"
+        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'sm:w-1/2'}`}
         htmlFor={label.toLowerCase()}
       >
         {label}
@@ -61,6 +61,7 @@ export const InputDecimal = ({ value, handle, label, validasi }) => {
         decimalScale={2}
         allowNegative={false}
         onValueChange={handle}
+        placeholder={label}
       />
       {validasi[`${name}`]?.map((msg, index) => (
         <span key={index} className="text-sm text-red-600 font-semibold">
@@ -78,13 +79,14 @@ export function Input({
   validasi,
   alias = "",
   type = "text",
+  flex=false
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   // console.log(name);
   return (
-    <div className="mb-6">
+    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
       <label
-        className="block mb-2 text-primary font-semibold text-lg"
+        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'w-1/2'}`}
         htmlFor={label.toLowerCase()}
       >
         {alias !== "" ? alias : label}
@@ -112,13 +114,14 @@ export function DateInput({
   label,
   validasi,
   alias = "",
+  flex=false
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   // console.log(name);
   return (
-    <div className="mb-6">
+    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
       <label
-        className="block mb-2 text-primary font-semibold text-lg"
+        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'sm:w-1/2'}`}
         htmlFor={label.toLowerCase()}
       >
         {alias !== "" ? alias : label}
@@ -129,7 +132,7 @@ export function DateInput({
         value={value}
         onChange={handle}
         displayFormat={"DD/MM/YYYY"}
-        containerClassName="mt-0"
+        containerClassName={`mt-0 ${flex && 'sm:w-full relative'}`}
         toggleClassName="hidden"
         inputClassName="w-full relative rounded-md focus:ring-0 font-normal p-2 border-2 border-second focus:bg-four rounded-md"
       />
@@ -149,12 +152,13 @@ export function Textarea({
   validasi,
   rows = 5,
   alias = "",
+  flex=false
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
-    <div className="mb-6">
+    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4'}`}>
       <label
-        className="block mb-2 text-primary font-semibold text-lg"
+        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'w-1/2'}`}
         htmlFor={label.toLowerCase()}
       >
         {alias !== "" ? alias : label}
@@ -183,13 +187,14 @@ export function Select({
   validasi,
   options,
   alias = "",
-  ccPosition="relative"
+  ccPosition="",
+  flex=false
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
-    <div className="mb-6">
+    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4'} ${ccPosition==='absolute' && 'items-center'}`}>
       <label
-        className="block mb-2 text-primary font-semibold text-lg"
+        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'sm:w-1/2'}`}
         htmlFor={label.toLowerCase()}
       >
         {alias !== "" ? alias : label}

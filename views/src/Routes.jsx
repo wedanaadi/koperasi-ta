@@ -38,6 +38,11 @@ const EditKasKeluar = React.lazy(() => import("./pages/TransaksiKas/KasPengeluar
 const Penyesuain = React.lazy(() => import("./pages/TransaksiKas/KasPenyesuain/View"));
 const AddPenyesuain = React.lazy(() => import("./pages/TransaksiKas/KasPenyesuain/Add"));
 const EditPenyesuain = React.lazy(() => import("./pages/TransaksiKas/KasPenyesuain/Edit"));
+const Simpanan = React.lazy(() => import("./pages/Simpanan/Index"));
+const Setoran = React.lazy(() => import("./pages/Simpanan/Setoran/Setoran"));
+const ViewSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/View"));
+const AddSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/Add"));
+const EditSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/Edit"));
 
 export default [
   {
@@ -238,84 +243,132 @@ export default [
         path: `transaksikas`,
         element: (
           <Suspense>
-            <TransaksiKas/>
+            <TransaksiKas />
           </Suspense>
         ),
         children: [
           {
             path: `kasmasuk`,
-            element:(
+            element: (
               <Suspense>
-                <KasMasuk/>
+                <KasMasuk />
               </Suspense>
-            )
+            ),
           },
           {
             path: `kasmasuk/add`,
-            element:(
+            element: (
               <Suspense>
-                <AddKasMasuk/>
+                <AddKasMasuk />
               </Suspense>
-            )
+            ),
           },
           {
             path: `kasmasuk/edit`,
-            element:(
+            element: (
               <Suspense>
-                <EditKasMasuk/>
+                <EditKasMasuk />
               </Suspense>
-            )
+            ),
           },
           {
             path: `kaskeluar`,
-            element:(
+            element: (
               <Suspense>
-                <KasKeluar/>
+                <KasKeluar />
               </Suspense>
-            )
+            ),
           },
           {
             path: `kaskeluar/add`,
-            element:(
+            element: (
               <Suspense>
-                <AddKasKeluar/>
+                <AddKasKeluar />
               </Suspense>
-            )
+            ),
           },
           {
             path: `kaskeluar/edit`,
-            element:(
+            element: (
               <Suspense>
-                <EditKasKeluar/>
+                <EditKasKeluar />
               </Suspense>
-            )
+            ),
           },
           {
             path: `kaspenyesuain`,
-            element:(
+            element: (
               <Suspense>
-                <Penyesuain/>
+                <Penyesuain />
               </Suspense>
-            )
+            ),
           },
           {
             path: `kaspenyesuain/add`,
-            element:(
+            element: (
               <Suspense>
-                <AddPenyesuain/>
+                <AddPenyesuain />
               </Suspense>
-            )
+            ),
           },
           {
             path: `kaspenyesuain/edit`,
-            element:(
+            element: (
               <Suspense>
-                <EditPenyesuain/>
+                <EditPenyesuain />
               </Suspense>
-            )
-          }
-        ]
-      }
+            ),
+          },
+        ],
+      },
+      {
+        path: `simpanan`,
+        element: (
+          <Suspense>
+            <Simpanan />
+          </Suspense>
+        ),
+        children: [
+          {
+            path: `setoran`,
+            element: (
+              <Suspense>
+                <Setoran />
+              </Suspense>
+            ),
+            children: [
+              {
+                index:true,
+                element: (
+                  <Suspense>
+                    <ViewSetoran />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `add`,
+                element: (
+                  <Suspense>
+                    <AddSetoran />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `edit`,
+                element: (
+                  <Suspense>
+                    <EditSetoran />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+          {
+            path: `penarikan`,
+            element: <div>Penarikan Simpanan</div>,
+          },
+        ],
+      },
     ],
   },
   {

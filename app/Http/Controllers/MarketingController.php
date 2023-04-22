@@ -18,6 +18,21 @@ class MarketingController extends Controller
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
   }
 
+  public function list_select()
+  {
+    $dataDB = Marketing::where('is_aktif', "1")
+      ->OrderBy('nama_marketing', 'ASC')
+      ->get();
+    $data = [];
+    foreach ($dataDB as $v) {
+      array_push($data, [
+        'label' => $v->nama_marketing,
+        'value' => $v->id
+      ]);
+    }
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
   // ! NOTE : Kode untuk menambah data baru
   public function store(Request $request)
   {
