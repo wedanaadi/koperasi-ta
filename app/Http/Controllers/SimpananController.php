@@ -45,20 +45,26 @@ class SimpananController extends Controller
 
     DB::beginTransaction();
     try {
-      $prevID = SimpananDetail::where('is_aktif', "0");
       $jenisSimpanan = JenisSimpanan::find($request->jenis_simpanan);
       if ((int)$request->jumlah_setoran < (int)$jenisSimpanan->saldo_minimal) {
         return response()->json(['errors' => 'Saldo setoran minimal harus ' . number_format($jenisSimpanan->saldo_minimal, 0, ",", ".") . '!'], 403);
       }
-
+      if($request->tipe === 'setoran') {
+        $stringKode = "SS";
+        $jenis = "1";
+      } else {
+        $stringKode = "PS";
+        $jenis = "2";
+      }
+      $prevID = SimpananDetail::where('is_aktif', "0")->where('type',$jenis);
       if ($prevID->count() > 0) {
         $newID = $prevID->first()->id;
       } else {
         $date = date('y') . date('m');
         $lastKode = SimpananDetail::select(DB::raw('MAX(id) AS kode'))
-          ->where(DB::raw('SUBSTR(id,3,4)'), $date)
+          ->where(DB::raw('SUBSTR(id,1,6)'), $stringKode.$date)
           ->first();
-        $newID = Fungsi::KodeGenerate($lastKode->kode, 5, 6, 'SS', $date);
+        $newID = Fungsi::KodeGenerate($lastKode->kode, 5, 6, $stringKode, $date);
       }
 
       $dataSimpanan = Simpanan::where('id_nasabah', $request->nasabah)->where('jenis_simpanan', $request->jenis_simpanan);
@@ -70,6 +76,9 @@ class SimpananController extends Controller
           $saldoSimpanan = $dataSimpanan->first()->jumlah_tabungan + $request->jumlah_setoran;
         } else {
           $saldoSimpanan = $dataSimpanan->first()->jumlah_tabungan - $request->jumlah_setoran;
+        }
+        if($saldoSimpanan < 0) {
+          return response()->json(['errors' => 'Jumlah tabungan tidak mencukupi!, saldo simpanan '.number_format($dataSimpanan->first()->jumlah_tabungan, 0, ",", ".")], 403);
         }
         $payloadSimpanan = [
           'jumlah_tabungan' => $saldoSimpanan,
@@ -90,7 +99,7 @@ class SimpananController extends Controller
           ];
           Simpanan::create($payloadSimpanan);
         } else {
-          return 'tidak memiliki tabungan';
+          return response()->json(['errors' => 'Nasabah tidak memiliki simpanan dari jenis simpanan yang dipilih!'], 403);
         }
       }
       $payload = [
@@ -145,9 +154,15 @@ class SimpananController extends Controller
 
       $oldSimpanan = Simpanan::find($find->simpanan_id);
       if($oldSimpanan->jenis_simpanan === $request->jenis_simpanan) {
-        $oldSimpanan->update([
-          'jumlah_tabungan' => $oldSimpanan->jumlah_tabungan - $find->saldo,
-        ]);
+        if($request->tipe === 'setoran') {
+          $oldSimpanan->update([
+            'jumlah_tabungan' => $oldSimpanan->jumlah_tabungan - $find->saldo,
+          ]);
+        } else {
+          $oldSimpanan->update([
+            'jumlah_tabungan' => $oldSimpanan->jumlah_tabungan + $find->saldo,
+          ]);
+        }
       } else {
         $oldSimpanan->delete();
       }
@@ -161,6 +176,9 @@ class SimpananController extends Controller
           $saldoSimpanan = $dataSimpanan->first()->jumlah_tabungan + $request->jumlah_setoran;
         } else {
           $saldoSimpanan = $dataSimpanan->first()->jumlah_tabungan - $request->jumlah_setoran;
+        }
+        if($saldoSimpanan < 0) {
+          return response()->json(['errors' => 'Jumlah tabungan tidak mencukupi!, saldo simpanan '.number_format($dataSimpanan->first()->jumlah_tabungan, 0, ",", ".")], 403);
         }
         $payloadSimpanan = [
           'jumlah_tabungan' => $saldoSimpanan,
@@ -181,7 +199,7 @@ class SimpananController extends Controller
           ];
           Simpanan::create($payloadSimpanan);
         } else {
-          return 'tidak memiliki tabungan';
+          return response()->json(['errors' => 'Nasabah tidak memiliki simpanan dari jenis simpanan yang dipilih!'], 403);
         }
       }
       $payload = [

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useStore from "../../../store/useStore";
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createData } from "../../../api/Simpanan";
+import { updateData } from "../../../api/Simpanan";
 import { listSelect } from "../../../api/Akun";
 import { listSelectJenisSimpanan } from "../../../api/JenisSimpanan";
 import { listSelectNasabah } from "../../../api/Nasabah";
@@ -16,7 +16,7 @@ import {
 } from "../../../components/Input";
 import { ConvertToEpoch } from "../../../components/Date";
 
-export default function Add() {
+export default function Edit() {
   const [dateTrx, setdateTrx] = useState({
     startDate: null,
     endDate: null,
@@ -31,7 +31,7 @@ export default function Add() {
   let optionJS = [];
   let optionNasabah = [];
   let optionMarketing = [];
-  const [setoran, setSetoran] = useState({
+  const [penarikan, setPenarikan] = useState({
     tanggal_transaksi: "",
     nasabah: "",
     jenis_simpanan: "",
@@ -39,13 +39,15 @@ export default function Add() {
     keterangan: "",
     untuk_akun: "",
     marketing: "",
-    tipe: "setoran",
+    tipe: "penarikan",
   });
   const navigasi = useNavigate();
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
   const tokenLogin = useStore((state) => state.token);
+
+  const dataLokal = JSON.parse(localStorage.getItem("dataEdit"));
 
   const {
     isLoading: isLoadingAkun,
@@ -100,16 +102,82 @@ export default function Add() {
     optionMarketing = marketings?.data;
   }
 
+  useEffect(() => {
+    setPenarikan({
+      ...penarikan,
+      ["untuk_akun"]: selectedUntuk?.value ? selectedUntuk.value : "",
+      ["jenis_simpanan"]: selectedJS?.value ? selectedJS.value : "",
+      ["marketing"]: selectedMarketing?.value ? selectedMarketing.value : "",
+      ["nasabah"]: selectedNasabah?.value ? selectedNasabah.value : "",
+      ["tanggal_transaksi"]:
+        dateTrx.startDate !== null ? ConvertToEpoch(dateTrx.startDate) : "",
+    });
+  }, [selectedJS, selectedUntuk, dateTrx, selectedMarketing, selectedNasabah]);
+
+  useEffect(() => {
+    setPenarikan({
+      tanggal_transaksi: dataLokal.tanggal_transaksi,
+      nasabah: dataLokal.simpanan.id_nasabah,
+      jumlah_setoran: dataLokal.saldo,
+      jenis_simpanan: dataLokal.simpanan.jenis_simpanan.id,
+      keterangan: dataLokal.keterangan,
+      untuk_akun: dataLokal.untuk_akun.id,
+      marketing: dataLokal.marketing.id,
+      tipe: "penarikan",
+    });
+
+    setdateTrx({
+      startDate: new Date(dataLokal.tanggal_transaksi),
+      endDate: new Date(dataLokal.tanggal_transaksi),
+    });
+  }, []);
+
+  useMemo(() => {
+    if (akuns?.data != undefined) {
+      const selectedUntuk = optionAkuns.filter(
+        ({ value }) => value == dataLokal.untuk_akun.id
+      );
+      setSelectedUntuk(selectedUntuk[0])
+    }
+  }, [akuns]);
+
+  useMemo(() => {
+    if (nasabahs?.data != undefined) {
+      const selectedNasabah = optionNasabah.filter(
+        ({ value }) => value == dataLokal.simpanan.id_nasabah
+      );
+      setSelectedNasabah(selectedNasabah[0])
+    }
+  }, [nasabahs]);
+
+  useMemo(() => {
+    if (jenisSimpanans?.data != undefined) {
+      const selectedJS = optionJS.filter(
+        ({ value }) => value == dataLokal.simpanan.jenis_simpanan.id
+      );
+      setSelectedJS(selectedJS[0])
+    }
+  }, [jenisSimpanans]);
+
+  useMemo(() => {
+    if (marketings?.data != undefined) {
+      const selectedMarketing = optionMarketing.filter(
+        ({ value }) => value == dataLokal.marketing.id
+      );
+      setSelectedMarketing(selectedMarketing[0])
+    }
+  }, [marketings]);
+
   const createPengeluaranMutation = useMutation({
-    mutationFn: createData,
+    mutationFn: updateData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["setoran", 1] });
-      navigasi(`/simpanan/setoran`);
+      queryClient.invalidateQueries({ queryKey: ["penarikan", 1] });
+      navigasi(`/simpanan/penarikan`);
       toastChange({
-        id: "NotifKP",
+        id: "NotifPenarikan",
         content: {
-          title: "Create Data",
-          description: "Create Setoran Successfuly",
+          title: "Update Data",
+          description: "Update Penarikan Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },
@@ -117,12 +185,13 @@ export default function Add() {
         dismiss: true,
         duration: 3000,
       });
+      localStorage.removeItem("dataEdit");
     },
     onMutate: () => {
       toastChange({
-        id: "NotifKP",
+        id: "NotifPenarikan",
         content: {
-          title: "Create Data",
+          title: "Update Data",
           description: "Loading....",
           backgroundColor: toastColors.loading,
           icon: toastIcon.loading,
@@ -144,9 +213,9 @@ export default function Add() {
         message = respon.statusText;
       }
       toastChange({
-        id: "NotifKP",
+        id: "NotifPenarikan",
         content: {
-          title: "Create Data",
+          title: "Update Data",
           description: message,
           backgroundColor: toastColors.error,
           icon: toastIcon.error,
@@ -158,30 +227,18 @@ export default function Add() {
     },
   });
 
-  useEffect(() => {
-    setSetoran({
-      ...setoran,
-      ["untuk_akun"]: selectedUntuk?.value ? selectedUntuk.value : "",
-      ["jenis_simpanan"]: selectedJS?.value ? selectedJS.value : "",
-      ["marketing"]: selectedMarketing?.value ? selectedMarketing.value : "",
-      ["nasabah"]: selectedNasabah?.value ? selectedNasabah.value : "",
-      ["tanggal_transaksi"]:
-        dateTrx.startDate !== null ? ConvertToEpoch(dateTrx.startDate) : "",
-    });
-  }, [selectedJS, selectedUntuk, dateTrx, selectedMarketing, selectedNasabah]);
-
   const handleSimpan = (e) => {
     e.preventDefault();
     createPengeluaranMutation.mutate({
-      newData: setoran,
+      Data: penarikan,
       token: tokenLogin,
-      // tipe: "setoran",
+      id: dataLokal.id
     });
   };
 
   const handleChangeInput = (e) => {
-    setSetoran({
-      ...setoran,
+    setPenarikan({
+      ...penarikan,
       [e.target.name]: e.target.value,
     });
   };
@@ -189,10 +246,10 @@ export default function Add() {
   return (
     <div className="bg-white card lg:w-1/2">
       <div className="border-second card-header">
-        <h3 className="mb-0 text-lg font-bold">Tambah Setoran</h3>
+        <h3 className="mb-0 text-lg font-bold">Ubah Penarikan</h3>
         <div className="flex justify-center items-center">
           <Link
-            to={`/simpanan/setoran`}
+            to={`/simpanan/penarikan`}
             className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"
           >
             <MdOutlineKeyboardBackspace /> &nbsp;
@@ -229,12 +286,12 @@ export default function Add() {
           />
           <InputFormat
             // flex={true}
-            value={setoran}
+            value={penarikan}
             validasi={errorValidasi}
             label="Jumlah Setoran"
             handle={(values) => {
-              setSetoran({
-                ...setoran,
+              setPenarikan({
+                ...penarikan,
                 ["jumlah_setoran"]: values.floatValue,
               });
             }}
@@ -244,7 +301,7 @@ export default function Add() {
             validasi={errorValidasi}
             label="Keterangan"
             handle={handleChangeInput}
-            value={setoran}
+            value={penarikan}
           />
           <Select
             label={"Untuk Akun"}
@@ -255,7 +312,9 @@ export default function Add() {
             // flex={true}
             ccPosition="absolute"
           />
-          <h1 className="underline font-bold text-lg mb-6">Indentitas Penyetor</h1>
+          <h1 className="underline font-bold text-lg mb-6">
+            Indentitas Penyetor
+          </h1>
           <Select
             label={"Marketing"}
             options={optionMarketing}

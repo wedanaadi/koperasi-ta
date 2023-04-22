@@ -31,7 +31,7 @@ export default function Add() {
   let optionJS = [];
   let optionNasabah = [];
   let optionMarketing = [];
-  const [setoran, setSetoran] = useState({
+  const [penarikan, setPenarikan] = useState({
     tanggal_transaksi: "",
     nasabah: "",
     jenis_simpanan: "",
@@ -39,7 +39,7 @@ export default function Add() {
     keterangan: "",
     untuk_akun: "",
     marketing: "",
-    tipe: "setoran",
+    tipe: "penarikan",
   });
   const navigasi = useNavigate();
   const toastChange = useStore((state) => state.changeState);
@@ -103,13 +103,13 @@ export default function Add() {
   const createPengeluaranMutation = useMutation({
     mutationFn: createData,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["setoran", 1] });
-      navigasi(`/simpanan/setoran`);
+      queryClient.invalidateQueries({ queryKey: ["penarikan", 1] });
+      navigasi(`/simpanan/penarikan`);
       toastChange({
-        id: "NotifKP",
+        id: "NotifPenarikan",
         content: {
           title: "Create Data",
-          description: "Create Setoran Successfuly",
+          description: "Create Penarikan Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },
@@ -120,7 +120,7 @@ export default function Add() {
     },
     onMutate: () => {
       toastChange({
-        id: "NotifKP",
+        id: "NotifPenarikan",
         content: {
           title: "Create Data",
           description: "Loading....",
@@ -144,7 +144,7 @@ export default function Add() {
         message = respon.statusText;
       }
       toastChange({
-        id: "NotifKP",
+        id: "NotifPenarikan",
         content: {
           title: "Create Data",
           description: message,
@@ -159,8 +159,8 @@ export default function Add() {
   });
 
   useEffect(() => {
-    setSetoran({
-      ...setoran,
+    setPenarikan({
+      ...penarikan,
       ["untuk_akun"]: selectedUntuk?.value ? selectedUntuk.value : "",
       ["jenis_simpanan"]: selectedJS?.value ? selectedJS.value : "",
       ["marketing"]: selectedMarketing?.value ? selectedMarketing.value : "",
@@ -173,15 +173,15 @@ export default function Add() {
   const handleSimpan = (e) => {
     e.preventDefault();
     createPengeluaranMutation.mutate({
-      newData: setoran,
+      newData: penarikan,
       token: tokenLogin,
-      // tipe: "setoran",
+      // tipe: "penarikan",
     });
   };
 
   const handleChangeInput = (e) => {
-    setSetoran({
-      ...setoran,
+    setPenarikan({
+      ...penarikan,
       [e.target.name]: e.target.value,
     });
   };
@@ -189,10 +189,10 @@ export default function Add() {
   return (
     <div className="bg-white card lg:w-1/2">
       <div className="border-second card-header">
-        <h3 className="mb-0 text-lg font-bold">Tambah Setoran</h3>
+        <h3 className="mb-0 text-lg font-bold">Tambah Penarikan</h3>
         <div className="flex justify-center items-center">
           <Link
-            to={`/simpanan/setoran`}
+            to={`/simpanan/penarikan`}
             className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"
           >
             <MdOutlineKeyboardBackspace /> &nbsp;
@@ -229,12 +229,12 @@ export default function Add() {
           />
           <InputFormat
             // flex={true}
-            value={setoran}
+            value={penarikan}
             validasi={errorValidasi}
             label="Jumlah Setoran"
             handle={(values) => {
-              setSetoran({
-                ...setoran,
+              setPenarikan({
+                ...penarikan,
                 ["jumlah_setoran"]: values.floatValue,
               });
             }}
@@ -244,7 +244,7 @@ export default function Add() {
             validasi={errorValidasi}
             label="Keterangan"
             handle={handleChangeInput}
-            value={setoran}
+            value={penarikan}
           />
           <Select
             label={"Untuk Akun"}

@@ -43,6 +43,10 @@ const Setoran = React.lazy(() => import("./pages/Simpanan/Setoran/Setoran"));
 const ViewSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/View"));
 const AddSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/Add"));
 const EditSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/Edit"));
+const Penarikan = React.lazy(() => import("./pages/Simpanan/Penarikan/Penarikan"));
+const ViewPenarikan = React.lazy(() => import("./pages/Simpanan/Penarikan/View"));
+const AddPenarikan = React.lazy(() => import("./pages/Simpanan/Penarikan/Add"));
+const EditPenarikan = React.lazy(() => import("./pages/Simpanan/Penarikan/Edit"));
 
 export default [
   {
@@ -365,7 +369,37 @@ export default [
           },
           {
             path: `penarikan`,
-            element: <div>Penarikan Simpanan</div>,
+            element: (
+              <Suspense>
+                <Penarikan />
+              </Suspense>
+            ),
+            children: [
+              {
+                index:true,
+                element: (
+                  <Suspense>
+                    <ViewPenarikan />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `add`,
+                element: (
+                  <Suspense>
+                    <AddPenarikan />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `edit`,
+                element: (
+                  <Suspense>
+                    <EditPenarikan />
+                  </Suspense>
+                ),
+              },
+            ],
           },
         ],
       },

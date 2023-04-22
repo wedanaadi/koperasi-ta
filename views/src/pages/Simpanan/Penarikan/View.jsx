@@ -52,7 +52,7 @@ export default function View() {
   const queryClient = useQueryClient();
 
   const fetchDatas = async () => {
-    let url = `${baseUrl}/simpanan?page=${currentPage}&perpage=${pagination.value}&tipe=1`;
+    let url = `${baseUrl}/simpanan?page=${currentPage}&perpage=${pagination.value}&tipe=0`;
     if (onSearch) {
       setCurrentPage(1);
       url += `&search=${onSearch}`;
@@ -68,11 +68,11 @@ export default function View() {
   const {
     isLoading,
     isError,
-    data: setorans,
+    data: penarikans,
     error,
     refetch,
   } = useQuery({
-    queryKey: ["setoran", currentPage, pagination],
+    queryKey: ["penarikan", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
@@ -80,12 +80,12 @@ export default function View() {
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1);
-      queryClient.invalidateQueries({ queryKey: ["setoran"] });
+      queryClient.invalidateQueries({ queryKey: ["penarikan"] });
       toastChange({
         id: "NotifSetoran",
         content: {
           title: "Delete Data",
-          description: "Delete data Setoran Successfuly",
+          description: "Delete data Penarikan Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },
@@ -141,7 +141,7 @@ export default function View() {
 
   const handleHapus = (id) => {
     if (confirmDelete) {
-      deleteSetoranMutation.mutate({ id: id, token: tokenLogin, tipe: "setoran" });
+      deleteSetoranMutation.mutate({ id: id, token: tokenLogin, tipe: "penarikan" });
       setConfirmDelete(false);
       setOpenDialog(false);
     }
@@ -161,7 +161,7 @@ export default function View() {
       />
       <div className="card bg-white">
         <div className="border-second card-header">
-          <h3 className="mb-0 text-lg font-bold">Data Setoran Simpanan</h3>
+          <h3 className="mb-0 text-lg font-bold">Data Penarikan Simpanan</h3>
           <div className="flex justify-center items-center">
             <Link
               to={"add"}
@@ -273,14 +273,14 @@ export default function View() {
                         </td>
                       </tr>
                     )}
-                    {setorans?.data.length > 0
-                      ? setorans?.data.map((data, index) => (
+                    {penarikans?.data.length > 0
+                      ? penarikans?.data.map((data, index) => (
                           <tr
                             className="border-b font-medium even:bg-white odd:bg-slate-100"
                             key={index}
                           >
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 font-medium">
-                              {index + setorans.from}
+                              {index + penarikans.from}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
                               {data.id}
@@ -338,12 +338,12 @@ export default function View() {
             </div>
           </div>
 
-          {setorans ? (
+          {penarikans ? (
             <Pagination
               className="pagination-bar float-right mb-3"
               currentPage={currentPage}
-              totalCount={setorans.total}
-              pageSize={setorans.per_page}
+              totalCount={penarikans.total}
+              pageSize={penarikans.per_page}
               onPageChange={(page) => setCurrentPage(page)}
             />
           ) : (
