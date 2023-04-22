@@ -98,6 +98,25 @@ export default [
     ]
   },
   {
+    label: "Pinjaman",
+    icon: <MdOutlineSaveAlt/>,
+    to: "/pinjaman",
+    gap: true,
+    role: ['direktur','admin','teller'],
+    children: [
+      {
+        label: "Pengajuan Pinjaman",
+        icon: "icon",
+        to: "pengajuan",
+      },
+      {
+        label: "Pinjaman",
+        icon: "icon",
+        to: "pinjaman",
+      },
+    ]
+  },
+  {
     label: "Setting",
     icon: <MdOutlineSettings/>,
     to: "/setting",
