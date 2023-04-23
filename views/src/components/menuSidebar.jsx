@@ -1,12 +1,12 @@
 import {
   MdOutlineDashboard,
   MdAccountCircle,
-  MdAnalytics,
   MdOutlineSettings,
-  MdLogout,
   MdViewModule,
   MdOutlineSaveAlt,
 } from "react-icons/md";
+import {GiTakeMyMoney} from "react-icons/gi"
+import {RiRefund2Fill} from "react-icons/ri"
 
 export default [
   {
@@ -80,7 +80,7 @@ export default [
   },
   {
     label: "Simpanan",
-    icon: <MdOutlineSaveAlt/>,
+    icon: <GiTakeMyMoney/>,
     to: "/simpanan",
     gap: true,
     role: ['direktur','admin','teller'],
@@ -99,7 +99,7 @@ export default [
   },
   {
     label: "Pinjaman",
-    icon: <MdOutlineSaveAlt/>,
+    icon: <RiRefund2Fill/>,
     to: "/pinjaman",
     gap: true,
     role: ['direktur','admin','teller'],
@@ -113,6 +113,11 @@ export default [
         label: "Pinjaman",
         icon: "icon",
         to: "pinjaman",
+      },
+      {
+        label: "Angsuran",
+        icon: "icon",
+        to: "angsuran",
       },
     ]
   },

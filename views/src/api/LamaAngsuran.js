@@ -2,6 +2,17 @@ import { func } from "prop-types";
 import axios from "../components/axiosApi.jsx"
 import baseUrl from "../components/baseUrl.jsx";
 
+export async function listSelectJW({queryKey}) {
+  const [_, token] = queryKey
+  const res = await axios.get(`${baseUrl}/jangkaWaktuForSelect`,{
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }
+  })
+  return res.data
+}
+
 export async function fetchDatas({queryKey}) {
   const [_, currentPage, onSearch, tokenLogin, setCurrentPage] = queryKey
   let url = `${baseUrl}/lamaangsuran?page=${currentPage}&perpage=${10}`;

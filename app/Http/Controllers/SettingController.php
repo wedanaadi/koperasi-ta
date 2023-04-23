@@ -42,6 +42,7 @@ class SettingController extends Controller
         'suku_bunga' => $request->suku_bunga,
         'biaya_administrasi' => $request->biaya_administrasi,
         'biaya_denda' => $request->biaya_denda,
+        'is_anggota' => $request->is_anggota,
         'created_at' => round(microtime(true) * 1000),
         'updated_at' => round(microtime(true) * 1000),
       ];

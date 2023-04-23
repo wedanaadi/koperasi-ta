@@ -14,7 +14,7 @@ export const NumberFormat = ({ value }) => {
   );
 };
 
-export const InputFormat = ({ value, handle, label, validasi, flex=false }) => {
+export const InputFormat = ({ value, handle, label, validasi, flex=false, disabled=false }) => {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
     <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
@@ -25,13 +25,14 @@ export const InputFormat = ({ value, handle, label, validasi, flex=false }) => {
         {label}
       </label>
       <NumericFormat
-        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md`}
+        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
         displayType="input"
         value={value[name]}
         thousandSeparator="."
         decimalSeparator=","
         allowNegative={false}
         onValueChange={handle}
+        disabled={disabled}
       />
       {validasi[`${name}`]?.map((msg, index) => (
         <span key={index} className="text-sm text-red-600 font-semibold">
@@ -42,7 +43,7 @@ export const InputFormat = ({ value, handle, label, validasi, flex=false }) => {
   );
 };
 
-export const InputDecimal = ({ value, handle, label, validasi, flex=false }) => {
+export const InputDecimal = ({ value, handle, label, validasi, flex=false, disabled=false, alias="" }) => {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
     <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
@@ -50,10 +51,10 @@ export const InputDecimal = ({ value, handle, label, validasi, flex=false }) => 
         className={`block mb-2 text-primary font-semibold text-lg ${flex && 'sm:w-1/2'}`}
         htmlFor={label.toLowerCase()}
       >
-        {label}
+        {alias !== "" ? alias : label}
       </label>
       <NumericFormat
-        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md`}
+        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
         displayType="input"
         value={value[name]}
         thousandSeparator="."
@@ -62,6 +63,7 @@ export const InputDecimal = ({ value, handle, label, validasi, flex=false }) => 
         allowNegative={false}
         onValueChange={handle}
         placeholder={label}
+        disabled={disabled}
       />
       {validasi[`${name}`]?.map((msg, index) => (
         <span key={index} className="text-sm text-red-600 font-semibold">
@@ -79,7 +81,8 @@ export function Input({
   validasi,
   alias = "",
   type = "text",
-  flex=false
+  flex=false,
+  disabled=false
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   // console.log(name);
@@ -92,12 +95,13 @@ export function Input({
         {alias !== "" ? alias : label}
       </label>
       <input
-        className="w-full p-2 border-2 border-second focus:bg-four rounded-md"
+        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
         type={type}
         name={name}
         value={value[name]}
         onChange={handle}
         placeholder={label}
+        disabled={disabled}
       />
       {validasi[`${name}`]?.map((msg, index) => (
         <span key={index} className="text-sm text-red-600 font-semibold">
@@ -114,7 +118,8 @@ export function DateInput({
   label,
   validasi,
   alias = "",
-  flex=false
+  flex=false,
+  disabled=false
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   // console.log(name);
@@ -131,10 +136,11 @@ export function DateInput({
         asSingle={true}
         value={value}
         onChange={handle}
+        disabled={disabled}
         displayFormat={"DD/MM/YYYY"}
         containerClassName={`mt-0 ${flex && 'sm:w-full relative'}`}
         toggleClassName="hidden"
-        inputClassName="w-full relative rounded-md focus:ring-0 font-normal p-2 border-2 border-second focus:bg-four rounded-md"
+        inputClassName={`w-full relative rounded-md focus:ring-0 font-normal p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
       />
       {validasi[`${name}`]?.map((msg, index) => (
         <span key={index} className="text-sm text-red-600 font-semibold">
@@ -152,7 +158,8 @@ export function Textarea({
   validasi,
   rows = 5,
   alias = "",
-  flex=false
+  flex=false,
+  disabled=false,
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
@@ -164,12 +171,13 @@ export function Textarea({
         {alias !== "" ? alias : label}
       </label>
       <textarea
-        className="w-full p-2 border-2 border-second focus:bg-four rounded-md"
+        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
         name={name}
         onChange={handle}
         placeholder={label}
         rows={rows}
         value={value[name]}
+        disabled={disabled}
       />
       {validasi[`${name}`]?.map((msg, index) => (
         <span key={index} className="text-sm text-red-600 font-semibold">

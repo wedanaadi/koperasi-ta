@@ -126,21 +126,21 @@ class SimpananController extends Controller
 
   public function update(Request $request, $id)
   {
-    // $validator = Validator::make($request->all(), [
-    //   'tanggal_transaksi' => 'required',
-    //   'nasabah' => 'required',
-    //   'jenis_simpanan' => 'required',
-    //   'jumlah_setoran' => 'required',
-    //   'keterangan' => 'required',
-    //   'untuk_akun' => 'required',
-    //   'marketing' => 'required',
-    // ], [
-    //   'required' => 'Input :attribute harus diisi!',
-    // ]);
+    $validator = Validator::make($request->all(), [
+      'tanggal_transaksi' => 'required',
+      'nasabah' => 'required',
+      'jenis_simpanan' => 'required',
+      'jumlah_setoran' => 'required',
+      'keterangan' => 'required',
+      'untuk_akun' => 'required',
+      'marketing' => 'required',
+    ], [
+      'required' => 'Input :attribute harus diisi!',
+    ]);
 
-    // if ($validator->fails()) {
-    //   return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
-    // }
+    if ($validator->fails()) {
+      return response()->json(['msg' => 'Validasi Error', "data" => null, 'errors' => $validator->messages()->toArray()], 422);
+    }
 
     $find = SimpananDetail::find($id);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Libraries\Fungsi;
+use App\Models\BiayaAdmin;
 use App\Models\Nasabah;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -32,6 +33,22 @@ class NasabahController extends Controller
         'value' => $v->id_nasabah
       ]);
     }
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
+  public function find_nasabah($id)
+  {
+    $nasabah = Nasabah::where('id_nasabah',$id)->first();
+    if($nasabah->jabatan === 'bukan') {
+      $isAnggota = "0";
+    } else {
+      $isAnggota = "1";
+    }
+    $biayaAdmin = BiayaAdmin::where('is_anggota',$isAnggota)->first();
+    $data = [
+      'nasabah' => $nasabah,
+      'biaya' => $biayaAdmin
+    ];
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
   }
 

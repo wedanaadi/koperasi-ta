@@ -17,11 +17,13 @@ export default function BiayaAdmin() {
     suku_bunga: 0,
     biaya_administrasi: 0,
     biaya_denda: 0,
+    is_anggota: 1
   });
   const [ba2, setBa2] = useState({
     suku_bunga: 0,
     biaya_administrasi: 0,
     biaya_denda: 0,
+    is_anggota: 0
   });
 
   const {
@@ -180,19 +182,21 @@ export default function BiayaAdmin() {
 
   useMemo(() => {
     if (BiayaAdmin1?.data != undefined) {
-      const { suku_bunga, biaya_administrasi, biaya_denda } = BiayaAdmin1.data;
+      const { suku_bunga, biaya_administrasi, biaya_denda, is_anggota } = BiayaAdmin1.data;
       setBa1({
         suku_bunga,
         biaya_administrasi,
         biaya_denda,
+        is_anggota:"1",
       });
     }
     if (BiayaAdmin2?.data != undefined) {
-      const { suku_bunga, biaya_administrasi, biaya_denda } = BiayaAdmin2.data;
+      const { suku_bunga, biaya_administrasi, biaya_denda, is_anggota } = BiayaAdmin2.data;
       setBa2({
         suku_bunga,
         biaya_administrasi,
         biaya_denda,
+        is_anggota:"0",
       });
     }
   }, [BiayaAdmin1, BiayaAdmin2]);

@@ -1,3 +1,4 @@
+import { element } from "prop-types";
 import React, { Suspense } from "react";
 import { RequiredLogin } from "./components/MiddlewareAuth";
 
@@ -29,24 +30,59 @@ const Setting = React.lazy(() => import("./pages/setting/Index"));
 const BA = React.lazy(() => import("./pages/setting/BiayaAdmin"));
 const Sistem = React.lazy(() => import("./pages/setting/Sistem"));
 const TransaksiKas = React.lazy(() => import("./pages/TransaksiKas/Index"));
-const KasMasuk = React.lazy(() => import("./pages/TransaksiKas/KasPemasukan/View"));
-const AddKasMasuk = React.lazy(() => import("./pages/TransaksiKas/KasPemasukan/Add"));
-const EditKasMasuk = React.lazy(() => import("./pages/TransaksiKas/KasPemasukan/Edit"));
-const KasKeluar = React.lazy(() => import("./pages/TransaksiKas/KasPengeluaran/View"));
-const AddKasKeluar = React.lazy(() => import("./pages/TransaksiKas/KasPengeluaran/Add"));
-const EditKasKeluar = React.lazy(() => import("./pages/TransaksiKas/KasPengeluaran/Edit"));
-const Penyesuain = React.lazy(() => import("./pages/TransaksiKas/KasPenyesuain/View"));
-const AddPenyesuain = React.lazy(() => import("./pages/TransaksiKas/KasPenyesuain/Add"));
-const EditPenyesuain = React.lazy(() => import("./pages/TransaksiKas/KasPenyesuain/Edit"));
+const KasMasuk = React.lazy(() =>
+  import("./pages/TransaksiKas/KasPemasukan/View")
+);
+const AddKasMasuk = React.lazy(() =>
+  import("./pages/TransaksiKas/KasPemasukan/Add")
+);
+const EditKasMasuk = React.lazy(() =>
+  import("./pages/TransaksiKas/KasPemasukan/Edit")
+);
+const KasKeluar = React.lazy(() =>
+  import("./pages/TransaksiKas/KasPengeluaran/View")
+);
+const AddKasKeluar = React.lazy(() =>
+  import("./pages/TransaksiKas/KasPengeluaran/Add")
+);
+const EditKasKeluar = React.lazy(() =>
+  import("./pages/TransaksiKas/KasPengeluaran/Edit")
+);
+const Penyesuain = React.lazy(() =>
+  import("./pages/TransaksiKas/KasPenyesuain/View")
+);
+const AddPenyesuain = React.lazy(() =>
+  import("./pages/TransaksiKas/KasPenyesuain/Add")
+);
+const EditPenyesuain = React.lazy(() =>
+  import("./pages/TransaksiKas/KasPenyesuain/Edit")
+);
 const Simpanan = React.lazy(() => import("./pages/Simpanan/Index"));
 const Setoran = React.lazy(() => import("./pages/Simpanan/Setoran/Setoran"));
 const ViewSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/View"));
 const AddSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/Add"));
 const EditSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/Edit"));
-const Penarikan = React.lazy(() => import("./pages/Simpanan/Penarikan/Penarikan"));
-const ViewPenarikan = React.lazy(() => import("./pages/Simpanan/Penarikan/View"));
+const Penarikan = React.lazy(() =>
+  import("./pages/Simpanan/Penarikan/Penarikan")
+);
+const ViewPenarikan = React.lazy(() =>
+  import("./pages/Simpanan/Penarikan/View")
+);
 const AddPenarikan = React.lazy(() => import("./pages/Simpanan/Penarikan/Add"));
-const EditPenarikan = React.lazy(() => import("./pages/Simpanan/Penarikan/Edit"));
+const EditPenarikan = React.lazy(() =>
+  import("./pages/Simpanan/Penarikan/Edit")
+);
+
+const PengajuanIndex = React.lazy(() => import("./pages/pengajuan/index"));
+const ViewPengajuan = React.lazy(() => import("./pages/pengajuan/View"));
+const AddPengajuan = React.lazy(() => import("./pages/pengajuan/Add"));
+const EditPengajuan = React.lazy(() => import("./pages/pengajuan/Edit"));
+const DetailPengajuan = React.lazy(() => import("./pages/pengajuan/Detail"));
+
+const IndexPinjaman = React.lazy(() => import("./pages/pinjaman/Index"));
+const ViewPinjaman = React.lazy(() => import("./pages/pinjaman/View"));
+const AddPinjaman = React.lazy(() => import("./pages/pinjaman/Add"));
+const EditPinjaman = React.lazy(() => import("./pages/pinjaman/Edit"));
 
 export default [
   {
@@ -342,7 +378,7 @@ export default [
             ),
             children: [
               {
-                index:true,
+                index: true,
                 element: (
                   <Suspense>
                     <ViewSetoran />
@@ -376,7 +412,7 @@ export default [
             ),
             children: [
               {
-                index:true,
+                index: true,
                 element: (
                   <Suspense>
                     <ViewPenarikan />
@@ -400,6 +436,87 @@ export default [
                 ),
               },
             ],
+          },
+        ],
+      },
+      {
+        path: `pinjaman`,
+        children: [
+          {
+            path: `pengajuan`,
+            element: (
+              <Suspense>
+                <PengajuanIndex />
+              </Suspense>
+            ),
+            children: [
+              {
+                index: true,
+                element: (
+                  <Suspense>
+                    <ViewPengajuan />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `add`,
+                element: (
+                  <Suspense>
+                    <AddPengajuan />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `edit`,
+                element: (
+                  <Suspense>
+                    <EditPengajuan />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `detail`,
+                element: (
+                  <Suspense>
+                    <DetailPengajuan />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+          {
+            path: `pinjaman`,
+            element: (
+              <Suspense>
+                <IndexPinjaman />
+              </Suspense>
+            ),
+            children: [
+              {
+                index: true,
+                element: (
+                  <Suspense>
+                    <ViewPinjaman />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `add`,
+                element: (
+                  <Suspense>
+                    <AddPinjaman />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `edit`,
+                element: (
+                  <Suspense>
+                    <EditPinjaman />
+                  </Suspense>
+                ),
+              }
+            ]
           },
         ],
       },

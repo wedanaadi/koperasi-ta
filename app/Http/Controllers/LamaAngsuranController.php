@@ -18,6 +18,21 @@ class LamaAngsuranController extends Controller
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
   }
 
+  public function list_select()
+  {
+    $dataDB = LamaAngsuran::where('is_aktif', "1")
+      ->OrderBy('lama_angsuran', 'ASC')
+      ->get();
+    $data = [];
+    foreach ($dataDB as $v) {
+      array_push($data, [
+        'label' => $v->lama_angsuran,
+        'value' => $v->id
+      ]);
+    }
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
   // ! NOTE : Kode untuk menambah data baru
   public function store(Request $request)
   {

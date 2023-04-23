@@ -1,13 +1,14 @@
 import React from "react";
 import logo from "../assets/info.svg";
 
-export default function ConfirmAlert({ settingDialog, actionConfirm }) {
-  const {openDialog, setOpenDialog} = settingDialog
-  const {confirmDelete, setConfirmDelete } = actionConfirm
+export default function ConfirmAlert2({ settingDialog, actionConfirm, text }) {
+  const {openConfirm, setOpenConfirm} = settingDialog
+  const {confirmAction, setConfirmAction } = actionConfirm
+  const {title, msg, button } = text
   return (
     <div
       className={`fixed ${
-        !openDialog && "hidden"
+        !openConfirm && "hidden"
       } inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-[999] duration-700`}
       id="my-modal"
     >
@@ -17,17 +18,17 @@ export default function ConfirmAlert({ settingDialog, actionConfirm }) {
             <img src={logo} alt="Logo" />
           </div>
           <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Hapus Data
+            {title}
           </h3>
           <div className="mt-2 px-7 py-3">
             <p className="text-sm text-gray-500">
-             Yakin Menghapus data?
+              {msg}
             </p>
           </div>
           <div className="items-center px-4 py-3">
-            <button className="btn2 bg-primary hover:bg-third" onClick={()=>setConfirmDelete(!confirmDelete)}>Hapus</button>
+            <button className="btn2 bg-primary hover:bg-third" onClick={()=>setConfirmAction(!confirmAction)}>{button}</button>
             &nbsp;
-            <button className="btn2 bg-slate-500 hover:opacity-80" onClick={()=>setOpenDialog(!openDialog)}>Batal</button>
+            <button className="btn2 bg-slate-500 hover:opacity-80" onClick={()=>setOpenConfirm(!openConfirm)}>Batal</button>
           </div>
         </div>
       </div>
