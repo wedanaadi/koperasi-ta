@@ -73,11 +73,13 @@ export default function View() {
     error,
     refetch,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["pinjaman", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
   const deleteMutation = useMutation({
+    networkMode: `always`,
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1);
@@ -136,6 +138,7 @@ export default function View() {
   });
 
   const rincianMutation = useMutation({
+    networkMode: `always`,
     mutationFn: getRincian,
     onSuccess: (res) => {
       setDataPropsRincian(res.data);

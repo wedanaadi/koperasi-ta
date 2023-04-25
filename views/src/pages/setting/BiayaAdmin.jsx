@@ -33,6 +33,7 @@ export default function BiayaAdmin() {
     error: error1,
     refetch: refetch1,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["ba1", "ba-1", tokenLogin],
     queryFn: getBiayaAdmin,
   });
@@ -44,11 +45,13 @@ export default function BiayaAdmin() {
     error: error2,
     refetch: refetch2,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["ba2", "ba-2", tokenLogin],
     queryFn: getBiayaAdmin,
   });
 
   const createBA1Mutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ba1", "ba-1", tokenLogin] });
@@ -106,6 +109,7 @@ export default function BiayaAdmin() {
   });
 
   const createBA2Mutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ba2", "ba-2", tokenLogin] });

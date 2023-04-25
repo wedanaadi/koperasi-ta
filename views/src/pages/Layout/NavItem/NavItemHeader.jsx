@@ -6,7 +6,7 @@ const resolveLinkPath = (childTo, parentTo) => `${parentTo}/${childTo}`;
 
 export default function NavItemHeader(props) {
   const { item } = props;
-  const { label, icon, to: headerToPath, children } = item;
+  const { label, icon, to: headerToPath, children, role } = item;
 
   const location = useLocation();
 
@@ -46,7 +46,10 @@ export default function NavItemHeader(props) {
         <div>
           {children.sort(compare).map((item, index) => {
             const key = `${item.label}-${index}`;
-            const { label, icon, children } = item;
+            const { label, icon, children, role } = item;
+            if(!role.includes('admin')) {
+              return false;
+            }
 
             if (children) {
               return (

@@ -12,13 +12,31 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AngsuranController extends Controller
 {
   public function index()
   {
     $data = Angsuran::OrderBy('pembayaran_ke', 'Desc')
+      ->where('no_pinjaman',request('pinjaman'))
       ->paginate(request('perpage'));
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
+  public function angsuran_pinjaman()
+  {
+    $data = Angsuran::OrderBy('pembayaran_ke', 'ASC')
+      ->where('no_pinjaman',request('pinjaman'))
+      ->get();
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
+  public function simulasi()
+  {
+    $data = SimulasiAngsuran::OrderBy('bulan', 'ASC')
+      ->where('pinjaman_id',request('pinjaman'))
+      ->get();
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
   }
 
@@ -132,6 +150,26 @@ class AngsuranController extends Controller
         'updated_at' => round(Carbon::now()->timestamp * 1000),
       ];
 
+      $payloadMaster = [
+        [
+          'id' => Str::uuid()->toString(),
+          'relasi_id' => $newID,
+          'akun' => $request->simpan_akun,
+          'debet' => $request->bayar_pokok+$request->bayar_bunga+$request->bayar_denda,
+          'kredit' => 0,
+          'tanggal' => $request->tanggal_transaksi,
+        ],
+        [
+          'id' => Str::uuid()->toString(),
+          'relasi_id' => $newID,
+          'akun' => $request->ambil_akun,
+          'kredit' => $request->bayar_pokok+$request->bayar_bunga+$request->bayar_denda,
+          'debet' => 0,
+          'tanggal' => $request->tanggal_transaksi,
+        ]
+      ];
+      DB::table('master_trx')->insert($payloadMaster);
+
       Angsuran::create($payload);
       $pinjaman = Pinjaman::where('no_pinjaman', $request->no_pinjaman);
       $jumlahPinjaman = $pinjaman->first()->jumlah_pinjaman;
@@ -178,10 +216,11 @@ class AngsuranController extends Controller
     $find = Angsuran::find($id);
     DB::beginTransaction();
     try {
+      DB::table('master_trx')->where('relasi_id',$find->kode_transaksi)->delete();
       $pokokHarusBayar = $request->tunggakan_pokok > 0 ? $request->tunggakan_pokok : $request->pokok;
-      if($request->tunggakan_bunga > 0) {
+      if ($request->tunggakan_bunga > 0) {
         $bungaHarusBayar = $request->tunggakan_bunga;
-      } else if($request->tunggakan_pokok > 0 AND $request->tunggakan_bunga == 0) {
+      } else if ($request->tunggakan_pokok > 0 and $request->tunggakan_bunga == 0) {
         $bungaHarusBayar = 0;
       } else {
         $bungaHarusBayar = $request->bunga;
@@ -206,6 +245,26 @@ class AngsuranController extends Controller
         'tanggal_transaksi' => $request->tanggal_transaksi,
         'updated_at' => round(Carbon::now()->timestamp * 1000),
       ];
+
+      $payloadMaster = [
+        [
+          'id' => Str::uuid()->toString(),
+          'relasi_id' => $find->kode_transaksi,
+          'akun' => $request->simpan_akun,
+          'debet' => $request->bayar_pokok+$request->bayar_bunga+$request->bayar_denda,
+          'kredit' => 0,
+          'tanggal' => $request->tanggal_transaksi,
+        ],
+        [
+          'id' => Str::uuid()->toString(),
+          'relasi_id' => $find->kode_transaksi,
+          'akun' => $request->ambil_akun,
+          'kredit' => $request->bayar_pokok+$request->bayar_bunga+$request->bayar_denda,
+          'debet' => 0,
+          'tanggal' => $request->tanggal_transaksi,
+        ]
+      ];
+      DB::table('master_trx')->insert($payloadMaster);
 
       $find->update($payload);
       $pinjaman = Pinjaman::where('no_pinjaman', $find->no_pinjaman);

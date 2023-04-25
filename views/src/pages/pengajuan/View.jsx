@@ -88,11 +88,13 @@ export default function View() {
     error,
     refetch,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["pengajuan", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
   const deletePengajuanMutation = useMutation({
+    networkMode: `always`,
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1);
@@ -151,6 +153,7 @@ export default function View() {
   });
 
   const updateStatusMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateStatus,
     onSuccess: () => {
       setCurrentPage(1);

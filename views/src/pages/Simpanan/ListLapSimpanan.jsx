@@ -11,7 +11,7 @@ import Pagination from "../../components/Datatable/Pagination/Pagination";
 import { NumberFormat } from "../../components/Input";
 import ToDate from "../../components/Date";
 
-export default function ListPinjaman() {
+export default function ListLapSimpanan() {
   const [currentPage, setCurrentPage] = useState(1);
   const [onSearch, setSearch] = useState("");
   const tokenLogin = useStore((state) => state.token);
@@ -47,7 +47,7 @@ export default function ListPinjaman() {
   const queryClient = useQueryClient();
 
   const fetchDatas = async () => {
-    let url = `${baseUrl}/angsuranpinjaman?page=${currentPage}&perpage=${pagination.value}`;
+    let url = `${baseUrl}/listlapsimpanan?page=${currentPage}&perpage=${pagination.value}`;
     if (onSearch) {
       setCurrentPage(1);
       url += `&search=${onSearch}`;
@@ -63,26 +63,25 @@ export default function ListPinjaman() {
   const {
     isLoading,
     isError,
-    data: listPinjamans,
+    data: simpanans,
     error,
-    refetch,
+    refetch
   } = useQuery({
     networkMode: `always`,
-    queryKey: ["listPinjaman", currentPage, pagination],
+    queryKey: ["listLapSimpanan"],
     queryFn: fetchDatas,
   });
 
-  const handleAngsuran = (data) => {
-    localStorage.setItem("dataPinjamanAngsuran", JSON.stringify(data));
-    navigasi("bayar", { replace: true });
+  const handleDetail = (data) => {
+    localStorage.setItem("dataRekSimpanan", JSON.stringify(data));
+    navigasi("detail", { replace: true });
   };
 
   if (isError) return `Error ${error.message}`;
-
   return (
     <div className="card bg-white">
       <div className="border-second card-header">
-        <h3 className="mb-0 text-lg font-bold">Data Angsuran Pinjaman</h3>
+        <h3 className="mb-0 text-lg font-bold">Data Rekening Simpanan</h3>
       </div>
       <div className="card-body">
         <div className="sm:flex sm:flex-row sm:items-center">
@@ -128,22 +127,19 @@ export default function ListPinjaman() {
                       #
                     </th>
                     <th scope="col" className="border-r border-third px-6 py-4">
-                      Nomor Pinjaman
-                    </th>
-                    <th scope="col" className="border-r border-third px-6 py-4">
-                      Tanggal Pinjaman
+                      No Nasabah
                     </th>
                     <th scope="col" className="border-r border-third px-6 py-4">
                       Nama Nasabah
                     </th>
                     <th scope="col" className="border-r border-third px-6 py-4">
-                      Bakidebet
+                      Simpanan Pokok
                     </th>
                     <th scope="col" className="border-r border-third px-6 py-4">
-                      Total Pokok
+                      Simpanan Sukarela
                     </th>
                     <th scope="col" className="border-r border-third px-6 py-4">
-                      Total Bunga
+                      Simpanan Wajib
                     </th>
                     <th
                       scope="col"
@@ -161,41 +157,38 @@ export default function ListPinjaman() {
                         </td>
                       </tr>
                     )}
-                    {listPinjamans?.data.length > 0
-                      ? listPinjamans?.data.map((data, index) => (
+                    {simpanans?.data.length > 0
+                      ? simpanans?.data.map((data, index) => (
                           <tr
                             className="border-b font-medium even:bg-white odd:bg-slate-100"
                             key={index}
                           >
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 font-medium">
-                              {index + listPinjamans.from}
+                              {index + simpanans.from}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {data.no_pinjaman}
+                              {data.id_nasabah}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {ToDate(data.tanggal_pinjaman)}
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {data.nama_nasabah}
+                              {data.nama}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
-                              <NumberFormat value={data.bakidebet} />
+                              <NumberFormat value={data.Simpanan_Pokok} />
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
-                              <NumberFormat value={data.pokok} />
+                              <NumberFormat value={data.Simpanan_Wajib} />
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
-                              <NumberFormat value={data.bunga} />
+                              <NumberFormat value={data.Simpanan_Sukarela} />
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2">
                               <div className="flex items-center">
                                 <button
-                                  className="btn2 bg-primary hover:opacity-80 flex items-center"
-                                  onClick={() => handleAngsuran(data)}
+                                  className="btn2 bg-orange-500 hover:opacity-80 flex items-center"
+                                  onClick={() => handleDetail(data)}
                                 >
                                   <MdPayment /> &nbsp;
-                                  <span>Angsuran</span>
+                                  <span>Detail</span>
                                 </button>
                               </div>
                             </td>
@@ -213,12 +206,12 @@ export default function ListPinjaman() {
             </div>
           </div>
         </div>
-        {listPinjamans ? (
+        {simpanans ? (
             <Pagination
               className="pagination-bar float-right mb-3"
               currentPage={currentPage}
-              totalCount={listPinjamans.total}
-              pageSize={listPinjamans.per_page}
+              totalCount={simpanans.total}
+              pageSize={simpanans.per_page}
               onPageChange={(page) => setCurrentPage(page)}
             />
           ) : (

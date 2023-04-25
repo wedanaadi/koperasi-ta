@@ -28,6 +28,7 @@ export default function Edit() {
   }, []);
 
   const createLamaAngsuranMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lamaangsuran", 1] });

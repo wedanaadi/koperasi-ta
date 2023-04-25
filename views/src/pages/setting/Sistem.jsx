@@ -35,6 +35,7 @@ export default function Sistem() {
     error: errorDirektur,
     refetch: refetchDirektur,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["direktur", "direktur", tokenLogin],
     queryFn: getList,
   });
@@ -46,6 +47,7 @@ export default function Sistem() {
     error: errorAdmin,
     refetch: refetchAdmin,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["admin", "admin", tokenLogin],
     queryFn: getList,
   });
@@ -57,6 +59,7 @@ export default function Sistem() {
     error: errorTeller,
     refetch: refetchTeller,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["teller", "teller", tokenLogin],
     queryFn: getList,
   });
@@ -68,6 +71,7 @@ export default function Sistem() {
     error,
     refetch,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["setting", tokenLogin],
     queryFn: getSetting,
   });
@@ -90,6 +94,7 @@ export default function Sistem() {
   }
 
   const createSistemMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["setting", tokenLogin] });

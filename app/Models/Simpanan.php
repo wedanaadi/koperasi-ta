@@ -24,13 +24,12 @@ class Simpanan extends Model
     return $this->belongsTo(JenisSimpanan::class, "jenis_simpanan", "id");
   }
 
-  // public function scopeFilter($query, array $filters)
-  // {
-  //   $query->when($filters['search'] ?? false, function ($query, $search) {
-  //     return $query->where('kode_transaksi', 'like', '%' . $search . '%')
-  //       ->orWhere('keterangan', 'like', '%' . $search . '%');
-  //   });
-  // }
+  public function scopeFilter($query, array $filters)
+  {
+    $query->when($filters['search'] ?? false, function ($query, $search) {
+      return $query->where('id_nasabah', 'like', '%' . $search . '%');
+    });
+  }
 
   // public function setoran()
   // {

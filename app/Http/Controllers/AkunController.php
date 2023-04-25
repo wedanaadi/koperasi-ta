@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Akun;
+use App\Models\MasterAkun;
+use App\Models\SimpananDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -118,5 +120,34 @@ class AkunController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'Failed update data delete', "data" => null, 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function lap_akun()
+  {
+    $data = [];
+    $akun = Akun::filter(request(['periode']))
+      ->where('is_aktif', "1")
+      ->OrderBy('no_akun', 'ASC')->get();
+    foreach ($akun as $v) {
+      $master = MasterAkun::filter(request(['periode']))->where('akun',$v->id);
+      $arr = [
+        'no_akun' => $v->no_akun,
+        'jenis' => $v->jenis_transaksi,
+        'debet' => 0,
+        'kredit' => 0,
+      ];
+      if($master->count() > 0) {
+        $debet = 0;
+        $kredit = 0;
+        foreach ($master->get() as $m) {
+          $debet += $m->debet;
+          $kredit += $m->kredit;
+        }
+        $arr['debet'] = $debet;
+        $arr['kredit'] = $kredit;
+      }
+      array_push($data,$arr);
+    }
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
   }
 }

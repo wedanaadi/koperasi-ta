@@ -59,6 +59,7 @@ export default function Add() {
   const tokenLogin = useStore((state) => state.token);
 
   const createNasabahMutation = useMutation({
+    networkMode: `always`,
     mutationFn: createData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["nasabah", 1] });

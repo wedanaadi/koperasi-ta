@@ -6,12 +6,12 @@ import baseUrl from "../../components/baseUrl";
 import { NumberFormat } from "../../components/Input";
 import axios from "../../components/axiosApi";
 import useStore from "../../store/useStore";
-import ToDate from "../../components/Date";
+import ToDate, { ToDate2 } from "../../components/Date";
 import CapitalFirst from "../../components/CapitalFirstLetter";
 import Pagination from "../../components/Datatable/Pagination/Pagination";
 
-export default function View() {
-  const dataLokal = JSON.parse(localStorage.getItem("dataPinjamanAngsuran"));
+export default function LapRiwayat() {
+  const dataLokal = JSON.parse(localStorage.getItem("dataRiwayatDetail"));
   const tokenLogin = useStore((state) => state.token);
   const [currentPage, setCurrentPage] = useState(1);
   const navigasi = useNavigate();
@@ -26,8 +26,18 @@ export default function View() {
     return res.data;
   };
 
+  const fetchSimulasi = async () => {
+    let url = `${baseUrl}/simulasi?pinjaman=${dataLokal.no_pinjaman}`;
+    const { data: res } = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${tokenLogin}`,
+      },
+    });
+    return res.data;
+  };
+
   const fetchAngsurans = async () => {
-    let url = `${baseUrl}/angsurans?page=${currentPage}&perpage=10&pinjaman=${dataLokal.no_pinjaman}`;
+    let url = `${baseUrl}/angsuransLap?pinjaman=${dataLokal.no_pinjaman}`;
     const { data: res } = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${tokenLogin}`,
@@ -37,44 +47,48 @@ export default function View() {
   };
 
   const {
-    isLoading: isLoadingProfile,
-    isError: isErrorProfile,
-    data: profiles,
-    error: errorProfile,
-  } = useQuery({
-    networkMode: `always`,
-    queryKey: ["profilAngsuranPinjaman"],
-    queryFn: fetchDatas,
-  });
-
-  const {
     isLoading,
     isError,
     data: angsurans,
     error,
   } = useQuery({
     networkMode: `always`,
-    queryKey: ["angsuran", currentPage],
+    queryKey: ["angsuran"],
     queryFn: fetchAngsurans,
   });
 
-  const handleEditButton = (data) => {
-    localStorage.setItem("dataEdit", JSON.stringify(data));
-    navigasi("edit", { replace: true });
-  };
+  const {
+    isLoading: isLoadingProfile,
+    isError: isErrorProfile,
+    data: profiles,
+    error: errorProfile,
+  } = useQuery({
+    networkMode: `always`,
+    queryKey: ["profilRiwayatPinjaman"],
+    queryFn: fetchDatas,
+  });
+
+  const {
+    isLoading: isLoadingSimulasi,
+    isError: isErrorSimulasi,
+    data: simulasis,
+    error: errorSimulasi,
+  } = useQuery({
+    networkMode: `always`,
+    queryKey: ["Simulasi"],
+    queryFn: fetchSimulasi,
+  });
 
   if (isLoadingProfile) return "loading....";
-  if (!isLoadingProfile && !isErrorProfile) {
-    localStorage.setItem("pinjamanProfile", JSON.stringify(profiles));
-  }
+
   return (
     <>
       <div className="card bg-white">
         <div className="border-second card-header">
-          <h3 className="mb-0 text-lg font-bold">Data Angsuran Pinjaman</h3>
+          <h3 className="mb-0 text-lg font-bold">Data Riwayat Pinjaman</h3>
           <div className="flex justify-center items-center">
             <Link
-              to={`/pinjaman/angsuran`}
+              to={`/pelaporan/lapriwayat`}
               className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"
             >
               <MdOutlineKeyboardBackspace /> &nbsp;
@@ -82,6 +96,7 @@ export default function View() {
             </Link>
           </div>
         </div>
+
         <div className="card-body">
           <div className="w-full border-2 border-third sm:flex sm:gap-x-2 sm:justify-between p-1">
             <div className="mb-2 sm:mb-0 sm:w-5/12">
@@ -198,17 +213,7 @@ export default function View() {
             </div>
           </div>
 
-          {!isLoadingProfile && !isErrorProfile && profiles?.sisa_pinjaman > 0 && (
-            <div className="flex mt-2">
-              <Link
-                to={"form"}
-                className="flex items-center btn2 bg-primary hover:opacity-80"
-              >
-                {/* <MdAddCircleOutline /> &nbsp; */}
-                <span>Bayar</span>
-              </Link>
-            </div>
-          )}
+          <h1 className="text-lg font-semibold">Simulasi Pinjaman</h1>
 
           <div className="flex flex-col overflow-x-auto">
             <div className="sm:-mx-6 lg:-mx-8 xl:-mx-0">
@@ -220,8 +225,86 @@ export default function View() {
                         scope="col"
                         className="border-r border-third px-6 py-4 w-1/12"
                       >
-                        #
+                        Bulan Ke
                       </th>
+                      <th
+                        scope="col"
+                        className="border-r border-third px-6 py-4"
+                      >
+                        Tanggal Jatuh Tempo
+                      </th>
+                      <th
+                        scope="col"
+                        className="border-r border-third px-6 py-4"
+                      >
+                        Bayar Pokok
+                      </th>
+                      <th
+                        scope="col"
+                        className="border-r border-third px-6 py-4"
+                      >
+                        Bayar Bunga
+                      </th>
+                      <th
+                        scope="col"
+                        className="border-r border-third px-6 py-4"
+                      >
+                        Total Tagihan Pokok + Bunga
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {isLoadingSimulasi && (
+                      <tr>
+                        <td colSpan={5} className="text-left">
+                          Loading....
+                        </td>
+                      </tr>
+                    )}
+                    {simulasis?.length > 0
+                      ? simulasis?.map((data, index) => (
+                          <tr
+                            className="border-b font-medium even:bg-white odd:bg-slate-100"
+                            key={index}
+                          >
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
+                              {data.bulan}
+                            </td>
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
+                              {ToDate2(data.jatuh_tempo)}
+                            </td>
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
+                              <NumberFormat value={data.pokok} />
+                            </td>
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
+                              <NumberFormat value={data.bunga} />
+                            </td>
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
+                              <NumberFormat value={data.total} />
+                            </td>
+                          </tr>
+                        ))
+                      : !isLoadingSimulasi && (
+                          <tr>
+                            <td colSpan={5} className="text-center">
+                              Tidak Ada Data
+                            </td>
+                          </tr>
+                        )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <h1 className="text-lg font-semibold">Detail Transaksi Pinjaman</h1>
+
+          <div className="flex flex-col overflow-x-auto">
+            <div className="sm:-mx-6 lg:-mx-8 xl:-mx-0">
+              <div className="min-w-full py-2 sm:px-6 lg:px-8 xl:px-0">
+                <table className="min-w-full border-2 border-third text-center text-base font-light">
+                  <thead className="border-b border-third font-medium whitespace-nowrap">
+                    <tr className="bg-four">
                       <th
                         scope="col"
                         className="border-r border-third px-6 py-4"
@@ -258,93 +341,99 @@ export default function View() {
                       >
                         Bayar Denda
                       </th>
-                      <th
-                        scope="col"
-                        className="border-r border-third px-6 py-4 w-2/12"
-                      >
-                        Aksi
-                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {isLoading && (
                       <tr>
-                        <td colSpan={8} className="text-left">
+                        <td colSpan={5} className="text-left">
                           Loading....
                         </td>
                       </tr>
                     )}
-                    {angsurans?.data.length > 0
-                      ? angsurans?.data.map((data, index) => (
-                          <tr
-                            className="border-b font-medium even:bg-white odd:bg-slate-100"
-                            key={index}
-                          >
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 font-medium">
-                              {index + angsurans.from}
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {data.kode_transaksi}
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {ToDate(data.tanggal_transaksi)}
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {data.pembayaran_ke}
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
-                              <NumberFormat value={data.pokok_bayar} />
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
-                              <NumberFormat value={data.bunga_bayar} />
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
-                              <NumberFormat value={data.denda_bayar} />
-                            </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2">
-                              <div className="flex items-center">
-                                <button
-                                  className="btn2 bg-orange-500 hover:opacity-80 flex items-center"
-                                  onClick={() => handleEditButton(data)}
-                                >
-                                  <MdEdit /> &nbsp;
-                                  <span>Edit</span>
-                                </button>
-                                &nbsp;
-                                <button
-                                  className="btn2 bg-blue-600 hover:opacity-80 flex items-center"
-                                  // onClick={() => handleAngsuran(data)}
-                                >
-                                  {/* <MdPayment /> &nbsp; */}
-                                  <span>Cetak Nota</span>
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
+                    {angsurans?.length > 0
+                      ? angsurans?.map((data, index) => {
+                          return (
+                            <tr
+                              className="border-b font-medium even:bg-white odd:bg-slate-100"
+                              key={index}
+                            >
+                              <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
+                                {data.kode_transaksi}
+                              </td>
+                              <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
+                                {ToDate2(data.tanggal_transaksi)}
+                              </td>
+                              <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
+                                {data.pembayaran_ke}
+                              </td>
+                              <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
+                                <NumberFormat value={data.pokok_bayar} />
+                              </td>
+                              <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
+                                <NumberFormat value={data.bunga_bayar} />
+                              </td>
+                              <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
+                                <NumberFormat value={data.denda_bayar} />
+                              </td>
+                            </tr>
+                          );
+                        })
                       : !isLoading && (
                           <tr>
-                            <td colSpan={8} className="text-center">
+                            <td colSpan={5} className="text-center">
                               Tidak Ada Data
                             </td>
                           </tr>
                         )}
                   </tbody>
+                  <tfoot>
+                    <tr className="font-medium even:bg-white odd:bg-slate-100">
+                      <td
+                        colSpan={3}
+                        className="whitespace-nowrap border-r border-t-2 border-third px-6 py-2 text-center"
+                      >
+                        Total
+                      </td>
+                      <td className="whitespace-nowrap border-r border-t-2 border-third px-6 py-2 text-right">
+                        <NumberFormat
+                          value={
+                            angsurans?.length > 0
+                              ? angsurans.reduce((total, item) => {
+                                  return total + item.pokok_bayar;
+                                }, 0)
+                              : 0
+                          }
+                        />
+                      </td>
+                      <td className="whitespace-nowrap border-r border-t-2 border-third px-6 py-2 text-right">
+                      <NumberFormat
+                          value={
+                            angsurans?.length > 0
+                              ? angsurans.reduce((total, item) => {
+                                  return total + item.bunga_bayar;
+                                }, 0)
+                              : 0
+                          }
+                        />
+                      </td>
+                      <td className="whitespace-nowrap border-r border-t-2 border-third px-6 py-2 text-right">
+                      <NumberFormat
+                          value={
+                            angsurans?.length > 0
+                              ? angsurans.reduce((total, item) => {
+                                  return total + item.denda_bayar;
+                                }, 0)
+                              : 0
+                          }
+                        />
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>
           </div>
-          {angsurans ? (
-            <Pagination
-              className="pagination-bar float-right mb-3"
-              currentPage={currentPage}
-              totalCount={angsurans.total}
-              pageSize={angsurans.per_page}
-              onPageChange={(page) => setCurrentPage(page)}
-            />
-          ) : (
-            false
-          )}
         </div>
       </div>
     </>

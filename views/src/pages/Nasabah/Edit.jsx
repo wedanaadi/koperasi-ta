@@ -106,6 +106,7 @@ export default function Edit() {
   }, []);
 
   const createNasabahMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["nasabah", 1] });

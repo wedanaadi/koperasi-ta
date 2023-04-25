@@ -72,11 +72,13 @@ export default function View() {
     error,
     refetch,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["penarikan", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
   const deleteSetoranMutation = useMutation({
+    networkMode: `always`,
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1);

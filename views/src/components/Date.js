@@ -5,6 +5,11 @@ export const ConvertToEpoch = (date) => {
   return myEpoch;
 };
 
+export const ToDate2 = (date) => {
+  let dateProps = new Date(date);
+  return dateProps.toLocaleDateString();
+};
+
 export const DateIndo = (date) => {
   const hari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
   const bulan = [

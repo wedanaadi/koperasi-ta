@@ -23,6 +23,7 @@ export default function Login() {
   const navigasi = useNavigate();
 
   const createMutation = useMutation({
+    networkMode: `always`,
     mutationFn: apiLogin,
     onSuccess: (res) => {
       setWaiting(false);

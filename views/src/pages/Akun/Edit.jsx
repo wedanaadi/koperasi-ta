@@ -33,6 +33,7 @@ export default function Edit() {
   }, []);
 
   const createAkunMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["akun", 1] });

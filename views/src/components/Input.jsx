@@ -2,7 +2,7 @@ import { NumericFormat } from "react-number-format";
 import SelectComponent from "./Tailwind/Select";
 import Datepicker from "react-tailwindcss-datepicker";
 
-export const NumberFormat = ({ value, decimalScale=0 }) => {
+export const NumberFormat = ({ value, decimalScale = 0 }) => {
   return (
     <NumericFormat
       displayType="text"
@@ -15,18 +15,35 @@ export const NumberFormat = ({ value, decimalScale=0 }) => {
   );
 };
 
-export const InputFormat = ({ value, handle, label, validasi, flex=false, disabled=false, alias="", decimalScale=0 }) => {
+export const InputFormat = ({
+  value,
+  handle,
+  label,
+  validasi,
+  flex = false,
+  disabled = false,
+  alias = "",
+  decimalScale = 0,
+}) => {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
-    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
+    <div
+      className={`mb-6 ${
+        flex && "sm:flex whitespace-nowrap gap-x-4 items-center"
+      }`}
+    >
       <label
-        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'w-1/2'}`}
+        className={`block mb-2 text-primary font-semibold text-lg ${
+          flex && "w-1/2"
+        }`}
         htmlFor={label.toLowerCase()}
       >
         {alias !== "" ? alias : label}
       </label>
       <NumericFormat
-        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
+        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${
+          disabled && "bg-four rounded-md"
+        }`}
         displayType="input"
         value={value[name]}
         thousandSeparator="."
@@ -45,18 +62,34 @@ export const InputFormat = ({ value, handle, label, validasi, flex=false, disabl
   );
 };
 
-export const InputDecimal = ({ value, handle, label, validasi, flex=false, disabled=false, alias="" }) => {
+export const InputDecimal = ({
+  value,
+  handle,
+  label,
+  validasi,
+  flex = false,
+  disabled = false,
+  alias = "",
+}) => {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
-    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
+    <div
+      className={`mb-6 ${
+        flex && "sm:flex whitespace-nowrap gap-x-4 items-center"
+      }`}
+    >
       <label
-        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'sm:w-1/2'}`}
+        className={`block mb-2 text-primary font-semibold text-lg ${
+          flex && "sm:w-1/2"
+        }`}
         htmlFor={label.toLowerCase()}
       >
         {alias !== "" ? alias : label}
       </label>
       <NumericFormat
-        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
+        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${
+          disabled && "bg-four rounded-md"
+        }`}
         displayType="input"
         value={value[name]}
         thousandSeparator="."
@@ -83,21 +116,29 @@ export function Input({
   validasi,
   alias = "",
   type = "text",
-  flex=false,
-  disabled=false
+  flex = false,
+  disabled = false,
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   // console.log(name);
   return (
-    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
+    <div
+      className={`mb-6 ${
+        flex && "sm:flex whitespace-nowrap gap-x-4 items-center"
+      }`}
+    >
       <label
-        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'w-1/2'}`}
+        className={`block mb-2 text-primary font-semibold text-lg ${
+          flex && "w-1/2"
+        }`}
         htmlFor={label.toLowerCase()}
       >
         {alias !== "" ? alias : label}
       </label>
       <input
-        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
+        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${
+          disabled && "bg-four rounded-md"
+        }`}
         type={type}
         name={name}
         value={value[name]}
@@ -119,32 +160,46 @@ export function DateInput({
   handle,
   label,
   validasi,
+  asSingle = true,
   alias = "",
-  flex=false,
-  disabled=false
+  flex = false,
+  disabled = false,
+  hiddenLabel = false,
+  hiddenvalidasi = false,
+  marginBottom='mb-6'
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   // console.log(name);
   return (
-    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
-      <label
-        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'sm:w-1/2'}`}
-        htmlFor={label.toLowerCase()}
-      >
-        {alias !== "" ? alias : label}
-      </label>
+    <div
+      className={`${marginBottom} ${
+        flex && "sm:flex whitespace-nowrap gap-x-4 items-center"
+      }`}
+    >
+      {!hiddenLabel && (
+        <label
+          className={`block mb-2 text-primary font-semibold text-lg ${
+            flex && "sm:w-1/2"
+          }`}
+          htmlFor={label.toLowerCase()}
+        >
+          {alias !== "" ? alias : label}
+        </label>
+      )}
       <Datepicker
         useRange={false}
-        asSingle={true}
+        asSingle={asSingle}
         value={value}
         onChange={handle}
         disabled={disabled}
         displayFormat={"DD/MM/YYYY"}
-        containerClassName={`mt-0 ${flex && 'sm:w-full relative'}`}
+        containerClassName={`mt-0 ${flex && "sm:w-full relative"}`}
         toggleClassName="hidden"
-        inputClassName={`w-full relative rounded-md focus:ring-0 font-normal p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
+        inputClassName={`w-full relative rounded-md focus:ring-0 font-normal p-2 border-2 border-second focus:bg-four rounded-md ${
+          disabled && "bg-four rounded-md"
+        }`}
       />
-      {validasi[`${name}`]?.map((msg, index) => (
+      {!hiddenvalidasi && validasi[`${name}`]?.map((msg, index) => (
         <span key={index} className="text-sm text-red-600 font-semibold">
           {msg}
         </span>
@@ -160,20 +215,24 @@ export function Textarea({
   validasi,
   rows = 5,
   alias = "",
-  flex=false,
-  disabled=false,
+  flex = false,
+  disabled = false,
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
-    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4'}`}>
+    <div className={`mb-6 ${flex && "sm:flex whitespace-nowrap gap-x-4"}`}>
       <label
-        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'w-1/2'}`}
+        className={`block mb-2 text-primary font-semibold text-lg ${
+          flex && "w-1/2"
+        }`}
         htmlFor={label.toLowerCase()}
       >
         {alias !== "" ? alias : label}
       </label>
       <textarea
-        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
+        className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${
+          disabled && "bg-four rounded-md"
+        }`}
         name={name}
         onChange={handle}
         placeholder={label}
@@ -197,14 +256,20 @@ export function Select({
   validasi,
   options,
   alias = "",
-  ccPosition="",
-  flex=false
+  ccPosition = "",
+  flex = false,
 }) {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
-    <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4'} ${ccPosition==='absolute' && 'items-center'}`}>
+    <div
+      className={`mb-6 ${flex && "sm:flex whitespace-nowrap gap-x-4"} ${
+        ccPosition === "absolute" && "items-center"
+      }`}
+    >
       <label
-        className={`block mb-2 text-primary font-semibold text-lg ${flex && 'sm:w-1/2'}`}
+        className={`block mb-2 text-primary font-semibold text-lg ${
+          flex && "sm:w-1/2"
+        }`}
         htmlFor={label.toLowerCase()}
       >
         {alias !== "" ? alias : label}

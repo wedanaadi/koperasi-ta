@@ -6,12 +6,12 @@ use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Kas extends Model
+class MasterAkun extends Model
 {
-  use HasFactory;
-  use Uuid;
+    use HasFactory;
+    use Uuid;
 
-  protected $table = 'transaksi_kas';
+  protected $table = 'master_trx';
   protected $guarded = [];
   public $timestamps = false;
   protected $keyType = 'string';
@@ -24,14 +24,7 @@ class Kas extends Model
     });
     $query->when($filters['periode'] ?? false, function ($query, $params) {
       $periode = explode(',', $params);
-      return $query->whereRaw("transaksi_kas.tanggal_transaksi >= '" . $periode[0] . "' AND transaksi_kas.tanggal_transaksi < '" . $periode[1] . "' ");
+      return $query->whereRaw("tanggal >= '" . $periode[0] . "' AND tanggal < '" . $periode[1] . "' ");
     });
-  }
-
-  public function untukAkun() {
-    return $this->belongsTo(Akun::class, "untuk_akun", "id");
-  }
-  public function dariAkun() {
-    return $this->belongsTo(Akun::class, "dari_akun", "id");
   }
 }

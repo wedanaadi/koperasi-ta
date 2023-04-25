@@ -55,6 +55,7 @@ export default function Edit() {
     data: akuns,
     error: errorAkun,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectAkun", tokenLogin],
     queryFn: listSelect,
   });
@@ -65,6 +66,7 @@ export default function Edit() {
     data: nasabahs,
     error: errorNasabah,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectNasabah", tokenLogin],
     queryFn: listSelectNasabah,
   });
@@ -75,6 +77,7 @@ export default function Edit() {
     data: jenisSimpanans,
     error: errorJS,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectJS", tokenLogin],
     queryFn: listSelectJenisSimpanan,
   });
@@ -85,6 +88,7 @@ export default function Edit() {
     data: marketings,
     error: errorMarketing,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectMarketing", tokenLogin],
     queryFn: listSelectMarketing,
   });
@@ -169,6 +173,7 @@ export default function Edit() {
   }, [marketings]);
 
   const createPengeluaranMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["setoran", 1] });

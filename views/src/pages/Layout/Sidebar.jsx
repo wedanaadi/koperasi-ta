@@ -23,6 +23,7 @@ export default function Sidebar({ open }) {
   const { pathname } = useLocation();
 
   const createLogoutMutation = useMutation({
+    networkMode: `always`,
     mutationFn: apiLogout,
     onSuccess: (res) => {
       actionLogin({

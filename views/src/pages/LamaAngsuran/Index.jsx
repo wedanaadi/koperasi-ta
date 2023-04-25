@@ -70,11 +70,13 @@ export default function Index() {
     error,
     refetch,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["lamaangsuran", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
   const deleteLamaAngsuranMutation = useMutation({
+    networkMode: `always`,
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1)

@@ -31,6 +31,7 @@ export default function Edit() {
   }, []);
 
   const createMarketingMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lamaangsuran", 1] });

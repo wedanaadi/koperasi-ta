@@ -1,6 +1,7 @@
 import { element } from "prop-types";
 import React, { Suspense } from "react";
 import { RequiredLogin } from "./components/MiddlewareAuth";
+import {Outlet} from "react-router-dom"
 
 const Home = React.lazy(() => import("./pages/Home"));
 const Login = React.lazy(() => import("./pages/Login"));
@@ -18,6 +19,7 @@ const Marketing = React.lazy(() => import("./pages/Marketing/Index"));
 const AddMarketing = React.lazy(() => import("./pages/Marketing/Add"));
 const EditMarketing = React.lazy(() => import("./pages/Marketing/Edit"));
 const Akun = React.lazy(() => import("./pages/Akun/Index"));
+const LapAkun = React.lazy(() => import("./pages/Akun/LapAkun"));
 const AddAkun = React.lazy(() => import("./pages/Akun/Add"));
 const EditAkun = React.lazy(() => import("./pages/Akun/Edit"));
 const Karyawan = React.lazy(() => import("./pages/Karyawan/Index"));
@@ -30,6 +32,7 @@ const Setting = React.lazy(() => import("./pages/setting/Index"));
 const BA = React.lazy(() => import("./pages/setting/BiayaAdmin"));
 const Sistem = React.lazy(() => import("./pages/setting/Sistem"));
 const TransaksiKas = React.lazy(() => import("./pages/TransaksiKas/Index"));
+const LapKas = React.lazy(() => import("./pages/TransaksiKas/LapTrx"));
 const KasMasuk = React.lazy(() =>
   import("./pages/TransaksiKas/KasPemasukan/View")
 );
@@ -58,6 +61,9 @@ const EditPenyesuain = React.lazy(() =>
   import("./pages/TransaksiKas/KasPenyesuain/Edit")
 );
 const Simpanan = React.lazy(() => import("./pages/Simpanan/Index"));
+const ListLapSimpanan = React.lazy(() => import("./pages/Simpanan/ListLapSimpanan"));
+const LapRekSimpanan = React.lazy(() => import("./pages/Simpanan/LapSimpanan"));
+const LapKasSimpanan = React.lazy(() => import("./pages/Simpanan/KasSimpanan"));
 const Setoran = React.lazy(() => import("./pages/Simpanan/Setoran/Setoran"));
 const ViewSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/View"));
 const AddSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/Add"));
@@ -83,6 +89,9 @@ const IndexPinjaman = React.lazy(() => import("./pages/pinjaman/Index"));
 const ViewPinjaman = React.lazy(() => import("./pages/pinjaman/View"));
 const AddPinjaman = React.lazy(() => import("./pages/pinjaman/Add"));
 const EditPinjaman = React.lazy(() => import("./pages/pinjaman/Edit"));
+const ListRiwayat = React.lazy(() => import("./pages/pinjaman/ListRiwayat"));
+const LapRiwayat = React.lazy(() => import("./pages/pinjaman/LapRiwayat"));
+const LapPinjaman = React.lazy(() => import("./pages/pinjaman/LapPinjaman"));
 
 const IndexAngsuran = React.lazy(() => import("./pages/Angsuran/Index"));
 const ListPinjaman = React.lazy(() => import("./pages/Angsuran/ListPinjaman"));
@@ -544,7 +553,7 @@ export default [
                 path: `bayar`,
                 element: (
                   <Suspense>
-                    <ViewAngsuran/>
+                    <ViewAngsuran />
                   </Suspense>
                 ),
               },
@@ -552,7 +561,7 @@ export default [
                 path: `bayar/form`,
                 element: (
                   <Suspense>
-                    <FormAngsuran/>
+                    <FormAngsuran />
                   </Suspense>
                 ),
               },
@@ -560,11 +569,85 @@ export default [
                 path: `bayar/edit`,
                 element: (
                   <Suspense>
-                    <FormEditAngsuran/>
+                    <FormEditAngsuran />
                   </Suspense>
                 ),
               },
             ],
+          },
+        ],
+      },
+      {
+        path: `pelaporan`,
+        element: (
+          <Suspense>
+            <Outlet/>
+          </Suspense>
+        ),
+        children: [
+          {
+            path: `lapsimpanan`,
+            element: (
+              <Suspense>
+                <ListLapSimpanan/>
+              </Suspense>
+            ),
+          },
+          {
+            path: `lapsimpanan/detail`,
+            element: (
+              <Suspense>
+                <LapRekSimpanan/>
+              </Suspense>
+            ),
+          },
+          {
+            path: `lapriwayat`,
+            element: (
+              <Suspense>
+                <ListRiwayat/>
+              </Suspense>
+            ),
+          },
+          {
+            path: `lapriwayat/detail`,
+            element: (
+              <Suspense>
+                <LapRiwayat/>
+              </Suspense>
+            ),
+          },
+          {
+            path: `lappinjaman`,
+            element: (
+              <Suspense>
+                <LapPinjaman/>
+              </Suspense>
+            ),
+          },
+          {
+            path: `lapkas`,
+            element: (
+              <Suspense>
+                <LapKas/>
+              </Suspense>
+            ),
+          },
+          {
+            path: `lapkassimpanan`,
+            element: (
+              <Suspense>
+                <LapKasSimpanan />
+              </Suspense>
+            ),
+          },
+          {
+            path: `lapakun`,
+            element: (
+              <Suspense>
+                <LapAkun />
+              </Suspense>
+            ),
           },
         ],
       },

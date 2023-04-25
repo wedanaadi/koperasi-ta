@@ -31,6 +31,7 @@ export default function Edit() {
   }, []);
 
   const createJSMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jenisSimpanan", 1] });

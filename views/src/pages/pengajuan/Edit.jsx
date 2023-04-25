@@ -56,6 +56,7 @@ export default function Edit() {
     data: nasabahs,
     error: errorNasabah,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectNasabah", tokenLogin],
     queryFn: listSelectNasabah,
   });
@@ -66,6 +67,7 @@ export default function Edit() {
     data: marketings,
     error: errorMarketing,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectMarketing", tokenLogin],
     queryFn: listSelectMarketing,
   });
@@ -76,6 +78,7 @@ export default function Edit() {
     data: jangkaWaktus,
     error: errorJW,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectJW", tokenLogin],
     queryFn: listSelectJW,
   });
@@ -149,6 +152,7 @@ export default function Edit() {
   }, [jangkaWaktus]);
 
   const createBAMutation = useMutation({
+    networkMode: `always`,
     mutationFn: findNasabah,
     onSuccess: (res) => {
       const { biaya, nasabah } = res.data;
@@ -192,6 +196,7 @@ export default function Edit() {
   });
 
   const createPengajuanMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pengajuan", 1] });

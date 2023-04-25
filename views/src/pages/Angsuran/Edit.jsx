@@ -56,6 +56,7 @@ export default function Edit() {
     data: akuns,
     error: errorAkun,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectAkun", tokenLogin],
     queryFn: listSelect,
   });
@@ -66,6 +67,7 @@ export default function Edit() {
     data: marketings,
     error: errorMarketing,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectMarketing", tokenLogin],
     queryFn: listSelectMarketing,
   });
@@ -141,6 +143,7 @@ export default function Edit() {
   }, [marketings]);
 
   const updateAngsuranMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["angsuran", 1] });

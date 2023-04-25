@@ -70,11 +70,13 @@ export default function View() {
     error,
     refetch,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["kaskeluar", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
   const deleteKasMasukMutation = useMutation({
+    networkMode: `always`,
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1);

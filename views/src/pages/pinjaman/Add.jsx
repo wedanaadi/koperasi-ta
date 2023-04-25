@@ -55,6 +55,7 @@ export default function Add() {
     data: nasabahs,
     error: errorNasabah,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectNasabah", tokenLogin],
     queryFn: listSelectNasabah,
   });
@@ -65,6 +66,7 @@ export default function Add() {
     data: akuns,
     error: errorAkun,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectAkun", tokenLogin],
     queryFn: listSelect,
   });
@@ -75,6 +77,7 @@ export default function Add() {
     data: jangkaWaktus,
     error: errorJW,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectJW", tokenLogin],
     queryFn: listSelectJW,
   });
@@ -110,6 +113,7 @@ export default function Add() {
   ]);
 
   const createBAMutation = useMutation({
+    networkMode: `always`,
     mutationFn: findNasabah,
     onSuccess: (res) => {
       const {biaya,nasabah} = res.data;
@@ -153,6 +157,7 @@ export default function Add() {
   });
 
   const createPinjamanMutation = useMutation({
+    networkMode: `always`,
     mutationFn: createData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pinjaman", 1] });

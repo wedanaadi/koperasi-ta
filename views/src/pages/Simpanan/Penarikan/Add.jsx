@@ -53,6 +53,7 @@ export default function Add() {
     data: akuns,
     error: errorAkun,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectAkun", tokenLogin],
     queryFn: listSelect,
   });
@@ -63,6 +64,7 @@ export default function Add() {
     data: nasabahs,
     error: errorNasabah,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectNasabah", tokenLogin],
     queryFn: listSelectNasabah,
   });
@@ -73,6 +75,7 @@ export default function Add() {
     data: jenisSimpanans,
     error: errorJS,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectJS", tokenLogin],
     queryFn: listSelectJenisSimpanan,
   });
@@ -83,6 +86,7 @@ export default function Add() {
     data: marketings,
     error: errorMarketing,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectMarketing", tokenLogin],
     queryFn: listSelectMarketing,
   });
@@ -101,6 +105,7 @@ export default function Add() {
   }
 
   const createPengeluaranMutation = useMutation({
+    networkMode: `always`,
     mutationFn: createData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["penarikan", 1] });

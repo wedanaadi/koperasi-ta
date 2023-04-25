@@ -55,6 +55,7 @@ export default function Edit() {
     data: akuns,
     error: errorAkun,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectAkun", tokenLogin],
     queryFn: listSelect,
   });
@@ -94,6 +95,7 @@ export default function Edit() {
   }, [akuns]);
 
   const createPengeluaranMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pengeluaran", 1] });

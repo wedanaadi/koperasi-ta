@@ -68,15 +68,19 @@ export default function Index() {
     error,
     refetch,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["akun", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
   const deleteAkunMutation = useMutation({
+    networkMode: `always`,
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1);
-      queryClient.invalidateQueries({ queryKey: ["akun"] });
+      queryClient.invalidateQueries({
+        queryKey: ["akun"],
+      });
       toastChange({
         id: "NotifAkun",
         content: {

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class KasController extends Controller
 {
@@ -68,6 +69,25 @@ class KasController extends Controller
         'created_at' => round(Carbon::now()->timestamp * 1000),
         'updated_at' => round(Carbon::now()->timestamp * 1000),
       ];
+      $payloadMaster = [
+        [
+          'id' => Str::uuid()->toString(),
+          'relasi_id' => $newID,
+          'akun' => $request->untuk_akun,
+          'debet' => $request->jumlah,
+          'kredit' => 0,
+          'tanggal' => $request->tanggal_transaksi,
+        ],
+        [
+          'id' => Str::uuid()->toString(),
+          'relasi_id' => $newID,
+          'akun' => $request->dari_akun,
+          'kredit' => $request->jumlah,
+          'debet' => 0,
+          'tanggal' => $request->tanggal_transaksi,
+        ]
+      ];
+      DB::table('master_trx')->insert($payloadMaster);
       Kas::create($payload);
       DB::commit();
       return response()->json(['msg' => 'Successfuly created data', "data" => $payload, 'error' => null], 201);
@@ -96,6 +116,7 @@ class KasController extends Controller
     $find = Kas::find($id);
     DB::beginTransaction();
     try {
+      DB::table('master_trx')->where('relasi_id',$find->kode_transaksi)->delete();
       $payload = [
         'tanggal_transaksi' => $request->tanggal_transaksi,
         'keterangan' => $request->keterangan,
@@ -105,6 +126,25 @@ class KasController extends Controller
         'jumlah' => $request->jumlah,
         'updated_at' => round(Carbon::now()->timestamp * 1000),
       ];
+      $payloadMaster = [
+        [
+          'id' => Str::uuid()->toString(),
+          'relasi_id' => $find->kode_transaksi,
+          'akun' => $request->untuk_akun,
+          'debet' => $request->jumlah,
+          'kredit' => 0,
+          'tanggal' => $request->tanggal_transaksi,
+        ],
+        [
+          'id' => Str::uuid()->toString(),
+          'relasi_id' => $find->kode_transaksi,
+          'akun' => $request->dari_akun,
+          'kredit' => $request->jumlah,
+          'debet' => 0,
+          'tanggal' => $request->tanggal_transaksi,
+        ]
+      ];
+      DB::table('master_trx')->insert($payloadMaster);
       $find->update($payload);
       DB::commit();
       return response()->json(['msg' => 'Successfuly update data', "data" => $payload, 'error' => null], 201);
@@ -130,5 +170,22 @@ class KasController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'Failed delete data', "data" => null, 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function lap_kas()
+  {
+    $periode = explode(',',request(['periode'])['periode']);
+    $saldoPrev = 0;
+    $sebelum = Kas::where('tanggal_transaksi','<',$periode[0])->get();
+    foreach ($sebelum as $v) {
+      $saldoPrev += $v->jumlah;
+    }
+    $data = Kas::filter(request(['search','periode']))
+      ->with('untukAkun','dariAkun')
+      ->where('is_aktif', "1")
+      ->where('jenis_transaksi',request(['jenis']))
+      ->OrderBy('tanggal_transaksi', 'ASC')
+      ->paginate(request('perpage'));
+    return response()->json(['msg' => 'Get data', "data" => ['lap' => $data, 'prev' => $saldoPrev], 'error' => []], 200);
   }
 }

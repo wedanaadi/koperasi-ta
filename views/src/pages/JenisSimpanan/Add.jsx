@@ -21,6 +21,7 @@ export default function Add() {
   const tokenLogin = useStore((state) => state.token);
 
   const createJSMutation = useMutation({
+    networkMode: `always`,
     mutationFn: createData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jenisSimpanan", 1] });

@@ -69,11 +69,13 @@ export default function Index() {
     error,
     refetch,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["jenisSimpanan", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
   const deleteJenisSimpananMutation = useMutation({
+    networkMode: `always`,
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1)

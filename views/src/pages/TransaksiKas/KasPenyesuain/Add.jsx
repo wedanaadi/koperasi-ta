@@ -38,6 +38,7 @@ export default function Add() {
     data: akuns,
     error: errorAkun,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["listSelectAkun", tokenLogin],
     queryFn: listSelect,
   });
@@ -47,6 +48,7 @@ export default function Add() {
   }
 
   const createPengeluaranMutation = useMutation({
+    networkMode: `always`,
     mutationFn: createData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["penyesuain", 1] });

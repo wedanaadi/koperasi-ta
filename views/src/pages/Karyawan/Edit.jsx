@@ -54,6 +54,7 @@ export default function Edit() {
   }, []);
 
   const createKaryawanMutation = useMutation({
+    networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["karyawan", 1] });

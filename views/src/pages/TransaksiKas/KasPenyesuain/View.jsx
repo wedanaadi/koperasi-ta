@@ -70,11 +70,13 @@ export default function View() {
     error,
     refetch,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["penyesuain", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
   const deleteKasPenyesuainMutation = useMutation({
+    networkMode: `always`,
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1);

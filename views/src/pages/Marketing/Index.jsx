@@ -68,11 +68,13 @@ export default function Index() {
     error,
     refetch,
   } = useQuery({
+    networkMode: `always`,
     queryKey: ["marketing", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
   const deleteMarketingMutation = useMutation({
+    networkMode: `always`,
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1)

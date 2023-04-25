@@ -23,6 +23,10 @@ class Pinjaman extends Model
         ->orWhere('id_nasabah', 'like', '%' . $search . '%')
         ->orWhere('nama_nasabah', 'like', '%' . $search . '%');
     });
+    $query->when($filters['periode'] ?? false, function ($query, $params) {
+      $periode = explode(',', $params);
+      return $query->whereRaw("pinjamans.tanggal_pinjaman >= '" . $periode[0] . "' AND pinjamans.tanggal_pinjaman < '" . $periode[1] . "' ");
+    });
   }
 
   public function jangka_waktu() {

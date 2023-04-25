@@ -19,6 +19,10 @@ class SimpananDetail extends Model
     $query->when($filters['search'] ?? false, function($query, $search){
       return $query->where('keterangan', 'like', '%' . $search . '%');
     });
+    $query->when($filters['periode'] ?? false, function ($query, $params) {
+      $periode = explode(',', $params);
+      return $query->whereRaw("simpanan_detail.tanggal_transaksi >= '" . $periode[0] . "' AND simpanan_detail.tanggal_transaksi < '" . $periode[1] . "' ");
+    });
   }
 
   public function simpanan() {

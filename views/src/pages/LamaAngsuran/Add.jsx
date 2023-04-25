@@ -20,6 +20,7 @@ export default function Add() {
   const tokenLogin = useStore((state) => state.token);
 
   const createLamaAngsuranMutation = useMutation({
+    networkMode: `always`,
     mutationFn: createData,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lamaangsuran", 1] });
