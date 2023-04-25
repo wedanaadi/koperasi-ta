@@ -2,7 +2,7 @@ import { NumericFormat } from "react-number-format";
 import SelectComponent from "./Tailwind/Select";
 import Datepicker from "react-tailwindcss-datepicker";
 
-export const NumberFormat = ({ value }) => {
+export const NumberFormat = ({ value, decimalScale=0 }) => {
   return (
     <NumericFormat
       displayType="text"
@@ -10,11 +10,12 @@ export const NumberFormat = ({ value }) => {
       thousandSeparator="."
       decimalSeparator=","
       allowNegative={false}
+      decimalScale={decimalScale}
     />
   );
 };
 
-export const InputFormat = ({ value, handle, label, validasi, flex=false, disabled=false }) => {
+export const InputFormat = ({ value, handle, label, validasi, flex=false, disabled=false, alias="", decimalScale=0 }) => {
   const name = label.replace(/\s+/g, "_").toLowerCase();
   return (
     <div className={`mb-6 ${flex && 'sm:flex whitespace-nowrap gap-x-4 items-center'}`}>
@@ -22,7 +23,7 @@ export const InputFormat = ({ value, handle, label, validasi, flex=false, disabl
         className={`block mb-2 text-primary font-semibold text-lg ${flex && 'w-1/2'}`}
         htmlFor={label.toLowerCase()}
       >
-        {label}
+        {alias !== "" ? alias : label}
       </label>
       <NumericFormat
         className={`w-full p-2 border-2 border-second focus:bg-four rounded-md ${disabled && 'bg-four rounded-md'}`}
@@ -33,6 +34,7 @@ export const InputFormat = ({ value, handle, label, validasi, flex=false, disabl
         allowNegative={false}
         onValueChange={handle}
         disabled={disabled}
+        decimalScale={decimalScale}
       />
       {validasi[`${name}`]?.map((msg, index) => (
         <span key={index} className="text-sm text-red-600 font-semibold">

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AkunController;
+use App\Http\Controllers\AngsuranController;
 use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\BiayaAdminController;
 use App\Http\Controllers\JenisSimpananController;
@@ -92,6 +93,12 @@ Route::get("/pinjaman", [PinjamanController::class, 'index'])->name('getPinjaman
 Route::post("/pinjaman", [PinjamanController::class, 'store'])->name('postPinjaman');
 Route::put("/pinjaman/{id}", [PinjamanController::class, 'update'])->name('updatePinjaman');
 Route::delete("/pinjaman/{id}", [PinjamanController::class, 'destroy'])->name('deletePinjaman');
+
+Route::get("/angsurans", [AngsuranController::class, 'index'])->name('getAngsuran');
+Route::get("/angsuranpinjaman", [PinjamanController::class, 'list_pinjaman'])->name('getListPinjaman');
+Route::get("/angsuranprofil/{id}", [AngsuranController::class, 'profile'])->name('getProfile');
+Route::post("/angsuran", [AngsuranController::class, 'store'])->name('postAngsuran');
+Route::put("/angsuran/{id}", [AngsuranController::class, 'update'])->name('updateAngsuran');
 
 Route::middleware('auth:sanctum')->group(function () {
   Route::post("/logout", [AuthenticationController::class, 'logout'])->name('logout');

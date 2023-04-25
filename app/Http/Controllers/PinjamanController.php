@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Libraries\Fungsi;
+use App\Models\BiayaAdmin;
 use App\Models\LamaAngsuran;
+use App\Models\Nasabah;
 use App\Models\Pinjaman;
 use App\Models\SimulasiAngsuran;
 use Carbon\Carbon;
@@ -20,19 +22,12 @@ class PinjamanController extends Controller
   public function index()
   {
     $data = Pinjaman::filter(request(['search']))
-      ->with('jangkaWaktu')
+      ->with('jangka_waktu')
       ->where('is_aktif', "1")
       ->OrderBy('no_pinjaman', 'ASC')
       ->paginate(request('perpage'));
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
   }
-
-  // public function paginateCustom($items, $perPage = 5, $page = null, $options = [])
-  // {
-  //   $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
-  //   $items = $items instanceof Collection ? $items : Collection::make($items);
-  //   return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
-  // }
 
   public function store(Request $request)
   {
@@ -92,7 +87,7 @@ class PinjamanController extends Controller
           'id' => Str::uuid()->toString(),
           'bulan' => $i,
           'pinjaman_id' => $newID,
-          'jatuh_tempo' => Carbon::createFromTimestamp($request->tanggal_pinjaman / 1000)->addMonths($i)->timestamp,
+          'jatuh_tempo' => (Carbon::createFromTimestamp($request->tanggal_pinjaman / 1000)->addMonths($i)->timestamp * 1000),
           'pokok' => round($besarPinjaman / $jangkaWaktu, 2),
           'bunga' => round($besarPinjaman * $sukuBunga, 2),
           'total' => round($besarPinjaman / $jangkaWaktu) + round($besarPinjaman * $sukuBunga),
@@ -157,7 +152,7 @@ class PinjamanController extends Controller
           'id' => Str::uuid()->toString(),
           'bulan' => $i,
           'pinjaman_id' => $find->no_pinjaman,
-          'jatuh_tempo' => Carbon::createFromTimestamp($request->tanggal_pinjaman / 1000)->addMonths($i)->timestamp,
+          'jatuh_tempo' => (Carbon::createFromTimestamp($request->tanggal_pinjaman / 1000)->addMonths($i)->timestamp * 1000),
           'pokok' => round($besarPinjaman / $jangkaWaktu, 2),
           'bunga' => round($besarPinjaman * $sukuBunga, 2),
           'total' => round($besarPinjaman / $jangkaWaktu) + round($besarPinjaman * $sukuBunga),
@@ -191,5 +186,49 @@ class PinjamanController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'Failed delete', "data" => null, 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function list_pinjaman()
+  {
+    $pinjaman = Pinjaman::filter(request(['search']))
+      ->where('is_aktif', "1")
+      ->where('status',"0")
+      ->OrderBy('no_pinjaman', 'ASC')
+      ->get();
+
+    $data = [];
+    foreach ($pinjaman as $p) {
+      $besarPinjaman = (int)$p->jumlah_pinjaman;
+      $sukuBunga = ((int)$p->suku_bunga / 100) / 12;
+      $jangkaWaktu = (int)LamaAngsuran::find($p->jangka_waktu)->lama_angsuran;
+      $isAnggota = Nasabah::where('id_nasabah',$p->id_nasabah)->first()->jabatan;
+      if($isAnggota==='bukan') {
+        $denda = BiayaAdmin::find('ba-2')->biaya_denda;
+      } else {
+        $denda = BiayaAdmin::find('ba-1')->biaya_denda;
+      }
+      array_push($data,[
+        'no_pinjaman' => $p->no_pinjaman,
+        'nama_nasabah' => $p->nama_nasabah,
+        'id_nasabah' => $p->id_nasabah,
+        'tanggal_pinjaman' => $p->tanggal_pinjaman,
+        'bakidebet' => $p->jumlah_pinjaman,
+        'pokok' => round($besarPinjaman / $jangkaWaktu,2),
+        'bunga' => round($besarPinjaman * $sukuBunga,2),
+        'denda' => $denda,
+        'jangka_waktu' => $jangkaWaktu,
+        'suku_bunga' => $p->suku_bunga,
+        'jatuh_tempo' => Carbon::createFromTimestamp($p->tanggal_pinjaman/1000)->format('d')
+      ]);
+    }
+    $data = $this->paginateCustom($data, 10);
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
+  public function paginateCustom($items, $perPage = 5, $page = null, $options = [])
+  {
+    $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+    $items = $items instanceof Collection ? $items : Collection::make($items);
+    return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
   }
 }

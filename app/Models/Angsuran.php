@@ -6,12 +6,12 @@ use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Pinjaman extends Model
+class Angsuran extends Model
 {
-  use HasFactory;
-  use Uuid;
+    use HasFactory;
+    use Uuid;
 
-  protected $table = 'pinjamans';
+  protected $table = 'angsurans';
   protected $guarded = [];
   public $timestamps = false;
   protected $keyType = 'string';
@@ -23,9 +23,5 @@ class Pinjaman extends Model
         ->orWhere('id_nasabah', 'like', '%' . $search . '%')
         ->orWhere('nama_nasabah', 'like', '%' . $search . '%');
     });
-  }
-
-  public function jangka_waktu() {
-    return $this->belongsTo(LamaAngsuran::class, "jangka_waktu", "id");
   }
 }

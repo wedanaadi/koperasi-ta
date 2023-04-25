@@ -84,6 +84,12 @@ const ViewPinjaman = React.lazy(() => import("./pages/pinjaman/View"));
 const AddPinjaman = React.lazy(() => import("./pages/pinjaman/Add"));
 const EditPinjaman = React.lazy(() => import("./pages/pinjaman/Edit"));
 
+const IndexAngsuran = React.lazy(() => import("./pages/Angsuran/Index"));
+const ListPinjaman = React.lazy(() => import("./pages/Angsuran/ListPinjaman"));
+const ViewAngsuran = React.lazy(() => import("./pages/Angsuran/View"));
+const FormAngsuran = React.lazy(() => import("./pages/Angsuran/Add"));
+const FormEditAngsuran = React.lazy(() => import("./pages/Angsuran/Edit"));
+
 export default [
   {
     path: `/`,
@@ -515,8 +521,50 @@ export default [
                     <EditPinjaman />
                   </Suspense>
                 ),
-              }
-            ]
+              },
+            ],
+          },
+          {
+            path: `angsuran`,
+            element: (
+              <Suspense>
+                <IndexAngsuran />
+              </Suspense>
+            ),
+            children: [
+              {
+                index: true,
+                element: (
+                  <Suspense>
+                    <ListPinjaman />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `bayar`,
+                element: (
+                  <Suspense>
+                    <ViewAngsuran/>
+                  </Suspense>
+                ),
+              },
+              {
+                path: `bayar/form`,
+                element: (
+                  <Suspense>
+                    <FormAngsuran/>
+                  </Suspense>
+                ),
+              },
+              {
+                path: `bayar/edit`,
+                element: (
+                  <Suspense>
+                    <FormEditAngsuran/>
+                  </Suspense>
+                ),
+              },
+            ],
           },
         ],
       },

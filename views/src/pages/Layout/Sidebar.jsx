@@ -9,10 +9,12 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import Menus from "../../components/menuSidebar.jsx";
 import logo from "../../assets/logo.png";
 import NavItem from "./NavItem/NavItem";
+import CapitalLetter from "../../components/CapitalFirstLetter"
 
 export default function Sidebar({ open }) {
   const [subMenuOpen, setSubMenuOpen] = useState(false);
   const tokenLogin = useStore((state) => state.token);
+  const dataLogin = useStore((state) => state.dataLogin);
   const actionLogin = useStore((state) => state.changeDataLogin);
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
@@ -104,7 +106,7 @@ export default function Sidebar({ open }) {
               Koperasi Karya Utama Mandiri
             </span>
             <h1 className="font-medium text-2xl text-center text-white p-2 mb-2">
-              Teller
+            {dataLogin?.jabatan ? CapitalLetter(dataLogin.jabatan) : 'Super User'}
             </h1>
             <hr />
           </div>

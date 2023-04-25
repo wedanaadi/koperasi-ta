@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { MdAddCircleOutline, MdDeleteOutline, MdEdit } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import Search from "../../components/Datatable/Search";
@@ -12,6 +12,8 @@ import ToDate from "../../components/Date";
 import { NumberFormat } from "../../components/Input";
 import { deleteData } from "../../api/Pinjaman";
 import Pagination from "../../components/Datatable/Pagination/Pagination";
+import { getRincian } from "../../api/Angsuran";
+const Rincian = React.lazy(() => import("./Rincian"));
 
 export default function View() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,7 +27,9 @@ export default function View() {
     value: 10,
   });
   const [openDialog, setOpenDialog] = useState(false);
+  const [openRincian, setOpenRincian] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [dataPropsRincian, setDataPropsRincian] = useState([]);
   const [idSelected, setIDSelected] = useState("");
   const optionsPage = [
     {
@@ -131,6 +135,38 @@ export default function View() {
     },
   });
 
+  const rincianMutation = useMutation({
+    mutationFn: getRincian,
+    onSuccess: (res) => {
+      setDataPropsRincian(res.data);
+      setOpenRincian(!openRincian);
+    },
+    onError: (res) => {
+      const respon = res.response;
+      let message = "";
+      if (respon.status === 422) {
+        setErrorValidasi(respon.data.errors);
+        message = respon.data.msg;
+      } else if (respon.status === 403) {
+        message = respon.data.errors;
+      } else {
+        message = respon.statusText;
+      }
+      toastChange({
+        id: "NotifRincian",
+        content: {
+          title: "Rincian",
+          description: message,
+          backgroundColor: toastColors.error,
+          icon: toastIcon.error,
+        },
+        position: "top-right",
+        dismiss: true,
+        duration: 7000,
+      });
+    },
+  });
+
   const handleEditButton = (data) => {
     localStorage.setItem("dataEdit", JSON.stringify(data));
     navigasi("edit", { replace: true });
@@ -148,14 +184,27 @@ export default function View() {
     handleHapus(idSelected);
   }, [confirmDelete]);
 
+  const handleRincian = (noPinjaman) => {
+    rincianMutation.mutate({
+      id: noPinjaman,
+      token: tokenLogin,
+    });
+  };
+
   if (isError) return `Error ${error.message}`;
 
   return (
     <>
-      <ConfirmDialog
-        settingDialog={{ openDialog, setOpenDialog }}
-        actionConfirm={{ confirmDelete, setConfirmDelete }}
-      />
+      <Suspense>
+        <ConfirmDialog
+          settingDialog={{ openDialog, setOpenDialog }}
+          actionConfirm={{ confirmDelete, setConfirmDelete }}
+        />
+        <Rincian
+          settingDialog={{ openRincian, setOpenRincian }}
+          dataProps={dataPropsRincian}
+        />
+      </Suspense>
       <div className="card bg-white">
         <div className="border-second card-header">
           <h3 className="mb-0 text-lg font-bold">Data Pinjaman</h3>
@@ -322,30 +371,42 @@ export default function View() {
                                     }
                                   />
                                 </span>
-                                <Link to={''} className="underline text-sm">Lihat Rincian Tagihan</Link>
+                                {/* <Link to={``} className="underline text-sm">Lihat Rincian Tagihan</Link> */}
+                                <span
+                                  onClick={() =>
+                                    handleRincian(data.no_pinjaman)
+                                  }
+                                  className="underline text-sm cursor-pointer"
+                                >
+                                  Lihat Rincian Tagihan
+                                </span>
                               </div>
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2">
-                              <div className="flex items-center">
-                                <button
-                                  className="btn2 bg-orange-500 hover:opacity-80 flex items-center"
-                                  onClick={() => handleEditButton(data)}
-                                >
-                                  <MdEdit /> &nbsp;
-                                  <span>Edit</span>
-                                </button>
-                                &nbsp;{" "}
-                                <button
-                                  className="btn2 bg-red-700 hover:opacity-80 flex items-center"
-                                  onClick={() => {
-                                    setOpenDialog(!openDialog);
-                                    setIDSelected(data.id);
-                                  }}
-                                >
-                                  <MdDeleteOutline /> &nbsp;
-                                  <span>Hapus</span>
-                                </button>
-                              </div>
+                              {parseInt(data.status) === 0 ? (
+                                <div className="flex items-center">
+                                  <button
+                                    className="btn2 bg-orange-500 hover:opacity-80 flex items-center"
+                                    onClick={() => handleEditButton(data)}
+                                  >
+                                    <MdEdit /> &nbsp;
+                                    <span>Edit</span>
+                                  </button>
+                                  &nbsp;
+                                  <button
+                                    className="btn2 bg-red-700 hover:opacity-80 flex items-center"
+                                    onClick={() => {
+                                      setOpenDialog(!openDialog);
+                                      setIDSelected(data.id);
+                                    }}
+                                  >
+                                    <MdDeleteOutline /> &nbsp;
+                                    <span>Hapus</span>
+                                  </button>
+                                </div>
+                              ) : (
+                                <span>Pinjaman Lunas</span>
+                              )}
                             </td>
                           </tr>
                         ))

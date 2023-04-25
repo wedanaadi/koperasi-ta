@@ -18,12 +18,14 @@ export default function Login() {
     username: "",
     password: "",
   })
+  const [waiting, setWaiting] = useState(false);
 
   const navigasi = useNavigate();
 
   const createMutation = useMutation({
     mutationFn: apiLogin,
     onSuccess: (res) => {
+      setWaiting(false);
       localStorage.setItem(
         "access_token",
         encriptData(res?.data?.access_token)
@@ -56,6 +58,7 @@ export default function Login() {
       });
     },
     onMutate: () => {
+      setWaiting(true);
       toastChange({
         id: "NotifAuthentication",
         content: {
@@ -70,6 +73,7 @@ export default function Login() {
       });
     },
     onError: (res) => {
+      setWaiting(false);
       const respon = res.response;
       let message = "";
       if(respon.status === 422) {
@@ -152,7 +156,7 @@ export default function Login() {
           </div>
           <div>
             <button
-              className="bg-primary hover:bg-third btn mb-6"
+              className={`bg-primary ${waiting ? 'bg-opacity-50' : 'hover:bg-third'} btn mb-6`}
               type="submit"
             >
               Submit
