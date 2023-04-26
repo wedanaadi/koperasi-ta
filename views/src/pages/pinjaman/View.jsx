@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { Suspense, useEffect, useState } from "react";
-import { MdAddCircleOutline, MdDeleteOutline, MdEdit } from "react-icons/md";
+import { MdAddCircleOutline, MdDeleteOutline, MdEdit, MdPrint } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import Search from "../../components/Datatable/Search";
 import Select from "../../components/Tailwind/Select";
@@ -22,6 +22,7 @@ export default function View() {
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
+  const dataSetting = useStore((state) => state.dataSetting);
   const [pagination, setPagination] = useState({
     label: "10",
     value: 10,
@@ -192,6 +193,17 @@ export default function View() {
       id: noPinjaman,
       token: tokenLogin,
     });
+  };
+
+  const handleCetak = (id) => {
+    window.open(
+      `${import.meta.env.VITE_BACKEND_PUBLIC}/pinjaman/bukti?id=${id}&lokasi=${
+        dataSetting?.lokasi ? dataSetting.lokasi : "Bali"
+      }&alamat=${
+        dataSetting?.alamat ? btoa(dataSetting.alamat) : "-"
+      }&direktur=${dataSetting?.alamat ? btoa(dataSetting.direktur) : "-"}`,
+      "_blank"
+    );
   };
 
   if (isError) return `Error ${error.message}`;
@@ -405,6 +417,16 @@ export default function View() {
                                   >
                                     <MdDeleteOutline /> &nbsp;
                                     <span>Hapus</span>
+                                  </button>
+                                  &nbsp;
+                                  <button
+                                    className="btn2 bg-primary hover:opacity-80 flex items-center"
+                                    onClick={() => {
+                                      handleCetak(data.no_pinjaman);
+                                    }}
+                                  >
+                                    <MdPrint /> &nbsp;
+                                    <span>Cetak</span>
                                   </button>
                                 </div>
                               ) : (

@@ -24,6 +24,10 @@ class Simpanan extends Model
     return $this->belongsTo(JenisSimpanan::class, "jenis_simpanan", "id");
   }
 
+  public function jenis_simpanans() {
+    return $this->belongsTo(JenisSimpanan::class, "jenis_simpanan", "id");
+  }
+
   public function scopeFilter($query, array $filters)
   {
     $query->when($filters['search'] ?? false, function ($query, $search) {

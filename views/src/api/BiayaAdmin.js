@@ -3,7 +3,7 @@ import baseUrl from "../components/baseUrl"
 
 export const getBiayaAdmin = async ({queryKey}) => {
   const [_, id, token] = queryKey
-  const res = await axiosApi.get(`${import.meta.env.VITE_BACKEND_API}/biayaadmin/${id}`,{},{
+  const res = await axiosApi.get(`${import.meta.env.VITE_BACKEND_API}/biayaadmin/${id}`,{
     headers: {
       Authorization: `Bearer ${token}`
     }

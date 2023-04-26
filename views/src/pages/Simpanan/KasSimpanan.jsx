@@ -9,11 +9,13 @@ import useStore from "../../store/useStore";
 import axios from "../../components/axiosApi";
 import ToDate, { ConvertToEpoch, ToDate2 } from "../../components/Date";
 import Pagination from "../../components/Datatable/Pagination/Pagination";
+import { MdPrint } from "react-icons/md";
 
 export default function KasSimpanan() {
   const [currentPage, setCurrentPage] = useState(1);
   const [onSearch, setSearch] = useState("");
   const tokenLogin = useStore((state) => state.token);
+  const dataSetting = useStore((state) => state.dataSetting);
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
@@ -79,11 +81,37 @@ export default function KasSimpanan() {
     queryFn: fetchDatas,
   });
 
+  const handleCetak = () => {
+    window.open(
+      `${import.meta.env.VITE_BACKEND_PUBLIC}/kas/cetak?lokasi=${
+        dataSetting?.lokasi ? dataSetting.lokasi : "Bali"
+      }&alamat=${
+        dataSetting?.alamat ? btoa(dataSetting.alamat) : "-"
+      }&direktur=${
+        dataSetting?.direktur ? btoa(dataSetting.direktur) : "-"
+      }&teller=${
+        dataSetting?.teller ? btoa(dataSetting.teller) : "-"
+      }&periode=${ConvertToEpoch(dateTrx.startDate)},${ConvertToEpoch(
+        dateTrx.endDate
+      )}`,
+      "_blank"
+    );
+  };
+
   return (
     <>
       <div className="card bg-white">
         <div className="border-second card-header">
           <h3 className="mb-0 text-lg font-bold">Laporan Kas Simpanan</h3>
+          <button
+            className="btn2 bg-primary hover:opacity-80 flex items-center"
+            onClick={() => {
+              handleCetak();
+            }}
+          >
+            <MdPrint /> &nbsp;
+            <span>Cetak</span>
+          </button>
         </div>
         <div className="card-body">
           <div className="sm:flex sm:flex-row sm:items-center gap-x-4">
@@ -211,7 +239,9 @@ export default function KasSimpanan() {
                           </td>
                           <td className="whitespace-nowrap border-r border-third px-6 py-2 font-medium">
                             <NumberFormat
-                              value={lapKasSimpanans?.simpanan_pokok?.penyetoran}
+                              value={
+                                lapKasSimpanans?.simpanan_pokok?.penyetoran
+                              }
                             />
                           </td>
                           <td className="whitespace-nowrap border-r border-third px-6 py-2 font-medium">
@@ -240,7 +270,9 @@ export default function KasSimpanan() {
                           </td>
                           <td className="whitespace-nowrap border-r border-third px-6 py-2 font-medium">
                             <NumberFormat
-                              value={lapKasSimpanans?.simpanan_wajib?.penyetoran}
+                              value={
+                                lapKasSimpanans?.simpanan_wajib?.penyetoran
+                              }
                             />
                           </td>
                           <td className="whitespace-nowrap border-r border-third px-6 py-2 font-medium">
@@ -270,7 +302,12 @@ export default function KasSimpanan() {
                   </tbody>
                   <tfoot>
                     <tr className="font-medium even:bg-white odd:bg-slate-100">
-                      <td colSpan={3} className="border-t-2 whitespace-nowrap border-r border-third px-6 py-2 font-medium">Total</td>
+                      <td
+                        colSpan={3}
+                        className="border-t-2 whitespace-nowrap border-r border-third px-6 py-2 font-medium"
+                      >
+                        Total
+                      </td>
                       <td className="border-t-2 whitespace-nowrap border-r border-third px-6 py-2 font-medium">
                         <NumberFormat
                           value={

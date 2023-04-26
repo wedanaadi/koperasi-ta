@@ -10,11 +10,13 @@ import axios from "../../components/axiosApi";
 import { ConvertToEpoch, ToDate2 } from "../../components/Date";
 import Pagination from "../../components/Datatable/Pagination/Pagination";
 import ToDate from "../../components/Date";
+import { MdPrint } from "react-icons/md";
 
 export default function LapPinjaman() {
   const [currentPage, setCurrentPage] = useState(1);
   const [onSearch, setSearch] = useState("");
   const tokenLogin = useStore((state) => state.token);
+  const dataSetting = useStore((state) => state.dataSetting);
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
@@ -76,15 +78,39 @@ export default function LapPinjaman() {
     refetch,
   } = useQuery({
     networkMode: `always`,
-    queryKey: ["lapPinjaman",currentPage,pagination, dateTrx],
+    queryKey: ["lapPinjaman", currentPage, pagination, dateTrx],
     queryFn: fetchDatas,
   });
+
+  const handleCetak = () => {
+    window.open(
+      `${import.meta.env.VITE_BACKEND_PUBLIC}/pinjaman/cetakpinjaman?lokasi=${
+        dataSetting?.lokasi ? dataSetting.lokasi : "Bali"
+      }&alamat=${
+        dataSetting?.alamat ? btoa(dataSetting.alamat) : "-"
+      }&direktur=${
+        dataSetting?.direktur ? btoa(dataSetting.direktur) : "-"
+      }&teller=${dataSetting?.teller ? btoa(dataSetting.teller) : "-"}&periode=${ConvertToEpoch(dateTrx.startDate)},${ConvertToEpoch(
+        dateTrx.endDate
+      )}`,
+      "_blank"
+    );
+  };
 
   return (
     <>
       <div className="card bg-white">
         <div className="border-second card-header">
           <h3 className="mb-0 text-lg font-bold">Laporan Pinjaman</h3>
+          <button
+            className="btn2 bg-primary hover:opacity-80 flex items-center"
+            onClick={() => {
+              handleCetak();
+            }}
+          >
+            <MdPrint /> &nbsp;
+            <span>Cetak</span>
+          </button>
         </div>
         <div className="card-body">
           <div className="sm:flex sm:flex-row sm:items-center gap-x-4">

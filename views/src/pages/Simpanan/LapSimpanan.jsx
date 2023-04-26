@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { MdOutlineKeyboardBackspace, MdPrint } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { NumberFormat } from "../../components/Input";
 import CapitalFirstLetter from "../../components/CapitalFirstLetter";
@@ -12,6 +12,7 @@ import axios from "../../components/axiosApi";
 export default function LapSimpanan() {
   const dataLokal = JSON.parse(localStorage.getItem("dataRekSimpanan"));
   const tokenLogin = useStore((state) => state.token);
+  const dataSetting = useStore((state)=>state.dataSetting)
   const [currentPage, setCurrentPage] = useState(1);
   const navigasi = useNavigate();
 
@@ -36,6 +37,10 @@ export default function LapSimpanan() {
     queryFn: fetchRekap,
   });
 
+  const handleCetak = (id) => {
+    window.open(`${import.meta.env.VITE_BACKEND_PUBLIC}/pinjaman/cetakreksimpanan?nasabah=${id}&lokasi=${dataSetting?.lokasi ? dataSetting.lokasi : 'Bali'}&alamat=${dataSetting?.alamat ? btoa(dataSetting.alamat) : '-'}`, '_blank');
+  }
+
   const totalDebet =
     rekapSimpanans?.length > 0
       ? rekapSimpanans.reduce((total, item) => {
@@ -49,7 +54,10 @@ export default function LapSimpanan() {
         }, 0)
       : 0;
 
-  const totalSemua = totalDebet-totalKredit < 0 ? `(${totalDebet-totalKredit})` : totalDebet-totalKredit;
+  const totalSemua =
+    totalDebet - totalKredit < 0
+      ? `(${totalDebet - totalKredit})`
+      : totalDebet - totalKredit;
 
   if (isError) return `Error ${error.message}`;
   return (
@@ -58,6 +66,16 @@ export default function LapSimpanan() {
         <div className="border-second card-header">
           <h3 className="mb-0 text-lg font-bold">Data Simpanan</h3>
           <div className="flex justify-center items-center">
+            <button
+              className="btn2 bg-primary hover:opacity-80 flex items-center"
+              onClick={() => {
+                handleCetak(dataLokal.id_nasabah);
+              }}
+            >
+              <MdPrint /> &nbsp;
+              <span>Cetak</span>
+            </button>
+            &nbsp;
             <Link
               to={`/pelaporan/lapsimpanan`}
               className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"
@@ -242,19 +260,13 @@ export default function LapSimpanan() {
                         Total
                       </td>
                       <td className="whitespace-nowrap border-r border-t-2 border-third px-6 py-2 text-right">
-                        <NumberFormat
-                          value={totalDebet}
-                        />
+                        <NumberFormat value={totalDebet} />
                       </td>
                       <td className="whitespace-nowrap border-r border-t-2 border-third px-6 py-2 text-right">
-                        <NumberFormat
-                          value={totalKredit}
-                        />
+                        <NumberFormat value={totalKredit} />
                       </td>
                       <td className="whitespace-nowrap border-r border-t-2 border-third px-6 py-2 text-right">
-                        <NumberFormat
-                          value={totalSemua}
-                        />
+                        <NumberFormat value={totalSemua} />
                       </td>
                       <td
                         colSpan={2}

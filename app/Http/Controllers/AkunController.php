@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Akun;
 use App\Models\MasterAkun;
 use App\Models\SimpananDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use PDF;
 
 class AkunController extends Controller
 {
@@ -149,5 +151,55 @@ class AkunController extends Controller
       array_push($data,$arr);
     }
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
+  public function cetak_header($alamat)
+  {
+    return view('pdf.headerReport', compact('alamat'));
+  }
+
+  public function cetak_neraca()
+  {
+    $data = [];
+    $akun = Akun::filter(request(['periode']))
+      ->where('is_aktif', "1")
+      ->OrderBy('no_akun', 'ASC')->get();
+    foreach ($akun as $v) {
+      $master = MasterAkun::filter(request(['periode']))->where('akun',$v->id);
+      $arr = [
+        'no_akun' => $v->no_akun,
+        'jenis' => $v->jenis_transaksi,
+        'debet' => 0,
+        'kredit' => 0,
+      ];
+      if($master->count() > 0) {
+        $debet = 0;
+        $kredit = 0;
+        foreach ($master->get() as $m) {
+          $debet += $m->debet;
+          $kredit += $m->kredit;
+        }
+        $arr['debet'] = $debet;
+        $arr['kredit'] = $kredit;
+      }
+      array_push($data,$arr);
+    }
+    $p = explode(',', request(['periode'])['periode']);
+      $body = [
+        'data' => $data,
+        'periode' => [
+          'start' => Carbon::createFromTimestamp($p[0] / 1000)->format('d/m/Y'),
+          'end' => Carbon::createFromTimestamp($p[1] / 1000)->format('d/m/Y'),
+        ],
+      ];
+      $setting = [
+        'lokasi' => request(['lokasi'])['lokasi'],
+        'judul' => "Laporan Kas Simpanan",
+      ];
+      $header = $this->cetak_header(base64_decode(request(['alamat'])['alamat']) . ', ' . request(['lokasi'])['lokasi']);
+      $html = view('pdf.neraca', compact('header', 'body', 'setting'));
+      return PDF::loadHTML($html)->setPaper('A4')
+        ->setOrientation('portrait')
+        ->inline($setting['judul'] . '-' . date('Y-m-d') . '.pdf');
   }
 }

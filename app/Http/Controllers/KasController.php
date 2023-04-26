@@ -3,21 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Libraries\Fungsi;
+use App\Libraries\Terbilang;
+use App\Models\Akun;
 use App\Models\Kas;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use PDF;
 
 class KasController extends Controller
 {
   public function index()
   {
     $data = Kas::filter(request(['search']))
-      ->with('untukAkun','dariAkun')
+      ->with('untukAkun', 'dariAkun')
       ->where('is_aktif', "1")
-      ->where('jenis_transaksi',request(['jenis']))
+      ->where('jenis_transaksi', request(['jenis']))
       ->OrderBy('kode_transaksi', 'ASC')
       ->paginate(request('perpage'));
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
@@ -41,20 +44,20 @@ class KasController extends Controller
 
     DB::beginTransaction();
     try {
-      if($request->jenis === 'pemasukan') {
+      if ($request->jenis === 'pemasukan') {
         $stringKode = "TM";
-      } else if($request->jenis === 'pengeluaran') {
+      } else if ($request->jenis === 'pengeluaran') {
         $stringKode = "TK";
       } else {
         $stringKode = "TP";
       }
-      $prevID = Kas::where('is_aktif', "0")->where('jenis_transaksi',$request->jenis);
+      $prevID = Kas::where('is_aktif', "0")->where('jenis_transaksi', $request->jenis);
       if ($prevID->count() > 0) {
         $newID = $prevID->first()->kode_transaksi;
       } else {
         $date = date('y') . date('m');
         $lastKode = Kas::select(DB::raw('MAX(kode_transaksi) AS kode'))
-          ->where(DB::raw('SUBSTR(kode_transaksi,1,6)'), $stringKode.$date)
+          ->where(DB::raw('SUBSTR(kode_transaksi,1,6)'), $stringKode . $date)
           ->first();
         $newID = Fungsi::KodeGenerate($lastKode->kode, 5, 6, $stringKode, $date);
       }
@@ -116,7 +119,7 @@ class KasController extends Controller
     $find = Kas::find($id);
     DB::beginTransaction();
     try {
-      DB::table('master_trx')->where('relasi_id',$find->kode_transaksi)->delete();
+      DB::table('master_trx')->where('relasi_id', $find->kode_transaksi)->delete();
       $payload = [
         'tanggal_transaksi' => $request->tanggal_transaksi,
         'keterangan' => $request->keterangan,
@@ -174,18 +177,98 @@ class KasController extends Controller
 
   public function lap_kas()
   {
-    $periode = explode(',',request(['periode'])['periode']);
+    $periode = explode(',', request(['periode'])['periode']);
     $saldoPrev = 0;
-    $sebelum = Kas::where('tanggal_transaksi','<',$periode[0])->get();
+    $sebelum = Kas::where('tanggal_transaksi', '<', $periode[0])->get();
     foreach ($sebelum as $v) {
       $saldoPrev += $v->jumlah;
     }
-    $data = Kas::filter(request(['search','periode']))
-      ->with('untukAkun','dariAkun')
+    $data = Kas::filter(request(['search', 'periode']))
+      ->with('untukAkun', 'dariAkun')
       ->where('is_aktif', "1")
-      ->where('jenis_transaksi',request(['jenis']))
+      ->where('jenis_transaksi', request(['jenis']))
       ->OrderBy('tanggal_transaksi', 'ASC')
       ->paginate(request('perpage'));
     return response()->json(['msg' => 'Get data', "data" => ['lap' => $data, 'prev' => $saldoPrev], 'error' => []], 200);
+  }
+
+  public function cetak_header($alamat)
+  {
+    return view('pdf.headerReport', compact('alamat'));
+  }
+
+  public function cetak_bukti()
+  {
+    $id = request(['id'])['id'];
+    $find = Kas::find($id);
+    $title = request(['title'])['title'];
+    if ($title === 'masuk') {
+      $judul = "BUKTI KAS MASUK";
+    } else if ($title === 'keluar') {
+      $judul = "BUKTI KAS KELUAR";
+    } else {
+      $judul = "BUKTI PENYESUAIN KAS";
+    }
+    $body = [
+      'dari' => Akun::find($find->dari_akun)->jenis_transaksi,
+      'jumlah' => $find->jumlah,
+      'keterangan' => $find->keterangan,
+      'tanggal' => Carbon::createFromTimestamp($find->tanggal_transaksi / 1000)->format('d/m/Y'),
+      'terbilang' => Terbilang::string($find->jumlah),
+      'lokasi' => request(['lokasi'])['lokasi'],
+      'judul' => $judul,
+    ];
+    $header = $this->cetak_header(base64_decode(request(['alamat'])['alamat']) . ', ' . request(['lokasi'])['lokasi']);
+    $html = view('pdf.buktiKas', compact('header', 'body'));
+    return PDF::loadHTML($html)->setPaper('A5')
+      ->setOrientation('landscape')
+      ->inline($judul . '-' . $body['tanggal'] . '.pdf');
+  }
+
+  public function cetak_trxkas()
+  {
+    $periode = explode(',', request(['periode'])['periode']);
+    $saldoPrev = 0;
+    $sebelum = Kas::where('tanggal_transaksi', '<', $periode[0])->get();
+    foreach ($sebelum as $v) {
+      $saldoPrev += $v->jumlah;
+    }
+    $data = [];
+    $kas = Kas::filter(request(['search', 'periode']))
+      ->where('is_aktif', "1")
+      ->where('jenis_transaksi', request(['jenis']))
+      ->OrderBy('tanggal_transaksi', 'ASC')->get();
+
+      foreach ($kas as $k) {
+        array_push($data,[
+          'kode_transaksi' => $k->kode_transaksi,
+          'tanggal_transaksi' => Carbon::createFromTimestamp($k->tanggal_transaksi / 1000)->format('d/m/Y'),
+          'keterangan' => $k->keterangan,
+          'jenis_transaksi' => $k->jenis_transaksi,
+          'dari_akun' => Akun::find($k->dari_akun)->jenis_transaksi,
+          'untuk_akun' => Akun::find($k->untuk_akun)->jenis_transaksi,
+          'jumlah' => $k->jumlah,
+        ]);
+      }
+      $p = explode(',', request(['periode'])['periode']);
+      $body = [
+        'data' => $data,
+        'periode' => [
+          'start' => Carbon::createFromTimestamp($p[0] / 1000)->format('d/m/Y'),
+          'end' => Carbon::createFromTimestamp($p[1] / 1000)->format('d/m/Y'),
+        ],
+        'prev' => $saldoPrev
+      ];
+      $setting = [
+        // 'tanggal' => Carbon::createFromTimestamp($body->tanggal_transaksi/1000)->format('d/m/Y'),
+        // 'terbilang' => Terbilang::string($body->saldo),
+        'lokasi' => request(['lokasi'])['lokasi'],
+        'judul' => "Laporan Kas Simpanan",
+      ];
+      $header = $this->cetak_header(base64_decode(request(['alamat'])['alamat']) . ', ' . request(['lokasi'])['lokasi']);
+      $html = view('pdf.trxkas', compact('header', 'body', 'setting'));
+      return PDF::loadHTML($html)->setPaper('A4')
+        ->setOrientation('portrait')
+        ->inline($setting['judul'] . '-' . date('Y-m-d') . '.pdf');
   }
 }

@@ -49,7 +49,7 @@ export async function updateData({Data, token, id}) {
 }
 
 export async function deleteData({id, token}) {
-  const res = await axios.delete(`${baseUrl}/lamaangsuran/${id}`,{},{
+  const res = await axios.delete(`${baseUrl}/lamaangsuran/${id}`,{
     headers: {
       Authorization: `Bearer ${token}`
     }

@@ -32,6 +32,9 @@ class SimpananDetail extends Model
   public function marketing() {
     return $this->belongsTo(Marketing::class, "marketing", "id");
   }
+  public function marketings() {
+    return $this->belongsTo(Marketing::class, "marketing", "id");
+  }
 
   public function untuk_akun() {
     return $this->belongsTo(Akun::class, "untuk_akun", "id");

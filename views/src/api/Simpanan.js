@@ -22,7 +22,7 @@ export async function updateData({Data, token, id}) {
 }
 
 export async function deleteData({id, token, tipe}) {
-  const res = await axiosApi.delete(`${baseUrl}/simpanan/${id}/${tipe}`,{tipe},{
+  const res = await axiosApi.delete(`${baseUrl}/simpanan/${id}/${tipe}`,{
     headers: {
       Authorization: `Bearer ${token}`
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Libraries\Fungsi;
+use App\Libraries\Terbilang;
 use App\Models\Akun;
 use App\Models\JenisSimpanan;
 use App\Models\Simpanan;
@@ -15,6 +16,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use PDF;
 
 class SimpananController extends Controller
 {
@@ -266,7 +268,7 @@ class SimpananController extends Controller
 
     DB::beginTransaction();
     try {
-      DB::table('master_trx')->where('relasi_id',$find->id)->delete();
+      DB::table('master_trx')->where('relasi_id', $find->id)->delete();
       $jenisSimpanan = JenisSimpanan::find($request->jenis_simpanan);
       if ((int)$request->jumlah_setoran < (int)$jenisSimpanan->saldo_minimal) {
         return response()->json(['errors' => 'Saldo setoran minimal harus ' . number_format($jenisSimpanan->saldo_minimal, 0, ",", ".") . '!'], 403);
@@ -383,5 +385,155 @@ class SimpananController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'Failed update data delete', "data" => null, 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function cetak_header($alamat)
+  {
+    return view('pdf.headerReport', compact('alamat'));
+  }
+
+  public function cetak_bukti()
+  {
+    $id = request(['id'])['id'];
+    $body = SimpananDetail::where('simpanan_id', $id)->with('marketings', 'simpanan', 'simpanan.nasabah', 'simpanan.jenis_simpanans')->first();
+    $title = request(['title'])['title'];
+    if ($title === 'setor') {
+      $judul = "BUKTI SETORAN SIMPANAN";
+    } else {
+      $judul = "BUKTI PENARIKAN SIMPANAN";
+    }
+    $setting = [
+      'tanggal' => Carbon::createFromTimestamp($body->tanggal_transaksi / 1000)->format('d/m/Y'),
+      'terbilang' => Terbilang::string($body->saldo),
+      'lokasi' => request(['lokasi'])['lokasi'],
+      'judul' => $judul,
+    ];
+    $header = $this->cetak_header(base64_decode(request(['alamat'])['alamat']) . ', ' . request(['lokasi'])['lokasi']);
+    $html = view('pdf.buktiSimpanan', compact('header', 'body', 'setting'));
+    return PDF::loadHTML($html)->setPaper('A5')
+      ->setOrientation('landscape')
+      ->inline($judul . '-' . $body['tanggal'] . '.pdf');
+  }
+
+  public function cetak_reksimpanan()
+  {
+    $rekkor = [];
+    $simpananDetail = SimpananDetail::OrderBy('created_at', 'ASC')
+      ->whereHas('simpanan', function ($q) {
+        $q->where('id_nasabah', request(['nasabah']));
+      })
+      ->get();
+    foreach ($simpananDetail as $v) {
+      $arr = [
+        'kode_transaksi' => $v->id,
+        'tanggal_transaksi' => $v->tanggal_transaksi,
+        'debet' => 0,
+        'kredit' => 0,
+        'jumlah' => 0,
+        'keterangan' => $v->keterangan,
+      ];
+
+      if ($v->type == '1') {
+        $arr['kredit'] = $v->saldo;
+      } else {
+        $arr['debet'] = $v->saldo;
+      }
+      $arr['jumlah'] = $v->saldo_akhir;
+      $idJenisSimpanan = Simpanan::find($v->simpanan_id)->jenis_simpanan;
+      $arr['jenis'] = JenisSimpanan::find($idJenisSimpanan)->nama_jenis_simpanan;
+
+      array_push($rekkor, $arr);
+    }
+    $data = [];
+    $nasabah = Simpanan::where('id', $simpananDetail[0]->simpanan_id)
+      ->with('nasabah')
+      ->orderBy('id_nasabah', 'ASC')
+      ->get();
+
+    foreach ($nasabah as $v) {
+      $arr = [
+        'id_nasabah' => $v->id_nasabah,
+        'nama' => $v->nasabah->nama_lengkap,
+        'tanggal_buka' => Carbon::createFromTimestamp($v->tanggal_buka / 1000)->format('d/m/Y')
+      ];
+      $jsall = JenisSimpanan::all();
+      foreach ($jsall as $j) {
+        $arr[str_replace(' ', '_', $j->nama_jenis_simpanan)] = 0;
+      }
+      $jenis = $v->jenis_simpanan;
+      $js = JenisSimpanan::find($jenis);
+      if (array_search($v->id_nasabah, array_column($data, 'id_nasabah')) !== false) {
+        $key = array_search($v->id_nasabah, array_column($data, 'id_nasabah'));
+        $data[$key][str_replace(' ', '_', $js->nama_jenis_simpanan)] = $v->jumlah_tabungan;
+      } else {
+        $arr[str_replace(' ', '_', $js->nama_jenis_simpanan)] = $v->jumlah_tabungan;
+        array_push($data, $arr);
+      }
+    }
+    $body = [
+      'data' => $data,
+      'rekening' => $rekkor,
+    ];
+    $setting = [
+      // 'tanggal' => Carbon::createFromTimestamp($body->tanggal_transaksi/1000)->format('d/m/Y'),
+      // 'terbilang' => Terbilang::string($body->saldo),
+      'lokasi' => request(['lokasi'])['lokasi'],
+      'judul' => "Rekening Simpanan",
+    ];
+    $header = $this->cetak_header(base64_decode(request(['alamat'])['alamat']) . ', ' . request(['lokasi'])['lokasi']);
+    $html = view('pdf.rekkor', compact('header', 'body', 'setting'));
+    return PDF::loadHTML($html)->setPaper('A4')
+      ->setOrientation('portrait')
+      ->inline($setting['judul'] . '-' . $body['data'][0]['id_nasabah'] . '.pdf');
+  }
+
+  public function cetak_kassimpanan()
+  {
+
+    $data = [];
+    $jenis = JenisSimpanan::all();
+    foreach ($jenis as $j) {
+      $totalMasuk = 0;
+      $totalKeluar = 0;
+      $id = $j->id;
+      $simpananDetail = SimpananDetail::filter(request(['periode']))
+        ->OrderBy('created_at', 'ASC')
+        ->whereHas('simpanan', function ($q) use ($id) {
+          $q->where('jenis_simpanan', '=', $id);
+        })->get();
+
+      foreach ($simpananDetail as $sd) {
+        if ($sd->type == '1') {
+          $totalMasuk += $sd->saldo;
+        } else {
+          $totalKeluar += $sd->saldo;
+        }
+      }
+      $data[strtolower(str_replace(' ', '_', $j->nama_jenis_simpanan))] = [
+        'penyetoran' => $totalMasuk,
+        'penarikan' => $totalKeluar,
+        'jenis' => $j->nama_jenis_simpanan,
+        'akun' => Akun::find($sd->untuk_akun)->jenis_transaksi
+      ];
+    }
+    $p = explode(',', request(['periode'])['periode']);
+    $body = [
+      'data' => $data,
+      'periode' => [
+        'start' => Carbon::createFromTimestamp($p[0] / 1000)->format('d/m/Y'),
+        'end' => Carbon::createFromTimestamp($p[1] / 1000)->format('d/m/Y'),
+      ],
+    ];
+    $setting = [
+      // 'tanggal' => Carbon::createFromTimestamp($body->tanggal_transaksi/1000)->format('d/m/Y'),
+      // 'terbilang' => Terbilang::string($body->saldo),
+      'lokasi' => request(['lokasi'])['lokasi'],
+      'judul' => "Laporan Kas Simpanan",
+    ];
+    $header = $this->cetak_header(base64_decode(request(['alamat'])['alamat']) . ', ' . request(['lokasi'])['lokasi']);
+    $html = view('pdf.kassimpanan', compact('header', 'body', 'setting'));
+    return PDF::loadHTML($html)->setPaper('A4')
+      ->setOrientation('portrait')
+      ->inline($setting['judul'] . '-' . date('Y-m-d') . '.pdf');
   }
 }

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Libraries\Fungsi;
+use App\Libraries\Terbilang;
 use App\Models\Angsuran;
 use App\Models\BiayaAdmin;
+use App\Models\Marketing;
 use App\Models\Nasabah;
+use App\Models\Pegawai;
 use App\Models\Pinjaman;
 use App\Models\SimulasiAngsuran;
 use Carbon\Carbon;
@@ -13,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use PDF;
 
 class AngsuranController extends Controller
 {
@@ -287,5 +291,47 @@ class AngsuranController extends Controller
       DB::rollBack();
       return response()->json(['msg' => 'Failed created data', "data" => null, 'error' => $e->getMessage()], 500);
     }
+  }
+
+  public function cetak_header($alamat)
+  {
+    return view('pdf.headerReport', compact('alamat'));
+  }
+
+  public function cetak_bukti()
+  {
+    $id = request(['id'])['id'];
+    $angsuran = Angsuran::find($id);
+
+    $pinjaman = Pinjaman::where('no_pinjaman', $angsuran->no_pinjaman)->first();
+    $body = [
+      'tanggal_transaksi' => Carbon::createFromTimestamp($angsuran->tanggal_transaksi / 1000)->format('d/m/Y'),
+      'kode_transaksi' => $angsuran->kode_transaksi,
+      'no_pinjaman' => $pinjaman->no_pinjaman,
+      'nasabah' => $pinjaman->nama_nasabah,
+      'id_nasabah' => $pinjaman->id_nasabah,
+      'marketing' => Marketing::find($angsuran->marketing)->nama_marketing,
+      'pembayaranKe' => $angsuran->pembayaran_ke,
+      'pokok' => $angsuran->pokok,
+      'bunga' => $angsuran->bunga,
+      'denda' => $angsuran->denda,
+      'pokok_tunggakan' => $angsuran->pokok_tunggakan,
+      'bunga_tunggakan' => $angsuran->bunga_tunggakan,
+      'pokok_bayar' => $angsuran->pokok_bayar,
+      'bunga_bayar' => $angsuran->bunga_bayar,
+      'denda_bayar' => $angsuran->denda_bayar,
+      'total_bayar' => $angsuran->pokok_bayar + $angsuran->bunga_bayar +$angsuran->denda_bayar,
+      'terbilang' => Terbilang::string($angsuran->pokok_bayar + $angsuran->bunga_bayar +$angsuran->denda_bayar)
+    ];
+    $setting = [
+      'lokasi' => request(['lokasi'])['lokasi'],
+      'judul' => 'Bukti Setoran Transaksi Kredit',
+      'direktur' => Pegawai::find(base64_decode(request(['direktur'])['direktur']))->nama_lengkap
+    ];
+    $header = $this->cetak_header(base64_decode(request(['alamat'])['alamat']) . ', ' . request(['lokasi'])['lokasi']);
+    $html = view('pdf.buktiAngsuran',compact('header','body','setting'));
+    return PDF::loadHTML($html)->setPaper('A4')
+      ->setOrientation('landscape')
+      ->inline($setting['judul'].'-'.$body['kode_transaksi'].'.pdf');
   }
 }

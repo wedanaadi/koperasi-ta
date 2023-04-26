@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { MdAddCircleOutline, MdEdit, MdDeleteOutline } from "react-icons/md";
+import { MdAddCircleOutline, MdEdit, MdDeleteOutline, MdPrint } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import baseUrl from "../../../components/baseUrl";
 import Search from "../../../components/Datatable/Search";
@@ -23,6 +23,7 @@ export default function View() {
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
+  const dataSetting = useStore((state)=>state.dataSetting)
   const [pagination, setPagination] = useState({
     label: "10",
     value: 10,
@@ -147,6 +148,17 @@ export default function View() {
       setConfirmDelete(false);
       setOpenDialog(false);
     }
+  };
+
+  const handleCetak = (id) => {
+    window.open(
+      `${import.meta.env.VITE_BACKEND_PUBLIC}/simpanan/bukti?id=${id}&lokasi=${
+        dataSetting?.lokasi ? dataSetting.lokasi : "Bali"
+      }&title=tarik&alamat=${
+        dataSetting?.alamat ? btoa(dataSetting.alamat) : "-"
+      }`,
+      "_blank"
+    );
   };
 
   useEffect(() => {
@@ -323,6 +335,16 @@ export default function View() {
                               >
                                 <MdDeleteOutline /> &nbsp;
                                 <span>Hapus</span>
+                              </button>
+                              &nbsp;
+                              <button
+                                className="btn2 bg-primary hover:opacity-80 flex items-center"
+                                onClick={() => {
+                                  handleCetak(data.simpanan_id);
+                                }}
+                              >
+                                <MdPrint /> &nbsp;
+                                <span>Cetak</span>
                               </button>
                             </td>
                           </tr>

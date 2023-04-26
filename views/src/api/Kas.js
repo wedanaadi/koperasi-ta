@@ -22,7 +22,7 @@ export async function updateData({Data, token, id}) {
 }
 
 export async function deleteData({id, token}) {
-  const res = await axiosApi.delete(`${baseUrl}/kas/${id}`,{},{
+  const res = await axiosApi.delete(`${baseUrl}/kas/${id}`,{
     headers: {
       Authorization: `Bearer ${token}`
     }

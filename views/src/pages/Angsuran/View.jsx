@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { MdEdit, MdOutlineKeyboardBackspace } from "react-icons/md";
+import { MdEdit, MdOutlineKeyboardBackspace, MdPrint } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import baseUrl from "../../components/baseUrl";
 import { NumberFormat } from "../../components/Input";
@@ -13,6 +13,7 @@ import Pagination from "../../components/Datatable/Pagination/Pagination";
 export default function View() {
   const dataLokal = JSON.parse(localStorage.getItem("dataPinjamanAngsuran"));
   const tokenLogin = useStore((state) => state.token);
+  const dataSetting = useStore((state) => state.dataSetting);
   const [currentPage, setCurrentPage] = useState(1);
   const navigasi = useNavigate();
 
@@ -61,6 +62,17 @@ export default function View() {
   const handleEditButton = (data) => {
     localStorage.setItem("dataEdit", JSON.stringify(data));
     navigasi("edit", { replace: true });
+  };
+
+  const handleCetak = (id) => {
+    window.open(
+      `${import.meta.env.VITE_BACKEND_PUBLIC}/angsuran/bukti?id=${id}&lokasi=${
+        dataSetting?.lokasi ? dataSetting.lokasi : "Bali"
+      }&alamat=${
+        dataSetting?.alamat ? btoa(dataSetting.alamat) : "-"
+      }&direktur=${dataSetting?.alamat ? btoa(dataSetting.direktur) : "-"}`,
+      "_blank"
+    );
   };
 
   if (isLoadingProfile) return "loading....";
@@ -313,9 +325,9 @@ export default function View() {
                                 &nbsp;
                                 <button
                                   className="btn2 bg-blue-600 hover:opacity-80 flex items-center"
-                                  // onClick={() => handleAngsuran(data)}
+                                  onClick={() => handleCetak(data.id)}
                                 >
-                                  {/* <MdPayment /> &nbsp; */}
+                                  <MdPrint /> &nbsp;
                                   <span>Cetak Nota</span>
                                 </button>
                               </div>

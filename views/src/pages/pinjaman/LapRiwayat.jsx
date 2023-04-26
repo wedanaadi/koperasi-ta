@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { MdEdit, MdOutlineKeyboardBackspace } from "react-icons/md";
+import { MdEdit, MdOutlineKeyboardBackspace, MdPrint } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import baseUrl from "../../components/baseUrl";
 import { NumberFormat } from "../../components/Input";
@@ -13,6 +13,7 @@ import Pagination from "../../components/Datatable/Pagination/Pagination";
 export default function LapRiwayat() {
   const dataLokal = JSON.parse(localStorage.getItem("dataRiwayatDetail"));
   const tokenLogin = useStore((state) => state.token);
+  const dataSetting = useStore((state)=>state.dataSetting)
   const [currentPage, setCurrentPage] = useState(1);
   const navigasi = useNavigate();
 
@@ -79,6 +80,10 @@ export default function LapRiwayat() {
     queryFn: fetchSimulasi,
   });
 
+  const handleCetak = (id) => {
+    window.open(`${import.meta.env.VITE_BACKEND_PUBLIC}/pinjaman/riwayat?pinjaman=${id}&lokasi=${dataSetting?.lokasi ? dataSetting.lokasi : 'Bali'}&alamat=${dataSetting?.alamat ? btoa(dataSetting.alamat) : '-'}`, '_blank');
+  }
+
   if (isLoadingProfile) return "loading....";
 
   return (
@@ -87,6 +92,16 @@ export default function LapRiwayat() {
         <div className="border-second card-header">
           <h3 className="mb-0 text-lg font-bold">Data Riwayat Pinjaman</h3>
           <div className="flex justify-center items-center">
+          <button
+              className="btn2 bg-primary hover:opacity-80 flex items-center"
+              onClick={() => {
+                handleCetak(dataLokal.no_pinjaman);
+              }}
+            >
+              <MdPrint /> &nbsp;
+              <span>Cetak</span>
+            </button>
+            &nbsp;
             <Link
               to={`/pelaporan/lapriwayat`}
               className="btn bg-slate-600 text-white hover:opacity-80 flex items-center"

@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useStore from "../../../store/useStore";
 import { deleteData } from "../../../api/Kas";
 import Pagination from "../../../components/Datatable/Pagination/Pagination";
-import { MdAddCircleOutline, MdEdit, MdDeleteOutline } from "react-icons/md";
+import { MdAddCircleOutline, MdEdit, MdDeleteOutline, MdPrint } from "react-icons/md";
 import Select from "../../../components/Tailwind/Select";
 import Search from "../../../components/Datatable/Search";
 import baseUrl from "../../../components/baseUrl";
@@ -21,6 +21,7 @@ export default function View() {
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
+  const dataSetting = useStore((state)=>state.dataSetting)
   const [pagination, setPagination] = useState({
     label: "10",
     value: 10,
@@ -150,6 +151,10 @@ export default function View() {
       setOpenDialog(false);
     }
   };
+
+  const handleCetak = (id) => {
+    window.open(`${import.meta.env.VITE_BACKEND_PUBLIC}/kas/bukti?id=${id}&lokasi=${dataSetting?.lokasi ? dataSetting.lokasi : 'Bali'}&title=masuk&alamat=${dataSetting?.alamat ? btoa(dataSetting.alamat) : '-'}`, '_blank');
+  }
 
   useEffect(() => {
     handleHapus(idSelected);
@@ -325,6 +330,16 @@ export default function View() {
                               >
                                 <MdDeleteOutline /> &nbsp;
                                 <span>Hapus</span>
+                              </button>
+                              &nbsp;
+                              <button
+                                className="btn2 bg-primary hover:opacity-80 flex items-center"
+                                onClick={() => {
+                                  handleCetak(data.id)
+                                }}
+                              >
+                                <MdPrint /> &nbsp;
+                                <span>Cetak</span>
                               </button>
                             </td>
                           </tr>
