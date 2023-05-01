@@ -22,6 +22,7 @@ export default function Add() {
     endDate: null,
   });
   const queryClient = useQueryClient();
+  const [waiting, setWaiting] = useState(false);
   const [errorValidasi, setErrorValidasi] = useState([]);
   const [selectedUntuk, setSelectedUntuk] = useState(null);
   const [selectedJS, setSelectedJS] = useState(null);
@@ -108,6 +109,7 @@ export default function Add() {
     networkMode: `always`,
     mutationFn: createData,
     onSuccess: () => {
+      setWaiting(false)
       queryClient.invalidateQueries({ queryKey: ["setoran", 1] });
       navigasi(`/simpanan/setoran`);
       toastChange({
@@ -124,6 +126,7 @@ export default function Add() {
       });
     },
     onMutate: () => {
+      setWaiting(true)
       toastChange({
         id: "NotifKP",
         content: {
@@ -138,6 +141,7 @@ export default function Add() {
       });
     },
     onError: (res) => {
+      setWaiting(false)
       const respon = res.response;
       let message = "";
       if (respon.status === 422) {
@@ -272,7 +276,7 @@ export default function Add() {
 
           <div className="md:w-2/12 float-right">
             <button
-              className="bg-primary hover:bg-third btn mb-6"
+              className={`bg-primary ${waiting ? 'bg-opacity-50' : 'hover:bg-third'} btn mb-6`}
               type="submit"
             >
               Simpan

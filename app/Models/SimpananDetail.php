@@ -17,7 +17,14 @@ class SimpananDetail extends Model
   public function scopeFilter($query, array $filters)
   {
     $query->when($filters['search'] ?? false, function($query, $search){
-      return $query->where('keterangan', 'like', '%' . $search . '%');
+      return $query->where('keterangan', 'like', '%' . $search . '%')
+      ->orWhereHas('marketing', function ($query) use ($search) {
+        $query->where('nama_marketing', 'like', '%' . $search . '%');
+      })->orWhereHas('simpanan', function ($query) use ($search) {
+        $query->where('id_nasabah', 'like', '%' . $search . '%');
+      })->orWhereHas('simpanan.nasabah', function ($query) use ($search) {
+        $query->where('nama_lengkap', 'like', '%' . $search . '%');
+      });
     });
     $query->when($filters['periode'] ?? false, function ($query, $params) {
       $periode = explode(',', $params);

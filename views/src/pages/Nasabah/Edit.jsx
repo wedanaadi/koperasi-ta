@@ -14,6 +14,7 @@ export default function Edit() {
   });
 
   const queryClient = useQueryClient();
+  const [waiting, setWaiting] = useState(false);
   const [errorValidasi, setErrorValidasi] = useState([]);
   const [selectedJK, setSelectedJK] = useState(null);
   const [selectedAgama, setSelectedAgama] = useState(null);
@@ -109,6 +110,7 @@ export default function Edit() {
     networkMode: `always`,
     mutationFn: updateData,
     onSuccess: () => {
+      setWaiting(false)
       queryClient.invalidateQueries({ queryKey: ["nasabah", 1] });
       navigasi(`/masterdata/nasabah`);
       toastChange({
@@ -126,6 +128,7 @@ export default function Edit() {
       localStorage.removeItem("dataEdit");
     },
     onMutate: () => {
+      setWaiting(true)
       toastChange({
         id: "NotifNasabah",
         content: {
@@ -140,6 +143,7 @@ export default function Edit() {
       });
     },
     onError: (res) => {
+      setWaiting(false)
       const respon = res.response;
       let message = "";
       if (respon.status === 422) {

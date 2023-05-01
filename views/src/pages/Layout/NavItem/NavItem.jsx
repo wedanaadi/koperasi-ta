@@ -1,10 +1,12 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import useStore from "../../../store/useStore";
 import NavItemHeader from "./NavItemHeader";
 
 export default function NavItem(props) {
+  const dataLogin = useStore((state) => state.dataLogin);
   const { label, icon, to, children, role } = props.item;
-  if(!role.includes('admin')) {
+  if(!role.includes(dataLogin?.jabatan)) {
     return false;
   }
   if (children) {

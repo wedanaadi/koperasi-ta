@@ -1,36 +1,51 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { Suspense, useEffect, useState } from "react";
-import { MdAddCircleOutline, MdDeleteOutline, MdEdit, MdPrint } from "react-icons/md";
+import {
+  MdAddCircleOutline,
+  MdEdit,
+  MdDeleteOutline,
+  MdCheckCircleOutline,
+  MdDangerous,
+  MdPreview,
+} from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import baseUrl from "../../components/baseUrl";
 import Search from "../../components/Datatable/Search";
 import Select from "../../components/Tailwind/Select";
 import useStore from "../../store/useStore";
-const ConfirmDialog = React.lazy(() => import("../../components/ConfirmAlert"));
 import axios from "../../components/axiosApi";
-import baseUrl from "../../components/baseUrl";
 import ToDate from "../../components/Date";
 import { NumberFormat } from "../../components/Input";
-import { deleteData } from "../../api/Pinjaman";
 import Pagination from "../../components/Datatable/Pagination/Pagination";
-import { getRincian } from "../../api/Angsuran";
-const Rincian = React.lazy(() => import("./Rincian"));
+import { deleteData, updateStatus } from "../../api/Pengajuan";
 
-export default function View() {
+const ConfirmDialog = React.lazy(() => import("../../components/ConfirmAlert"));
+const ConfirmAction = React.lazy(() =>
+  import("../../components/ConfirmAlert2")
+);
+
+export default function ViewValidasi() {
   const [currentPage, setCurrentPage] = useState(1);
   const [onSearch, setSearch] = useState("");
   const tokenLogin = useStore((state) => state.token);
+  const dataLogin = useStore((state) => state.dataLogin);
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
-  const dataSetting = useStore((state) => state.dataSetting);
   const [pagination, setPagination] = useState({
     label: "10",
     value: 10,
   });
   const [openDialog, setOpenDialog] = useState(false);
-  const [openRincian, setOpenRincian] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [dataPropsRincian, setDataPropsRincian] = useState([]);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(false);
+  const [valueStatus, setValueStatus] = useState(false);
+  const [textConfrim, setTextConfirm] = useState({
+    text: "",
+    msg: "",
+    button: "",
+  });
   const [idSelected, setIDSelected] = useState("");
   const optionsPage = [
     {
@@ -53,8 +68,10 @@ export default function View() {
   const navigasi = useNavigate();
   const queryClient = useQueryClient();
 
+  const { pathname } = useLocation();
+
   const fetchDatas = async () => {
-    let url = `${baseUrl}/pinjaman?page=${currentPage}&perpage=${pagination.value}`;
+    let url = `${baseUrl}/pengajuan?page=${currentPage}&perpage=${pagination.value}`;
     if (onSearch) {
       setCurrentPage(1);
       url += `&search=${onSearch}`;
@@ -70,26 +87,26 @@ export default function View() {
   const {
     isLoading,
     isError,
-    data: pinjamans,
+    data: pengajuans,
     error,
     refetch,
   } = useQuery({
     networkMode: `always`,
-    queryKey: ["pinjaman", currentPage, pagination],
+    queryKey: ["pengajuan", currentPage, pagination],
     queryFn: fetchDatas,
   });
 
-  const deleteMutation = useMutation({
+  const deletePengajuanMutation = useMutation({
     networkMode: `always`,
     mutationFn: deleteData,
     onSuccess: () => {
       setCurrentPage(1);
-      queryClient.invalidateQueries({ queryKey: ["pinjaman"] });
+      queryClient.invalidateQueries({ queryKey: ["pengajuan"] });
       toastChange({
-        id: "NotifPinjaman",
+        id: "NotifPengajuan",
         content: {
           title: "Delete Data",
-          description: "Delete data Pinjaman Successfuly",
+          description: "Delete data Pengjuan Kas Successfuly",
           backgroundColor: toastColors.success,
           icon: toastIcon.check,
         },
@@ -100,7 +117,7 @@ export default function View() {
     },
     onMutate: () => {
       toastChange({
-        id: "NotifPinjaman",
+        id: "NotifPengajuan",
         content: {
           title: "Delete Data",
           description: "Loading....",
@@ -124,7 +141,7 @@ export default function View() {
         message = respon.statusText;
       }
       toastChange({
-        id: "NotifPinjaman",
+        id: "NotifPengajuan",
         content: {
           title: "Delete Data",
           description: message,
@@ -138,12 +155,38 @@ export default function View() {
     },
   });
 
-  const rincianMutation = useMutation({
+  const updateStatusMutation = useMutation({
     networkMode: `always`,
-    mutationFn: getRincian,
-    onSuccess: (res) => {
-      setDataPropsRincian(res.data);
-      setOpenRincian(!openRincian);
+    mutationFn: updateStatus,
+    onSuccess: () => {
+      setCurrentPage(1);
+      queryClient.invalidateQueries({ queryKey: ["pengajuan"] });
+      toastChange({
+        id: "NotifPengajuan",
+        content: {
+          title: "Update Data",
+          description: "Update Status Pengajuan Successfuly",
+          backgroundColor: toastColors.success,
+          icon: toastIcon.check,
+        },
+        position: "top-right",
+        dismiss: true,
+        duration: 3000,
+      });
+    },
+    onMutate: () => {
+      toastChange({
+        id: "NotifPengajuan",
+        content: {
+          title: "Update Data",
+          description: "Loading....",
+          backgroundColor: toastColors.loading,
+          icon: toastIcon.loading,
+        },
+        position: "top-right",
+        dismiss: false,
+        duration: 0,
+      });
     },
     onError: (res) => {
       const respon = res.response;
@@ -157,9 +200,9 @@ export default function View() {
         message = respon.statusText;
       }
       toastChange({
-        id: "NotifRincian",
+        id: "NotifPengajuan",
         content: {
-          title: "Rincian",
+          title: "Update Data",
           description: message,
           backgroundColor: toastColors.error,
           icon: toastIcon.error,
@@ -176,11 +219,28 @@ export default function View() {
     navigasi("edit", { replace: true });
   };
 
+  const handleDetailButton = (data) => {
+    localStorage.setItem("dataDetail", JSON.stringify(data));
+    navigasi("detail", { replace: true });
+  };
+
   const handleHapus = (id) => {
     if (confirmDelete) {
-      deleteMutation.mutate({ id: id, token: tokenLogin });
+      deletePengajuanMutation.mutate({ id: id, token: tokenLogin });
       setConfirmDelete(false);
       setOpenDialog(false);
+    }
+  };
+
+  const handleAction = (id) => {
+    if (confirmAction) {
+      updateStatusMutation.mutate({
+        Data: { status: valueStatus },
+        token: tokenLogin,
+        id: id,
+      });
+      setConfirmAction(false);
+      setOpenConfirm(false);
     }
   };
 
@@ -188,41 +248,27 @@ export default function View() {
     handleHapus(idSelected);
   }, [confirmDelete]);
 
-  const handleRincian = (noPinjaman) => {
-    rincianMutation.mutate({
-      id: noPinjaman,
-      token: tokenLogin,
-    });
-  };
-
-  const handleCetak = (id) => {
-    window.open(
-      `${import.meta.env.VITE_BACKEND_PUBLIC}/pinjaman/bukti?id=${id}&lokasi=${
-        dataSetting?.lokasi ? dataSetting.lokasi : "Bali"
-      }&alamat=${
-        dataSetting?.alamat ? btoa(dataSetting.alamat) : "-"
-      }&direktur=${dataSetting?.alamat ? btoa(dataSetting.direktur) : "-"}`,
-      "_blank"
-    );
-  };
+  useEffect(() => {
+    handleAction(idSelected);
+  }, [confirmAction]);
 
   if (isError) return `Error ${error.message}`;
-
   return (
     <>
+      <ConfirmDialog
+        settingDialog={{ openDialog, setOpenDialog }}
+        actionConfirm={{ confirmDelete, setConfirmDelete }}
+      />
       <Suspense>
-        <ConfirmDialog
-          settingDialog={{ openDialog, setOpenDialog }}
-          actionConfirm={{ confirmDelete, setConfirmDelete }}
-        />
-        <Rincian
-          settingDialog={{ openRincian, setOpenRincian }}
-          dataProps={dataPropsRincian}
+        <ConfirmAction
+          settingDialog={{ openConfirm, setOpenConfirm }}
+          actionConfirm={{ confirmAction, setConfirmAction }}
+          text={textConfrim}
         />
       </Suspense>
       <div className="card bg-white">
         <div className="border-second card-header">
-          <h3 className="mb-0 text-lg font-bold">Data Pinjaman</h3>
+          <h3 className="mb-0 text-lg font-bold">Validasi Pengajuan</h3>
           <div className="flex justify-center items-center">
             <Link
               to={"add"}
@@ -280,31 +326,61 @@ export default function View() {
                         scope="col"
                         className="border-r border-third px-6 py-4"
                       >
-                        Nomor Pinjaman
+                        Kode Pengajuan
                       </th>
                       <th
                         scope="col"
                         className="border-r border-third px-6 py-4"
                       >
-                        Tanggal Pinjaman
+                        Tanggal Pengajuan
                       </th>
                       <th
                         scope="col"
                         className="border-r border-third px-6 py-4"
                       >
-                        Nama Nasabah
+                        ID Nasabah
                       </th>
                       <th
                         scope="col"
                         className="border-r border-third px-6 py-4"
                       >
-                        Hitungan
+                        Jenis Kredit
                       </th>
                       <th
                         scope="col"
                         className="border-r border-third px-6 py-4"
                       >
-                        Total Tagihan
+                        Nama Lengkap
+                      </th>
+                      <th
+                        scope="col"
+                        className="border-r border-third px-6 py-4"
+                      >
+                        Jumlah Pinjaman
+                      </th>
+                      <th
+                        scope="col"
+                        className="border-r border-third px-6 py-4"
+                      >
+                        Jangka Waktu
+                      </th>
+                      <th
+                        scope="col"
+                        className="border-r border-third px-6 py-4"
+                      >
+                        Keperluan
+                      </th>
+                      <th
+                        scope="col"
+                        className="border-r border-third px-6 py-4"
+                      >
+                        Marketing
+                      </th>
+                      <th
+                        scope="col"
+                        className="border-r border-third px-6 py-4"
+                      >
+                        Status
                       </th>
                       <th
                         scope="col"
@@ -317,89 +393,107 @@ export default function View() {
                   <tbody>
                     {isLoading && (
                       <tr>
-                        <td colSpan={7} className="text-left">
+                        <td colSpan={12} className="text-left">
                           Loading....
                         </td>
                       </tr>
                     )}
-                    {pinjamans?.data.length > 0
-                      ? pinjamans?.data.map((data, index) => (
+                    {pengajuans?.data.length > 0
+                      ? pengajuans?.data.map((data, index) => (
                           <tr
                             className="border-b font-medium even:bg-white odd:bg-slate-100"
                             key={index}
                           >
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 font-medium">
-                              {index + pinjamans.from}
+                              {index + pengajuans.from}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {data.no_pinjaman}
+                              {data.kode_pengajuan}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {ToDate(data.tanggal_pinjaman)}
+                              {ToDate(data.tanggal_pengajuan)}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {data.nama_nasabah}
+                              {data.id_nasabah}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              <div className="flex flex-col text-sm">
-                                <span>
-                                  Jumlah Pinjaman Awal:{" "}
-                                  <NumberFormat value={data.jumlah_pinjaman} />
-                                </span>
-                                <span>
-                                  Jangka Waktu:{" "}
-                                  {data.jangka_waktu.lama_angsuran} Bulan
-                                </span>
-                                <span>
-                                  Tagihan Pokok Perbulan:{" "}
-                                  <NumberFormat
-                                    value={Math.round(
-                                      parseFloat(data.jumlah_pinjaman) /
-                                        data.jangka_waktu.lama_angsuran
-                                    )}
-                                  />
-                                </span>
-                                <span>
-                                  Tagihan Bunga Perbulan:{" "}
-                                  <NumberFormat
-                                    value={
-                                      parseFloat(data.jumlah_pinjaman) *
-                                      (parseFloat(data.suku_bunga) / 100 / 12)
-                                    }
-                                  />
-                                </span>
-                                <span>Suku Bunga: {data.suku_bunga} %</span>
-                              </div>
+                              {data.jenis_kredit}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              <div className="flex flex-col items-start">
-                                <span>
-                                  Total Tagihan Perbulan:{" "}
-                                  <NumberFormat
-                                    value={
-                                      Math.round(
-                                        parseFloat(data.jumlah_pinjaman) /
-                                          data.jangka_waktu.lama_angsuran
-                                      ) +
-                                      parseFloat(data.jumlah_pinjaman) *
-                                        (parseFloat(data.suku_bunga) / 100 / 12)
-                                    }
-                                  />
-                                </span>
-                                {/* <Link to={``} className="underline text-sm">Lihat Rincian Tagihan</Link> */}
-                                <span
-                                  onClick={() =>
-                                    handleRincian(data.no_pinjaman)
-                                  }
-                                  className="underline text-sm cursor-pointer"
-                                >
-                                  Lihat Rincian Tagihan
-                                </span>
-                              </div>
+                              {data.nama_lengkap}
                             </td>
-                            <td className="whitespace-nowrap border-r border-third px-6 py-2">
-                              {parseInt(data.status) === 0 ? (
-                                <div className="flex items-center">
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
+                              <NumberFormat value={data.jumlah_pinjaman} />
+                            </td>
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-right">
+                              {data.jangka_waktu.lama_angsuran}
+                            </td>
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
+                              {data.keperluan}
+                            </td>
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
+                              {data.marketing.nama_marketing}
+                            </td>
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
+                              {data.status === 0
+                                ? "Menunggu"
+                                : data.status === 1
+                                ? "Diterima"
+                                : "Ditolak"}
+                            </td>
+                            <td className="whitespace-nowrap border-r border-third px-6 py-2 flex justify-center">
+                              {parseInt(data.status) !== 2 && (
+                                <>
+                                  <button
+                                    className="btn2 bg-teal-800 hover:opacity-80 flex items-center"
+                                    onClick={() => handleDetailButton(data)}
+                                  >
+                                    <MdPreview /> &nbsp;
+                                    <span>Detail</span>
+                                  </button>
+                                  &nbsp;
+                                </>
+                              )}
+                              {parseInt(data.status) === 0 && (
+                                <>
+                                  <button
+                                    className="btn2 bg-green-600 hover:opacity-80 flex items-center"
+                                    onClick={() => {
+                                      setOpenConfirm(!openConfirm);
+                                      setTextConfirm({
+                                        title: "Terima Pengajuan",
+                                        msg: "Anda yakin menerima pengajuan pinjaman?",
+                                        button: "Terima",
+                                      });
+                                      setIDSelected(data.id);
+                                      setValueStatus("1");
+                                    }}
+                                  >
+                                    <MdCheckCircleOutline /> &nbsp;
+                                    <span>Terima</span>
+                                  </button>
+                                  &nbsp;
+                                  <button
+                                    className="btn2 bg-red-600 hover:opacity-80 flex items-center"
+                                    onClick={() => {
+                                      setOpenConfirm(!openConfirm);
+                                      setTextConfirm({
+                                        title: "Tolak Pengajuan",
+                                        msg: "Anda yakin menolak pengajuan pinjaman?",
+                                        button: "Tolak",
+                                      });
+                                      setIDSelected(data.id);
+                                      setValueStatus("2");
+                                    }}
+                                  >
+                                    <MdDangerous /> &nbsp;
+                                    <span>Tolak</span>
+                                  </button>
+                                  &nbsp;
+                                </>
+                              )}
+                              {/* {parseInt(data.status) === 0 && (
+                                <>
                                   <button
                                     className="btn2 bg-orange-500 hover:opacity-80 flex items-center"
                                     onClick={() => handleEditButton(data)}
@@ -408,6 +502,10 @@ export default function View() {
                                     <span>Edit</span>
                                   </button>
                                   &nbsp;
+                                </>
+                              )}
+                              {parseInt(data.status) !== 1 && (
+                                <>
                                   <button
                                     className="btn2 bg-red-700 hover:opacity-80 flex items-center"
                                     onClick={() => {
@@ -418,26 +516,14 @@ export default function View() {
                                     <MdDeleteOutline /> &nbsp;
                                     <span>Hapus</span>
                                   </button>
-                                  &nbsp;
-                                  <button
-                                    className="btn2 bg-primary hover:opacity-80 flex items-center"
-                                    onClick={() => {
-                                      handleCetak(data.no_pinjaman);
-                                    }}
-                                  >
-                                    <MdPrint /> &nbsp;
-                                    <span>Cetak</span>
-                                  </button>
-                                </div>
-                              ) : (
-                                <span>Pinjaman Lunas</span>
-                              )}
+                                </>
+                              )} */}
                             </td>
                           </tr>
                         ))
                       : !isLoading && (
                           <tr>
-                            <td colSpan={7} className="text-center">
+                            <td colSpan={12} className="text-center">
                               Tidak Ada Data
                             </td>
                           </tr>
@@ -447,12 +533,13 @@ export default function View() {
               </div>
             </div>
           </div>
-          {pinjamans ? (
+
+          {pengajuans ? (
             <Pagination
               className="pagination-bar float-right mb-3"
               currentPage={currentPage}
-              totalCount={pinjamans.total}
-              pageSize={pinjamans.per_page}
+              totalCount={pengajuans.total}
+              pageSize={pengajuans.per_page}
               onPageChange={(page) => setCurrentPage(page)}
             />
           ) : (

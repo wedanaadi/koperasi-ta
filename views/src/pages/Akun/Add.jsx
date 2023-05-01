@@ -9,6 +9,7 @@ import { Input } from "../../components/Input";
 
 export default function Add() {
   const queryClient = useQueryClient();
+  const [waiting, setWaiting] = useState(false);
   const [errorValidasi, setErrorValidasi] = useState([]);
   const [akun, setAkun] = useState({
     no_akun: "",
@@ -25,6 +26,7 @@ export default function Add() {
     networkMode: `always`,
     mutationFn: createData,
     onSuccess: () => {
+      setWaiting(false)
       queryClient.invalidateQueries({ queryKey: ["akun", 1] });
       navigasi(`/masterdata/akun`);
       toastChange({
@@ -41,6 +43,7 @@ export default function Add() {
       });
     },
     onMutate: () => {
+      setWaiting(true)
       toastChange({
         id: "NotifAkun",
         content: {
@@ -55,6 +58,7 @@ export default function Add() {
       });
     },
     onError: (res) => {
+      setWaiting(false)
       const respon = res.response;
       let message = "";
       if(respon.status === 422) {
@@ -128,7 +132,7 @@ export default function Add() {
           />
           <div className="w-2/12 float-right">
             <button
-              className="bg-primary hover:bg-third btn mb-6"
+              className={`bg-primary ${waiting ? 'bg-opacity-50' : 'hover:bg-third'} btn mb-6`}
               type="submit"
             >
               Simpan

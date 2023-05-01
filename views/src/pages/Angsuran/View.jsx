@@ -210,17 +210,19 @@ export default function View() {
             </div>
           </div>
 
-          {!isLoadingProfile && !isErrorProfile && profiles?.sisa_pinjaman > 0 && (
-            <div className="flex mt-2">
-              <Link
-                to={"form"}
-                className="flex items-center btn2 bg-primary hover:opacity-80"
-              >
-                {/* <MdAddCircleOutline /> &nbsp; */}
-                <span>Bayar</span>
-              </Link>
-            </div>
-          )}
+          {!isLoadingProfile &&
+            !isErrorProfile &&
+            profiles?.sisa_pinjaman > 0 && (
+              <div className="flex mt-2">
+                <Link
+                  to={"form"}
+                  className="flex items-center btn2 bg-primary hover:opacity-80"
+                >
+                  {/* <MdAddCircleOutline /> &nbsp; */}
+                  <span>Bayar</span>
+                </Link>
+              </div>
+            )}
 
           <div className="flex flex-col overflow-x-auto">
             <div className="sm:-mx-6 lg:-mx-8 xl:-mx-0">
@@ -315,14 +317,18 @@ export default function View() {
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2">
                               <div className="flex items-center">
-                                <button
-                                  className="btn2 bg-orange-500 hover:opacity-80 flex items-center"
-                                  onClick={() => handleEditButton(data)}
-                                >
-                                  <MdEdit /> &nbsp;
-                                  <span>Edit</span>
-                                </button>
-                                &nbsp;
+                                {parseInt(data.status) === 0 && (
+                                  <>
+                                    <button
+                                      className="btn2 bg-orange-500 hover:opacity-80 flex items-center"
+                                      onClick={() => handleEditButton(data)}
+                                    >
+                                      <MdEdit /> &nbsp;
+                                      <span>Edit</span>
+                                    </button>
+                                    &nbsp;
+                                  </>
+                                )}
                                 <button
                                   className="btn2 bg-blue-600 hover:opacity-80 flex items-center"
                                   onClick={() => handleCetak(data.id)}

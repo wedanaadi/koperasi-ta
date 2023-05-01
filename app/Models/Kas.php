@@ -20,7 +20,12 @@ class Kas extends Model
   {
     $query->when($filters['search'] ?? false, function ($query, $search) {
       return $query->where('kode_transaksi', 'like', '%' . $search . '%')
-        ->orWhere('keterangan', 'like', '%' . $search . '%');
+        ->orWhere('keterangan', 'like', '%' . $search . '%')
+        ->orWhereHas('untukAkun', function ($query) use ($search) {
+          $query->where('jenis_transaksi', 'like', '%' . $search . '%');
+        })->orWhereHas('dariAkun', function ($query) use ($search) {
+          $query->where('jenis_transaksi', 'like', '%' . $search . '%');
+        });
     });
     $query->when($filters['periode'] ?? false, function ($query, $params) {
       $periode = explode(',', $params);

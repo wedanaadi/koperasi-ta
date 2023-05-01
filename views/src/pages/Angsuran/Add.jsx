@@ -25,6 +25,7 @@ export default function Add() {
   );
   const queryClient = useQueryClient();
   const [errorValidasi, setErrorValidasi] = useState([]);
+  const [waiting, setWaiting] = useState(null);
   const [selectedMarketing, setSelectedMarketing] = useState(null);
   const [selectedAmbilAkun, setSelectedAmbilAkun] = useState(null);
   const [selectedSimpanAkun, setSelectedSimpanAkun] = useState(null);
@@ -124,6 +125,7 @@ export default function Add() {
     networkMode: `always`,
     mutationFn: createData,
     onSuccess: () => {
+      setWaiting(false)
       queryClient.invalidateQueries({ queryKey: ["angsuran", 1] });
       queryClient.invalidateQueries({ queryKey: ["profilAngsuranPinjaman"] });
       navigasi(`/pinjaman/angsuran/bayar`);
@@ -141,6 +143,7 @@ export default function Add() {
       });
     },
     onMutate: () => {
+      setWaiting(true)
       toastChange({
         id: "NotifAngsuran",
         content: {
@@ -155,6 +158,7 @@ export default function Add() {
       });
     },
     onError: (res) => {
+      setWaiting(false)
       const respon = res.response;
       let message = "";
       if (respon.status === 422) {
@@ -329,7 +333,7 @@ export default function Add() {
           />
           <div className="md:w-2/12 float-right">
             <button
-              className="bg-primary hover:bg-third btn mb-6"
+              className={`bg-primary ${waiting ? 'bg-opacity-50' : 'hover:bg-third'} btn mb-6`}
               type="submit"
             >
               Simpan

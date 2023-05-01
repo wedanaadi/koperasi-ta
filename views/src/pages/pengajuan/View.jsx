@@ -8,7 +8,7 @@ import {
   MdDangerous,
   MdPreview,
 } from "react-icons/md";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import baseUrl from "../../components/baseUrl";
 import Search from "../../components/Datatable/Search";
 import Select from "../../components/Tailwind/Select";
@@ -28,6 +28,7 @@ export default function View() {
   const [currentPage, setCurrentPage] = useState(1);
   const [onSearch, setSearch] = useState("");
   const tokenLogin = useStore((state) => state.token);
+  const dataLogin = useStore((state) => state.dataLogin);
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
@@ -66,6 +67,8 @@ export default function View() {
   ];
   const navigasi = useNavigate();
   const queryClient = useQueryClient();
+
+  const { pathname } = useLocation();
 
   const fetchDatas = async () => {
     let url = `${baseUrl}/pengajuan?page=${currentPage}&perpage=${pagination.value}`;
@@ -451,7 +454,7 @@ export default function View() {
                                   &nbsp;
                                 </>
                               )}
-                              {parseInt(data.status) === 0 && (
+                              {/* {parseInt(data.status) === 0 && (
                                 <>
                                   <button
                                     className="btn2 bg-green-600 hover:opacity-80 flex items-center"
@@ -488,7 +491,7 @@ export default function View() {
                                   </button>
                                   &nbsp;
                                 </>
-                              )}
+                              )} */}
                               {parseInt(data.status) === 0 && (
                                 <>
                                   <button

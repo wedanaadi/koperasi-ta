@@ -1,7 +1,7 @@
 import { element } from "prop-types";
 import React, { Suspense } from "react";
 import { RequiredLogin } from "./components/MiddlewareAuth";
-import {Outlet} from "react-router-dom"
+import { Outlet } from "react-router-dom";
 
 const Home = React.lazy(() => import("./pages/Home"));
 const Login = React.lazy(() => import("./pages/Login"));
@@ -61,7 +61,9 @@ const EditPenyesuain = React.lazy(() =>
   import("./pages/TransaksiKas/KasPenyesuain/Edit")
 );
 const Simpanan = React.lazy(() => import("./pages/Simpanan/Index"));
-const ListLapSimpanan = React.lazy(() => import("./pages/Simpanan/ListLapSimpanan"));
+const ListLapSimpanan = React.lazy(() =>
+  import("./pages/Simpanan/ListLapSimpanan")
+);
 const LapRekSimpanan = React.lazy(() => import("./pages/Simpanan/LapSimpanan"));
 const LapKasSimpanan = React.lazy(() => import("./pages/Simpanan/KasSimpanan"));
 const Setoran = React.lazy(() => import("./pages/Simpanan/Setoran/Setoran"));
@@ -81,9 +83,15 @@ const EditPenarikan = React.lazy(() =>
 
 const PengajuanIndex = React.lazy(() => import("./pages/pengajuan/index"));
 const ViewPengajuan = React.lazy(() => import("./pages/pengajuan/View"));
+const ValidasiPengajuan = React.lazy(() =>
+  import("./pages/pengajuan/ViewValidasi")
+);
 const AddPengajuan = React.lazy(() => import("./pages/pengajuan/Add"));
 const EditPengajuan = React.lazy(() => import("./pages/pengajuan/Edit"));
 const DetailPengajuan = React.lazy(() => import("./pages/pengajuan/Detail"));
+const DetailValidasiPengajuan = React.lazy(() =>
+  import("./pages/pengajuan/DetailValidasi")
+);
 
 const IndexPinjaman = React.lazy(() => import("./pages/pinjaman/Index"));
 const ViewPinjaman = React.lazy(() => import("./pages/pinjaman/View"));
@@ -98,16 +106,17 @@ const ListPinjaman = React.lazy(() => import("./pages/Angsuran/ListPinjaman"));
 const ViewAngsuran = React.lazy(() => import("./pages/Angsuran/View"));
 const FormAngsuran = React.lazy(() => import("./pages/Angsuran/Add"));
 const FormEditAngsuran = React.lazy(() => import("./pages/Angsuran/Edit"));
+import LoadingPage from "./pages/LoadingPage"
 
 export default [
   {
     path: `/`,
     element: (
-      // <RequiredLogin>
-      <Suspense fallback={`Loading Page....`}>
-        <Home />
-      </Suspense>
-      // </RequiredLogin>
+      <RequiredLogin>
+        <Suspense fallback={<LoadingPage/>}>
+          <Home />
+        </Suspense>
+      </RequiredLogin>
     ),
     children: [
       {
@@ -500,6 +509,32 @@ export default [
             ],
           },
           {
+            path: `validasi`,
+            element: (
+              <Suspense>
+                <PengajuanIndex />
+              </Suspense>
+            ),
+            children: [
+              {
+                index: true,
+                element: (
+                  <Suspense>
+                    <ValidasiPengajuan />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `detail`,
+                element: (
+                  <Suspense>
+                    <DetailValidasiPengajuan />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+          {
             path: `pinjaman`,
             element: (
               <Suspense>
@@ -581,7 +616,7 @@ export default [
         path: `pelaporan`,
         element: (
           <Suspense>
-            <Outlet/>
+            <Outlet />
           </Suspense>
         ),
         children: [
@@ -589,7 +624,7 @@ export default [
             path: `lapsimpanan`,
             element: (
               <Suspense>
-                <ListLapSimpanan/>
+                <ListLapSimpanan />
               </Suspense>
             ),
           },
@@ -597,7 +632,7 @@ export default [
             path: `lapsimpanan/detail`,
             element: (
               <Suspense>
-                <LapRekSimpanan/>
+                <LapRekSimpanan />
               </Suspense>
             ),
           },
@@ -605,7 +640,7 @@ export default [
             path: `lapriwayat`,
             element: (
               <Suspense>
-                <ListRiwayat/>
+                <ListRiwayat />
               </Suspense>
             ),
           },
@@ -613,7 +648,7 @@ export default [
             path: `lapriwayat/detail`,
             element: (
               <Suspense>
-                <LapRiwayat/>
+                <LapRiwayat />
               </Suspense>
             ),
           },
@@ -621,7 +656,7 @@ export default [
             path: `lappinjaman`,
             element: (
               <Suspense>
-                <LapPinjaman/>
+                <LapPinjaman />
               </Suspense>
             ),
           },
@@ -629,7 +664,7 @@ export default [
             path: `lapkas`,
             element: (
               <Suspense>
-                <LapKas/>
+                <LapKas />
               </Suspense>
             ),
           },

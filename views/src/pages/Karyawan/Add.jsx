@@ -8,6 +8,7 @@ import { Input, Select, Textarea } from "../../components/Input";
 
 export default function Add() {
   const queryClient = useQueryClient();
+  const [waiting, setWaiting] = useState(false);
   const [errorValidasi, setErrorValidasi] = useState([]);
   const [selectedValue, setSelectedValue] = useState(null);
   const [karyawan, setKaryawan] = useState({
@@ -33,6 +34,7 @@ export default function Add() {
     networkMode: `always`,
     mutationFn: createData,
     onSuccess: () => {
+      setWaiting(false)
       queryClient.invalidateQueries({ queryKey: ["karyawan", 1] });
       navigasi(`/masterdata/karyawan`);
       toastChange({
@@ -49,6 +51,7 @@ export default function Add() {
       });
     },
     onMutate: () => {
+      setWaiting(true)
       toastChange({
         id: "NotifKaryawan",
         content: {
@@ -63,6 +66,7 @@ export default function Add() {
       });
     },
     onError: (res) => {
+      setWaiting(false)
       const respon = res.response;
       let message = "";
       if(respon.status === 422) {
@@ -164,7 +168,7 @@ export default function Add() {
           />
           <div className="w-2/12 float-right">
             <button
-              className="bg-primary hover:bg-third btn mb-6"
+              className={`bg-primary ${waiting ? 'bg-opacity-50' : 'hover:bg-third'} btn mb-6`}
               type="submit"
             >
               Simpan

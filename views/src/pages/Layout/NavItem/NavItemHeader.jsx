@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { BsChevronDown } from "react-icons/bs";
+import useStore from "../../../store/useStore";
 
 const resolveLinkPath = (childTo, parentTo) => `${parentTo}/${childTo}`;
 
 export default function NavItemHeader(props) {
+  const dataLogin = useStore((state) => state.dataLogin);
   const { item } = props;
   const { label, icon, to: headerToPath, children, role } = item;
 
@@ -47,7 +49,7 @@ export default function NavItemHeader(props) {
           {children.sort(compare).map((item, index) => {
             const key = `${item.label}-${index}`;
             const { label, icon, children, role } = item;
-            if(!role.includes('admin')) {
+            if(!role.includes(dataLogin?.jabatan)) {
               return false;
             }
 

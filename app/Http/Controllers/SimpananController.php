@@ -82,9 +82,9 @@ class SimpananController extends Controller
         ->OrderBy('created_at', 'ASC')
         ->whereHas('simpanan', function ($q) use ($id) {
           $q->where('jenis_simpanan', '=', $id);
-        })->get();
+        });
 
-      foreach ($simpananDetail as $sd) {
+      foreach ($simpananDetail->get() as $sd) {
         if ($sd->type == '1') {
           $totalMasuk += $sd->saldo;
         } else {

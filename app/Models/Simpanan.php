@@ -31,7 +31,10 @@ class Simpanan extends Model
   public function scopeFilter($query, array $filters)
   {
     $query->when($filters['search'] ?? false, function ($query, $search) {
-      return $query->where('id_nasabah', 'like', '%' . $search . '%');
+      return $query->where('id_nasabah', 'like', '%' . $search . '%')
+      ->orWhereHas('nasabah', function ($query) use ($search) {
+          $query->where('nama_lengkap', 'like', '%' . $search . '%');
+        });
     });
   }
 

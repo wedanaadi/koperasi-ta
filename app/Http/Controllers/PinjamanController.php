@@ -237,7 +237,7 @@ class PinjamanController extends Controller
   {
     $pinjaman = Pinjaman::filter(request(['search']))
       ->where('is_aktif', "1")
-      ->where('status', "0")
+      // ->where('status', "0")
       ->OrderBy('no_pinjaman', 'ASC')
       ->get();
 
