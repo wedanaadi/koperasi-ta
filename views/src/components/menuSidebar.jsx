@@ -185,6 +185,12 @@ export default [
         to: "lapakun",
         role: ['direktur','teller'],
       },
+      {
+        label: "Lap Transaksi Simpanan",
+        icon: "icon",
+        to: "lapsimpananperiode",
+        role: ['direktur','teller'],
+      },
     ]
   },
   {

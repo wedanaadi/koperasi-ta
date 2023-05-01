@@ -237,7 +237,7 @@ export default function LapTrx() {
                               {data.kode_transaksi}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {ToDate(data.tanggal_transaksi)}
+                              {ToDate2(data.tanggal_transaksi)}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
                               {data.jenis_transaksi}

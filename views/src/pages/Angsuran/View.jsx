@@ -6,7 +6,7 @@ import baseUrl from "../../components/baseUrl";
 import { NumberFormat } from "../../components/Input";
 import axios from "../../components/axiosApi";
 import useStore from "../../store/useStore";
-import ToDate from "../../components/Date";
+import ToDate, { ToDate2 } from "../../components/Date";
 import CapitalFirst from "../../components/CapitalFirstLetter";
 import Pagination from "../../components/Datatable/Pagination/Pagination";
 
@@ -301,7 +301,7 @@ export default function View() {
                               {data.kode_transaksi}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {ToDate(data.tanggal_transaksi)}
+                              {ToDate2(data.tanggal_transaksi)}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
                               {data.pembayaran_ke}

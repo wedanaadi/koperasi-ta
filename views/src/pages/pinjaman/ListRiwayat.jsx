@@ -9,7 +9,7 @@ import useStore from "../../store/useStore";
 import axios from "../../components/axiosApi";
 import Pagination from "../../components/Datatable/Pagination/Pagination";
 import { NumberFormat } from "../../components/Input";
-import ToDate from "../../components/Date";
+import ToDate, { ToDate2 } from "../../components/Date";
 
 export default function ListRiwayat() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -173,7 +173,7 @@ export default function ListRiwayat() {
                               {data.no_pinjaman}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {ToDate(data.tanggal_pinjaman)}
+                              {ToDate2(data.tanggal_pinjaman)}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
                               {data.nama_nasabah}

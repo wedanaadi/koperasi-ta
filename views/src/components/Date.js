@@ -6,8 +6,19 @@ export const ConvertToEpoch = (date) => {
 };
 
 export const ToDate2 = (date) => {
-  let dateProps = new Date(date);
-  return dateProps.toLocaleDateString();
+  // let dateProps = new Date(date);
+  // return dateProps.toLocaleDateString();
+
+  let d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  // return [year, month, day].join("-");
+  return [day, month, year].join("/");
 };
 
 export const DateIndo = (date) => {
@@ -37,7 +48,7 @@ export const DateIndo = (date) => {
   let bulan1 = bulan[xbulan];
   let tahun1 = xtahun < 1000 ? xtahun + 1900 : xtahun;
 
-  return hari1 +', ' + tanggal + ' ' + bulan1 + ' ' + tahun1
+  return hari1 + ", " + tanggal + " " + bulan1 + " " + tahun1;
 };
 
 export default function ToDate(date, type) {

@@ -269,15 +269,6 @@ export default function ViewValidasi() {
       <div className="card bg-white">
         <div className="border-second card-header">
           <h3 className="mb-0 text-lg font-bold">Validasi Pengajuan</h3>
-          <div className="flex justify-center items-center">
-            <Link
-              to={"add"}
-              className="flex items-center btn bg-green-700 hover:opacity-80"
-            >
-              <MdAddCircleOutline /> &nbsp;
-              <span>Tambah</span>
-            </Link>
-          </div>
         </div>
         <div className="card-body">
           <div className="sm:flex sm:flex-row sm:items-center">

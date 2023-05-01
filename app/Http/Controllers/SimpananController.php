@@ -6,6 +6,7 @@ use App\Libraries\Fungsi;
 use App\Libraries\Terbilang;
 use App\Models\Akun;
 use App\Models\JenisSimpanan;
+use App\Models\Pegawai;
 use App\Models\Simpanan;
 use App\Models\SimpananDetail;
 use Carbon\Carbon;
@@ -36,6 +37,42 @@ class SimpananController extends Controller
       ->OrderBy('id', 'ASC')
       ->paginate(request('perpage'));
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
+  public function simpanan_periode()
+  {
+    $data = SimpananDetail::filter(request(['periode', 'tipe']))
+      ->with('marketing', 'simpanan', 'simpanan.nasabah', 'simpanan.jenis_simpanan')
+      ->paginate(request('perpage'));
+    return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
+  }
+
+  public function cetak_simpanan_periode()
+  {
+    $data = SimpananDetail::filter(request(['periode', 'tipe']))
+      ->with('marketings', 'simpanan', 'simpanan.nasabah', 'simpanan.jenis_simpanans')
+      ->get();
+    $p = explode(',', request(['periode'])['periode']);
+    $body = [
+      'data' => $data,
+      'periode' => [
+        'start' => Carbon::createFromTimestamp($p[0] / 1000)->format('d/m/Y'),
+        'end' => Carbon::createFromTimestamp($p[1] / 1000)->format('d/m/Y'),
+      ],
+    ];
+    $setting = [
+      // 'tanggal' => Carbon::createFromTimestamp($body->tanggal_transaksi/1000)->format('d/m/Y'),
+      // 'terbilang' => Terbilang::string($body->saldo),
+      'lokasi' => request(['lokasi'])['lokasi'],
+      'judul' => "Laporan Periode Simpanan",
+      'direktur' => Pegawai::find(base64_decode(request(['direktur'])['direktur']))->nama_lengkap,
+      'teller' => Pegawai::find(base64_decode(request(['teller'])['teller']))->nama_lengkap,
+    ];
+    $header = $this->cetak_header(base64_decode(request(['alamat'])['alamat']) . ', ' . request(['lokasi'])['lokasi']);
+    $html = view('pdf.periodeSimpanan', compact('header', 'body', 'setting'));
+    return PDF::loadHTML($html)->setPaper('A4')
+      ->setOrientation('portrait')
+      ->inline($setting['judul'] . '-' . date('Y-m-d') . '.pdf');
   }
 
   public function rekening_simpanan()
@@ -91,11 +128,12 @@ class SimpananController extends Controller
           $totalKeluar += $sd->saldo;
         }
       }
+
       $data[strtolower(str_replace(' ', '_', $j->nama_jenis_simpanan))] = [
         'penyetoran' => $totalMasuk,
         'penarikan' => $totalKeluar,
         'jenis' => $j->nama_jenis_simpanan,
-        'akun' => Akun::find($sd->untuk_akun)->jenis_transaksi
+        'akun' => $simpananDetail->count() > 0 ? Akun::find($sd->untuk_akun)->jenis_transaksi : $j->nama_jenis_simpanan
       ];
     }
     return response()->json(['msg' => 'Get data', "data" => $data, 'error' => []], 200);
@@ -500,9 +538,9 @@ class SimpananController extends Controller
         ->OrderBy('created_at', 'ASC')
         ->whereHas('simpanan', function ($q) use ($id) {
           $q->where('jenis_simpanan', '=', $id);
-        })->get();
+        });
 
-      foreach ($simpananDetail as $sd) {
+      foreach ($simpananDetail->get() as $sd) {
         if ($sd->type == '1') {
           $totalMasuk += $sd->saldo;
         } else {
@@ -513,7 +551,7 @@ class SimpananController extends Controller
         'penyetoran' => $totalMasuk,
         'penarikan' => $totalKeluar,
         'jenis' => $j->nama_jenis_simpanan,
-        'akun' => Akun::find($sd->untuk_akun)->jenis_transaksi
+        'akun' => $simpananDetail->count() > 0 ? Akun::find($sd->untuk_akun)->jenis_transaksi : $j->nama_jenis_simpanan
       ];
     }
     $p = explode(',', request(['periode'])['periode']);

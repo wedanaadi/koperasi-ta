@@ -9,7 +9,6 @@ import useStore from "../../store/useStore";
 import axios from "../../components/axiosApi";
 import { ConvertToEpoch, ToDate2 } from "../../components/Date";
 import Pagination from "../../components/Datatable/Pagination/Pagination";
-import ToDate from "../../components/Date";
 import { MdPrint } from "react-icons/md";
 
 export default function LapPinjaman() {
@@ -226,7 +225,7 @@ export default function LapPinjaman() {
                               {data.no_pinjaman}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {ToDate(data.tanggal_pinjaman)}
+                              {ToDate2(data.tanggal_pinjaman)}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
                               {data.nama_nasabah}

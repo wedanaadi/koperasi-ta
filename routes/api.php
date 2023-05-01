@@ -89,6 +89,7 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get("/reksimpanan", [SimpananController::class, 'rekening_simpanan'])->name('getRekSimpanan');
   Route::get("/kassimpanan", [SimpananController::class, 'kas_simpanan'])->name('getKasSimpanan');
   Route::get("/listlapsimpanan", [SimpananController::class, 'listlap_simpanan'])->name('getListLapSimpanan');
+  Route::get("/simpananperiode", [SimpananController::class, 'simpanan_periode'])->name('getLapSimpananPeriode');
   Route::post("/simpanan", [SimpananController::class, 'store'])->name('postSimpanan');
   Route::put("/simpanan/{id}", [SimpananController::class, 'update'])->name('updateSimpanan');
   Route::delete("/simpanan/{id}/{tipe}", [SimpananController::class, 'destroy'])->name('deleteSimpanan');

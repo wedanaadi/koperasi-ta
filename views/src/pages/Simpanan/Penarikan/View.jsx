@@ -1,13 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
-import { MdAddCircleOutline, MdEdit, MdDeleteOutline, MdPrint } from "react-icons/md";
+import {
+  MdAddCircleOutline,
+  MdEdit,
+  MdDeleteOutline,
+  MdPrint,
+} from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import baseUrl from "../../../components/baseUrl";
 import Search from "../../../components/Datatable/Search";
 import Select from "../../../components/Tailwind/Select";
 import useStore from "../../../store/useStore";
 import axios from "../../../components/axiosApi";
-import ToDate from "../../../components/Date";
+import ToDate, { ToDate2 } from "../../../components/Date";
 import { NumberFormat } from "../../../components/Input";
 import { deleteData } from "../../../api/Simpanan";
 import Pagination from "../../../components/Datatable/Pagination/Pagination";
@@ -23,7 +28,7 @@ export default function View() {
   const toastChange = useStore((state) => state.changeState);
   const toastIcon = useStore((state) => state.iconsToast);
   const toastColors = useStore((state) => state.colorsToast);
-  const dataSetting = useStore((state)=>state.dataSetting)
+  const dataSetting = useStore((state) => state.dataSetting);
   const [pagination, setPagination] = useState({
     label: "10",
     value: 10,
@@ -144,7 +149,11 @@ export default function View() {
 
   const handleHapus = (id) => {
     if (confirmDelete) {
-      deleteSetoranMutation.mutate({ id: id, token: tokenLogin, tipe: "penarikan" });
+      deleteSetoranMutation.mutate({
+        id: id,
+        token: tokenLogin,
+        tipe: "penarikan",
+      });
       setConfirmDelete(false);
       setOpenDialog(false);
     }
@@ -176,7 +185,15 @@ export default function View() {
       <div className="card bg-white">
         <div className="border-second card-header">
           <h3 className="mb-0 text-lg font-bold">Data Penarikan Simpanan</h3>
-          <div className="flex justify-center items-center">
+          <div className="flex justify-between items-center">
+            <Link
+              to={"/pelaporan/lapsimpananperiode"}
+              className="flex items-center btn bg-primary hover:opacity-80"
+            >
+              <MdPrint /> &nbsp;
+              <span>Laporan</span>
+            </Link>
+            &nbsp;
             <Link
               to={"add"}
               className="flex items-center btn bg-green-700 hover:opacity-80"
@@ -300,7 +317,7 @@ export default function View() {
                               {data.id}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {ToDate(data.tanggal_transaksi)}
+                              {ToDate2(data.tanggal_transaksi)}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
                               {data.simpanan.id_nasabah}

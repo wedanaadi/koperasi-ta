@@ -10,7 +10,7 @@ import Search from "../../../components/Datatable/Search";
 import baseUrl from "../../../components/baseUrl";
 import axios from "../../../components/axiosApi";
 import { NumberFormat } from "../../../components/Input";
-import ToDate from "../../../components/Date"
+import ToDate, { ToDate2 } from "../../../components/Date"
 
 const ConfirmDialog = React.lazy(() => import("../../../components/ConfirmAlert"));
 
@@ -295,7 +295,7 @@ export default function View() {
                               {data.kode_transaksi}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {ToDate(data.tanggal_transaksi)}
+                              {ToDate2(data.tanggal_transaksi)}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
                               {data.keterangan}

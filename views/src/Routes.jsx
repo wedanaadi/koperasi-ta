@@ -1,11 +1,13 @@
 import { element } from "prop-types";
 import React, { Suspense } from "react";
 import { RequiredLogin } from "./components/MiddlewareAuth";
+import { RoleAuthorization } from "./components/RoleAuth";
 import { Outlet } from "react-router-dom";
 
 const Home = React.lazy(() => import("./pages/Home"));
 const Login = React.lazy(() => import("./pages/Login"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
+const Forbidden = React.lazy(() => import("./pages/Forbidden"));
 const Dashboard = React.lazy(() => import("./pages/Dashboard"));
 const LamaAngsuran = React.lazy(() => import("./pages/LamaAngsuran/Index"));
 const AddLamaAngsuran = React.lazy(() => import("./pages/LamaAngsuran/Add"));
@@ -66,6 +68,9 @@ const ListLapSimpanan = React.lazy(() =>
 );
 const LapRekSimpanan = React.lazy(() => import("./pages/Simpanan/LapSimpanan"));
 const LapKasSimpanan = React.lazy(() => import("./pages/Simpanan/KasSimpanan"));
+const LapPeriodeSimpanan = React.lazy(() =>
+  import("./pages/Simpanan/LapPeriode")
+);
 const Setoran = React.lazy(() => import("./pages/Simpanan/Setoran/Setoran"));
 const ViewSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/View"));
 const AddSetoran = React.lazy(() => import("./pages/Simpanan/Setoran/Add"));
@@ -106,14 +111,14 @@ const ListPinjaman = React.lazy(() => import("./pages/Angsuran/ListPinjaman"));
 const ViewAngsuran = React.lazy(() => import("./pages/Angsuran/View"));
 const FormAngsuran = React.lazy(() => import("./pages/Angsuran/Add"));
 const FormEditAngsuran = React.lazy(() => import("./pages/Angsuran/Edit"));
-import LoadingPage from "./pages/LoadingPage"
+import LoadingPage from "./pages/LoadingPage";
 
 export default [
   {
     path: `/`,
     element: (
       <RequiredLogin>
-        <Suspense fallback={<LoadingPage/>}>
+        <Suspense fallback={<LoadingPage />}>
           <Home />
         </Suspense>
       </RequiredLogin>
@@ -134,145 +139,181 @@ export default [
           {
             path: `karyawan`,
             element: (
-              <Suspense>
-                <Karyawan />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <Karyawan />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `karyawan/add`,
             element: (
-              <Suspense>
-                <AddKaryawan />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <AddKaryawan />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `karyawan/edit`,
             element: (
-              <Suspense>
-                <EditKaryawan />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <EditKaryawan />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `lamaAngsuran`,
             element: (
-              <Suspense>
-                <LamaAngsuran />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <LamaAngsuran />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `lamaAngsuran/add`,
             element: (
-              <Suspense>
-                <AddLamaAngsuran />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <AddLamaAngsuran />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `lamaAngsuran/edit`,
             element: (
-              <Suspense>
-                <EditLamaAngsuran />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <EditLamaAngsuran />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `marketing`,
             element: (
-              <Suspense>
-                <Marketing />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <Marketing />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `marketing/add`,
             element: (
-              <Suspense>
-                <AddMarketing />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <AddMarketing />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `marketing/edit`,
             element: (
-              <Suspense>
-                <EditMarketing />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <EditMarketing />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `jenissimpanan`,
             element: (
-              <Suspense>
-                <JenisSimpanan />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <JenisSimpanan />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `jenissimpanan/add`,
             element: (
-              <Suspense>
-                <AddJenisSimpanan />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <AddJenisSimpanan />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `jenissimpanan/edit`,
             element: (
-              <Suspense>
-                <EditJenisSimpanan />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <EditJenisSimpanan />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `akun`,
             element: (
-              <Suspense>
-                <Akun />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <Akun />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `akun/add`,
             element: (
-              <Suspense>
-                <AddAkun />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <AddAkun />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `akun/edit`,
             element: (
-              <Suspense>
-                <EditAkun />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <EditAkun />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `nasabah`,
             element: (
-              <Suspense>
-                <Nasabah />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <Nasabah />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `nasabah/add`,
             element: (
-              <Suspense>
-                <AddNasabah />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <AddNasabah />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `nasabah/edit`,
             element: (
-              <Suspense>
-                <EditNasabah />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <EditNasabah />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
         ],
@@ -280,25 +321,31 @@ export default [
       {
         path: `setting`,
         element: (
-          <Suspense>
-            <Setting />
-          </Suspense>
+          <RoleAuthorization allowRoles={["direktur"]}>
+            <Suspense>
+              <Setting />
+            </Suspense>
+          </RoleAuthorization>
         ),
         children: [
           {
             path: `biayaadmin`,
             element: (
-              <Suspense>
-                <BA />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <BA />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `sistem`,
             element: (
-              <Suspense>
-                <Sistem />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <Sistem />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
         ],
@@ -306,81 +353,101 @@ export default [
       {
         path: `transaksikas`,
         element: (
-          <Suspense>
-            <TransaksiKas />
-          </Suspense>
+          <RoleAuthorization allowRoles={["direktur","teller"]}>
+            <Suspense>
+              <TransaksiKas />
+            </Suspense>
+          </RoleAuthorization>
         ),
         children: [
           {
             path: `kasmasuk`,
             element: (
-              <Suspense>
-                <KasMasuk />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <KasMasuk />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `kasmasuk/add`,
             element: (
-              <Suspense>
-                <AddKasMasuk />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <AddKasMasuk />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `kasmasuk/edit`,
             element: (
-              <Suspense>
-                <EditKasMasuk />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <EditKasMasuk />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `kaskeluar`,
             element: (
-              <Suspense>
-                <KasKeluar />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <KasKeluar />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `kaskeluar/add`,
             element: (
-              <Suspense>
-                <AddKasKeluar />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <AddKasKeluar />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `kaskeluar/edit`,
             element: (
-              <Suspense>
-                <EditKasKeluar />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <EditKasKeluar />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `kaspenyesuain`,
             element: (
-              <Suspense>
-                <Penyesuain />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <Penyesuain />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `kaspenyesuain/add`,
             element: (
-              <Suspense>
-                <AddPenyesuain />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <AddPenyesuain />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `kaspenyesuain/edit`,
             element: (
-              <Suspense>
-                <EditPenyesuain />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <EditPenyesuain />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
         ],
@@ -388,41 +455,51 @@ export default [
       {
         path: `simpanan`,
         element: (
-          <Suspense>
-            <Simpanan />
-          </Suspense>
+          <RoleAuthorization allowRoles={["direktur","teller"]}>
+            <Suspense>
+              <Simpanan />
+            </Suspense>
+          </RoleAuthorization>
         ),
         children: [
           {
             path: `setoran`,
             element: (
-              <Suspense>
-                <Setoran />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <Setoran />
+                </Suspense>
+              </RoleAuthorization>
             ),
             children: [
               {
                 index: true,
                 element: (
-                  <Suspense>
-                    <ViewSetoran />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <ViewSetoran />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `add`,
                 element: (
-                  <Suspense>
-                    <AddSetoran />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <AddSetoran />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `edit`,
                 element: (
-                  <Suspense>
-                    <EditSetoran />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <EditSetoran />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
             ],
@@ -430,33 +507,41 @@ export default [
           {
             path: `penarikan`,
             element: (
-              <Suspense>
-                <Penarikan />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <Penarikan />
+                </Suspense>
+              </RoleAuthorization>
             ),
             children: [
               {
                 index: true,
                 element: (
-                  <Suspense>
-                    <ViewPenarikan />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <ViewPenarikan />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `add`,
                 element: (
-                  <Suspense>
-                    <AddPenarikan />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <AddPenarikan />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `edit`,
                 element: (
-                  <Suspense>
-                    <EditPenarikan />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <EditPenarikan />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
             ],
@@ -469,41 +554,51 @@ export default [
           {
             path: `pengajuan`,
             element: (
-              <Suspense>
-                <PengajuanIndex />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","admin"]}>
+                <Suspense>
+                  <PengajuanIndex />
+                </Suspense>
+              </RoleAuthorization>
             ),
             children: [
               {
                 index: true,
                 element: (
-                  <Suspense>
-                    <ViewPengajuan />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","admin"]}>
+                    <Suspense>
+                      <ViewPengajuan />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `add`,
                 element: (
-                  <Suspense>
-                    <AddPengajuan />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","admin"]}>
+                    <Suspense>
+                      <AddPengajuan />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `edit`,
                 element: (
-                  <Suspense>
-                    <EditPengajuan />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","admin"]}>
+                    <Suspense>
+                      <EditPengajuan />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `detail`,
                 element: (
-                  <Suspense>
-                    <DetailPengajuan />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","admin"]}>
+                    <Suspense>
+                      <DetailPengajuan />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
             ],
@@ -511,25 +606,31 @@ export default [
           {
             path: `validasi`,
             element: (
-              <Suspense>
-                <PengajuanIndex />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur"]}>
+                <Suspense>
+                  <PengajuanIndex />
+                </Suspense>
+              </RoleAuthorization>
             ),
             children: [
               {
                 index: true,
                 element: (
-                  <Suspense>
-                    <ValidasiPengajuan />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur"]}>
+                    <Suspense>
+                      <ValidasiPengajuan />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `detail`,
                 element: (
-                  <Suspense>
-                    <DetailValidasiPengajuan />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur"]}>
+                    <Suspense>
+                      <DetailValidasiPengajuan />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
             ],
@@ -537,33 +638,41 @@ export default [
           {
             path: `pinjaman`,
             element: (
-              <Suspense>
-                <IndexPinjaman />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <IndexPinjaman />
+                </Suspense>
+              </RoleAuthorization>
             ),
             children: [
               {
                 index: true,
                 element: (
-                  <Suspense>
-                    <ViewPinjaman />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <ViewPinjaman />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `add`,
                 element: (
-                  <Suspense>
-                    <AddPinjaman />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <AddPinjaman />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `edit`,
                 element: (
-                  <Suspense>
-                    <EditPinjaman />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <EditPinjaman />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
             ],
@@ -571,41 +680,51 @@ export default [
           {
             path: `angsuran`,
             element: (
-              <Suspense>
-                <IndexAngsuran />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <IndexAngsuran />
+                </Suspense>
+              </RoleAuthorization>
             ),
             children: [
               {
                 index: true,
                 element: (
-                  <Suspense>
-                    <ListPinjaman />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <ListPinjaman />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `bayar`,
                 element: (
-                  <Suspense>
-                    <ViewAngsuran />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <ViewAngsuran />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `bayar/form`,
                 element: (
-                  <Suspense>
-                    <FormAngsuran />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <FormAngsuran />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
               {
                 path: `bayar/edit`,
                 element: (
-                  <Suspense>
-                    <FormEditAngsuran />
-                  </Suspense>
+                  <RoleAuthorization allowRoles={["direktur","teller"]}>
+                    <Suspense>
+                      <FormEditAngsuran />
+                    </Suspense>
+                  </RoleAuthorization>
                 ),
               },
             ],
@@ -615,73 +734,101 @@ export default [
       {
         path: `pelaporan`,
         element: (
-          <Suspense>
-            <Outlet />
-          </Suspense>
+          <RoleAuthorization allowRoles={["direktur","teller","admin"]}>
+            <Suspense>
+              <Outlet />
+            </Suspense>
+          </RoleAuthorization>
         ),
         children: [
           {
             path: `lapsimpanan`,
             element: (
-              <Suspense>
-                <ListLapSimpanan />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <ListLapSimpanan />
+                </Suspense>
+              </RoleAuthorization>
+            ),
+          },
+          {
+            path: `lapsimpananperiode`,
+            element: (
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <LapPeriodeSimpanan />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `lapsimpanan/detail`,
             element: (
-              <Suspense>
-                <LapRekSimpanan />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <LapRekSimpanan />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `lapriwayat`,
             element: (
-              <Suspense>
-                <ListRiwayat />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller","admin"]}>
+                <Suspense>
+                  <ListRiwayat />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `lapriwayat/detail`,
             element: (
-              <Suspense>
-                <LapRiwayat />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller","admin"]}>
+                <Suspense>
+                  <LapRiwayat />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `lappinjaman`,
             element: (
-              <Suspense>
-                <LapPinjaman />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <LapPinjaman />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `lapkas`,
             element: (
-              <Suspense>
-                <LapKas />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <LapKas />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `lapkassimpanan`,
             element: (
-              <Suspense>
-                <LapKasSimpanan />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <LapKasSimpanan />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
           {
             path: `lapakun`,
             element: (
-              <Suspense>
-                <LapAkun />
-              </Suspense>
+              <RoleAuthorization allowRoles={["direktur","teller"]}>
+                <Suspense>
+                  <LapAkun />
+                </Suspense>
+              </RoleAuthorization>
             ),
           },
         ],
@@ -693,6 +840,14 @@ export default [
     element: (
       <Suspense>
         <Login />
+      </Suspense>
+    ),
+  },
+  {
+    path: `/forbidden`,
+    element: (
+      <Suspense>
+        <Forbidden />
       </Suspense>
     ),
   },

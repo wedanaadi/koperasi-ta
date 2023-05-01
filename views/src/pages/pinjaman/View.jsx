@@ -8,7 +8,7 @@ import useStore from "../../store/useStore";
 const ConfirmDialog = React.lazy(() => import("../../components/ConfirmAlert"));
 import axios from "../../components/axiosApi";
 import baseUrl from "../../components/baseUrl";
-import ToDate from "../../components/Date";
+import ToDate, { ToDate2 } from "../../components/Date";
 import { NumberFormat } from "../../components/Input";
 import { deleteData } from "../../api/Pinjaman";
 import Pagination from "../../components/Datatable/Pagination/Pagination";
@@ -335,7 +335,7 @@ export default function View() {
                               {data.no_pinjaman}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
-                              {ToDate(data.tanggal_pinjaman)}
+                              {ToDate2(data.tanggal_pinjaman)}
                             </td>
                             <td className="whitespace-nowrap border-r border-third px-6 py-2 text-left">
                               {data.nama_nasabah}

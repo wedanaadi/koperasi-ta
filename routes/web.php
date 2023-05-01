@@ -32,3 +32,4 @@ Route::get('/pinjaman/riwayat',[PinjamanController::class, 'cetak_riwayatpinjama
 Route::get('/kas/cetak',[SimpananController::class, 'cetak_kassimpanan']);
 Route::get('/kas/trxkas',[KasController::class, 'cetak_trxkas']);
 Route::get('/akun/neraca',[AkunController::class, 'cetak_neraca']);
+Route::get('/simpananperiode/cetak',[SimpananController::class, 'cetak_simpanan_periode']);
